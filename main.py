@@ -1,7 +1,7 @@
-from kivy.lang import *
-from kivy.uix.screenmanager import *
-from kivymd.app import *
-from kivymd.uix.screen import *
+from kivy.lang import Builder
+from kivy.uix.screenmanager import ScreenManager
+from kivymd.app import MDApp
+from kivymd.uix.screen import Screen
 
 
 class LoginWindow(Screen):
@@ -25,6 +25,7 @@ class MyApp(MDApp):
         self.theme_cls.theme_style = "Dark"
         self.theme_cls.primary_palette = "Blue"
         screen = Builder.load_file("My.kv")
+        print("Test")
         return screen
 
 
