@@ -26,6 +26,7 @@ class MyApp(MDApp):
         self.theme_cls.primary_palette = "Blue"
         screen = Builder.load_file("My.kv")
         print("test7")
+        print("test8")
         return screen
 
 
