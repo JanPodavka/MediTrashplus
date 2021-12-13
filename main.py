@@ -22,7 +22,7 @@ class MyApp(MDApp):
         super().__init__(**kwargs)
 
     def build(self):
-        self.theme_cls.theme_style = "Light"
+        self.theme_cls.theme_style = "Dark"
         self.theme_cls.primary_palette = "Blue"
         screen = Builder.load_file("My.kv")
         return screen
