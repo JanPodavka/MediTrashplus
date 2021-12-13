@@ -28,6 +28,7 @@ class MyApp(MDApp):
         print("Test")
         print("Test1")
         print("Test2")
+        print("Test4")
         return screen
 
 
