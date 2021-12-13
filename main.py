@@ -1,7 +1,7 @@
-from kivy.lang import Builder
-from kivy.uix.screenmanager import ScreenManager
-from kivymd.app import MDApp
-from kivymd.uix.screen import Screen
+from kivy.lang import *
+from kivy.uix.screenmanager import *
+from kivymd.app import *
+from kivymd.uix.screen import *
 
 
 class LoginWindow(Screen):
