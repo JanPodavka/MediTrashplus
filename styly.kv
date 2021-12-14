@@ -8,6 +8,9 @@ WindowManager:
 
 <LoginWindow>:
     name:'login'
+    MDIconButton:
+        icon: "Obrazky/exit-to-app.png"
+        on_press: quit()
 
     MDCard:
         pos_hint: {"center_x": .5, "center_y": .5}
@@ -41,8 +44,7 @@ WindowManager:
                     text_size: None, None
                     text: 'Přihlášení'
                     on_press:
-                        app.root.current = "main"
-                        root.manager.transition.direction = "left"
+
                 MDRoundFlatButton:
                     pos_hint: {'center_x': 0.5,'center_y': .5}
                     text_color: 0, 0, 0, 1
@@ -50,19 +52,20 @@ WindowManager:
                     text_size: None, None
                     text: 'Registrace'
                     on_press:
-                        app.root.current = "main"
-                        root.manager.transition.direction = "left"
+
             BoxLayout:
                 orientation: "vertical"
                 size_hint_y: 1
                 pos_hint: {'center_x': 0.5,'center_y': 0.9}
                 MDTextField:
+                    id: name
                     hint_text: "Přihlašovací jméno"
-                    text_color: 0, 0, 0, 0.75
+                    text_color: 0, 0 , 0, 0.75
                     pos_hint: {'center_x': 0.5,'center_y': 0.5}
                     size_hint_x: 0.6
 
                 MDTextField:
+                    id:password
                     hint_text: "Heslo"
                     text_color: 0, 0, 0, 0.75
                     pos_hint: {'center_x': 0.5,'center_y': 0.5}
@@ -71,14 +74,15 @@ WindowManager:
             BoxLayout:
                 orientation: "vertical"
                 size_hint_y: 0.5
-                pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                pos_hint: {'center_x': 0.5,'center_y': 0.1}
                 MDFillRoundFlatButton:
-                    pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                    pos_hint: {'center_x': 0.5,'center_y': 1}
                     text_color: 0, 0, 0, 1
                     size_hint: 0.25, 0.25
                     text_size: None, None
-                    text: 'Registrace'
+                    text: 'Přihlásit'
                     on_press:
+                        root.login_user(name.text, password.text)
                         app.root.current = "main"
                         root.manager.transition.direction = "left"
 <MainWindow>:
@@ -97,5 +101,13 @@ WindowManager:
             text: "Statistika"
         Image:
             source: 'obrazky/logo.png'
+
+    MDRaisedButton:
+        text: "zpatky"
+        font_size: 32
+        on_release : print("zpatky")
+        on_press:
+            app.root.current = "login"
+            root.manager.transition.direction = "right"
 
 
