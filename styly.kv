@@ -1,0 +1,90 @@
+#:import App kivymd.app.MDApp
+
+WindowManager:
+    LoginWindow:
+    MainWindow
+
+
+
+<LoginWindow>:
+    name:'login'
+
+    MDBoxLayout:
+
+        padding: 10
+        spacing: "25dp"
+        orientation: 'vertical'
+        size: root.width, root.height
+
+        BoxLayout:
+            pos_hint: {"center_x": .5, "center_y": .3}
+            size_hint_y: 1.5
+            Image:
+                source: 'obrazky/cover.png'
+                allow_stretch: True
+                pos_hint: {"center_x": .5, "center_y": .1}
+
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint_x: 0.5
+            pos_hint: {"center_x": .5, "center_y": .5}
+            spacing:20
+
+
+
+            MDFillRoundFlatIconButton:
+                pos_hint: {'center_x': 0.5,'center_x': 0.5}
+                size_hint: 0.5, 0.5
+                #width: .3 * self.parent.width
+                text_size: None, None
+                text: 'Přihlásit'
+                on_press:
+                    app.root.current = "main"
+                    root.manager.transition.direction = "left"
+            MDFillRoundFlatIconButton:
+                pos_hint: {'center_x': 0.5,'center_x': 0.5}
+                #width: .3 * self.parent.width
+                size_hint: 0.5, 0.5
+                text_size: None, None
+                text: 'Registrace'
+                on_press:
+                    app.root.current = "main"
+                    root.manager.transition.direction = "left"
+        BoxLayout:
+            orientation: "vertical"
+            pos_hint: {'center_x': 0.5,'center_x': 0.5}
+            MDTextField:
+                hint_text: "Přihlašovací jméno"
+                pos_hint: {'center_x': 0.5,'center_x': 0.5}
+                size_hint_x: 0.6
+
+            MDTextField:
+                hint_text: "Heslo"
+                pos_hint: {'center_x': 0.5,'center_x': 0.5}
+                size_hint_x: 0.6
+
+
+
+
+<MainWindow>:
+    name:"main"
+
+
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        MDToolbar:
+            title: "Volba obrazku"
+            left_action_items: [['menu', lambda x: None]]
+            elevation: 10
+
+        MDBoxLayout:
+            orientation: "vertical"
+
+            MDRaisedButton:
+                text: "zpatky"
+                font_size: 32
+                on_release : print("zpatky")
+                on_press:
+                    app.root.current = "login"
+                    root.manager.transition.direction = "right"
