@@ -1,5 +1,4 @@
 #:import App kivymd.app.MDApp
-
 WindowManager:
     LoginWindow:
     MainWindow
@@ -28,43 +27,27 @@ WindowManager:
 
         BoxLayout:
             orientation: 'horizontal'
-            size_hint_x: 0.5
+            size_hint_x: 0.3
             pos_hint: {"center_x": .5, "center_y": .5}
             spacing:20
 
-            Button:
+            MDRoundFlatButton:
                 pos_hint: {'center_x': 0.5,'center_x': 0.1}
                 width: .3 * self.parent.width
-                text_size: None, None
+                font_size: 35
                 text: 'Přihlásit'
                 on_press:
                     app.root.current = "main"
                     root.manager.transition.direction = "left"
-            Button:
-                pos_hint: {'center_x': 0.5,'center_x': 0.1}
+
+            MDRoundFlatButton:
+                text: "Registrace"
+                font_size: 35
+                pos_hint: {"center_x": .5}
                 width: .3 * self.parent.width
-                text_size: None, None
-                text: 'Registrace'
                 on_press:
                     app.root.current = "main"
                     root.manager.transition.direction = "left"
-#            MDRoundFlatButton:
-#                pos_hint: {'center_x': 0.5,'center_x': 0.1}
-#                width: .3 * self.parent.width
-#                text_size: None, None
-#                text: 'Přihlásit'
-#                on_press:
-#                    app.root.current = "main"
-#                    root.manager.transition.direction = "left"
-#
-#            MDRoundFlatButton:
-#                text: "Registrace"
-#                text_size: None, None
-#                pos_hint: {"center_x": .5}
-#                width: .3 * self.parent.width
-#                on_press:
-#                    app.root.current = "main"
-#                    root.manager.transition.direction = "left"
 
 #            MDRoundFlatButton:
 #                text: "Registrovat"
