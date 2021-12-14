@@ -14,12 +14,27 @@ class LoginWindow(Screen):
 
     def login_user(self, loginText, passwordText):
         app = MDApp.get_running_app()
-        app.usernameL = loginText
-        app.passwordL = passwordText
-        print(app.usernameL)
-        print(app.passwordL)
-        app.usernameL = self.ids['name'].text
-        app.passwordL = self.ids['password'].text
+        #Otevři soubor
+        with open('data/pass.txt') as f:
+            lines = f.readlines()
+        # porovnaj zda je v DTB (zatím txt)
+        for line in lines:
+            line = line.replace("\n", "")
+            udaje = line.split(" ")
+            if self.ids['name'].text == udaje[0] and self.ids['password'].text == udaje[1]:
+                print("úspěšně přihlášeno")
+                # Náhrání do údajů aktivnního uživatele
+                app.usernameL = loginText
+                app.passwordL = passwordText
+                # Vymazání text inputů
+                self.ids['name'].text = ""
+                self.ids['password'].text = ""
+                return True
+        print("Špatné údaje")
+        self.ids['name'].text = ""
+        self.ids['password'].text = ""
+        return False
+
 
 
 class MainWindow(Screen):
@@ -35,6 +50,9 @@ class MyApp(MDApp):
     def build(self):
         usernameL = StringProperty(None)
         passwordL = StringProperty(None)
+
+
+
 
         self.theme_cls.theme_style = "Light"
         self.theme_cls.primary_palette = "Gray"
