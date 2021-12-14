@@ -4,62 +4,83 @@ WindowManager:
     LoginWindow:
     MainWindow
 
+
+
 <LoginWindow>:
     name:'login'
 
-    MDBoxLayout:
-
+    MDCard:
+        pos_hint: {"center_x": .5, "center_y": .5}
+        size_hint: .8, .8
+        elevation: 10
         padding: 10
-        spacing: "25dp"
-        orientation: 'vertical'
-        size: root.width, root.height
+        MDBoxLayout:
+            padding: 10
+            spacing: "25dp"
+            orientation: 'vertical'
+            size: root.width, root.height
 
-        BoxLayout:
-            pos_hint: {"center_x": .5, "center_y": .3}
-            size_hint_y: 1.5
-            Image:
-                source: 'obrazky/cover.png'
-                allow_stretch: True
-                pos_hint: {"center_x": .5, "center_y": .1}
+            BoxLayout:
+                pos_hint: {"center_x": .5, "center_y": .5}
+                size_hint_y: 3
+                Image:
+                    source: 'obrazky/cover.png'
+                    allow_stretch: True
+                    pos_hint: {"center_x": .5, "center_y": .3}
 
-        BoxLayout:
-            orientation: 'horizontal'
-            size_hint_x: 0.5
-            pos_hint: {"center_x": .5, "center_y": .5}
-            spacing:20
-
-
-
-            MDFillRoundFlatIconButton:
-                pos_hint: {'center_x': 0.5,'center_x': 0.5}
-                size_hint: 0.5, 0.5
-                #width: .3 * self.parent.width
-                text_size: None, None
-                text: 'Přihlásit'
-                on_press:
-                    app.root.current = "main"
-                    root.manager.transition.direction = "left"
-            MDFillRoundFlatIconButton:
-                pos_hint: {'center_x': 0.5,'center_x': 0.5}
-                #width: .3 * self.parent.width
-                size_hint: 0.5, 0.5
-                text_size: None, None
-                text: 'Registrace'
-                on_press:
-                    app.root.current = "main"
-                    root.manager.transition.direction = "left"
-        BoxLayout:
-            orientation: "vertical"
-            pos_hint: {'center_x': 0.5,'center_x': 0.5}
-            MDTextField:
-                hint_text: "Přihlašovací jméno"
-                pos_hint: {'center_x': 0.5,'center_x': 0.5}
+            BoxLayout:
+                orientation: 'horizontal'
                 size_hint_x: 0.6
+                pos_hint: {"center_x": .5, "center_y": 1}
+                spacing:20
 
-            MDTextField:
-                hint_text: "Heslo"
-                pos_hint: {'center_x': 0.5,'center_x': 0.5}
-                size_hint_x: 0.6
+                MDRoundFlatButton:
+                    pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                    size_hint: 0.5, 0.5
+                    text_color: 0, 0, 0, 1
+                    text_size: None, None
+                    text: 'Přihlášení'
+                    on_press:
+                        app.root.current = "main"
+                        root.manager.transition.direction = "left"
+                MDRoundFlatButton:
+                    pos_hint: {'center_x': 0.5,'center_y': .5}
+                    text_color: 0, 0, 0, 1
+                    size_hint: 0.5, 0.5
+                    text_size: None, None
+                    text: 'Registrace'
+                    on_press:
+                        app.root.current = "main"
+                        root.manager.transition.direction = "left"
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_y: 1
+                pos_hint: {'center_x': 0.5,'center_y': 0.9}
+                MDTextField:
+                    hint_text: "Přihlašovací jméno"
+                    text_color: 0, 0, 0, 0.75
+                    pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                    size_hint_x: 0.6
+
+                MDTextField:
+                    hint_text: "Heslo"
+                    text_color: 0, 0, 0, 0.75
+                    pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                    size_hint_x: 0.6
+
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_y: 0.5
+                pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                MDFillRoundFlatButton:
+                    pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                    text_color: 0, 0, 0, 1
+                    size_hint: 0.25, 0.25
+                    text_size: None, None
+                    text: 'Registrace'
+                    on_press:
+                        app.root.current = "main"
+                        root.manager.transition.direction = "left"
 <MainWindow>:
     name:"main"
 
@@ -76,16 +97,5 @@ WindowManager:
             text: "Statistika"
         Image:
             source: 'obrazky/logo.png'
-
-    MDBoxLayout:
-            orientation: "vertical"
-
-            MDRaisedButton:
-                text: "zpatky"
-                font_size: 32
-                on_release : print("zpatky")
-                on_press:
-                    app.root.current = "login"
-                    root.manager.transition.direction = "right"
 
 
