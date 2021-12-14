@@ -24,10 +24,8 @@ WindowManager:
                 orientation: 'vertical'
                 size: root.width, root.height
 
-                MDLabel:
-                    text:"MediTrash"
-                    font_size: 32
-                    halign: "center"
+                FitImage:
+                    source: 'obrazky/logo.png'
 
                 MDTextField:
                     hint_text: "Zadejte jméno"
@@ -39,8 +37,9 @@ WindowManager:
                     helper_text: "heslo"
                     helper_text_mode: "on_focus"
 
-                MDRaisedButton:
+                MDRoundFlatButton:
                     text: "Login"
+
                     font_size: 32
                     size_hint_x: None
                     width: .3 * self.parent.width
@@ -51,7 +50,7 @@ WindowManager:
                         root.manager.transition.direction = "left"
 
 
-                MDRaisedButton:
+                MDFillRoundFlatButton:
                     text: "Ukončit"
                     font_size: 32
                     size_hint_x: 1.0
