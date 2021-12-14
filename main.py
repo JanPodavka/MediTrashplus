@@ -9,6 +9,7 @@ from kivymd.app import MDApp
 from kivymd.uix.screen import Screen
 from kivy.properties import StringProperty
 
+
 class LoginWindow(Screen):
 
     def login_user(self, loginText, passwordText):
@@ -28,11 +29,18 @@ class LoginWindow(Screen):
                 # Vymazání text inputů
                 self.ids['name'].text = ""
                 self.ids['password'].text = ""
+                self.ids['password'].helper_text = ""
+                self.ids['password'].error = False
+
                 return True
         print("Špatné údaje")
+        self.ids['password'].error = True
         self.ids['name'].text = ""
         self.ids['password'].text = ""
+        self.ids['password'].helper_text = "Zadejte správné údaje"
         return False
+
+
 
 class MainWindow(Screen):
     pass
@@ -42,6 +50,7 @@ class RegistrationWindow(Screen):
 
 class WindowManager(ScreenManager):
     pass
+
 
 class MyApp(MDApp):
 
@@ -53,6 +62,7 @@ class MyApp(MDApp):
         self.theme_cls.primary_palette = "Gray"
         screen = Builder.load_file("styly.kv")
         return screen
+
 
 if __name__ == '__main__':
     MyApp().run()

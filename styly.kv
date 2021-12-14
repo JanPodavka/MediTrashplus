@@ -2,9 +2,8 @@
 
 WindowManager:
     LoginWindow:
-    MainWindow
-    RegistrationWindow
-
+    MainWindow:
+    RegistrationWindow:
 
 <RegistFormular@BoxLayout>:
     BoxLayout:
@@ -24,6 +23,7 @@ WindowManager:
             pos_hint: {'center_x': 0.2, 'center_y': 1}
 
 
+<Navbar@BoxLayout>:
 <LoginWindow>:
     name:'login'
     MDIconButton:
@@ -64,6 +64,7 @@ WindowManager:
                     on_press:
                         app.root.current = "main"
                         root.manager.transition.direction = "left"
+
                 MDRoundFlatButton:
                     pos_hint: {'center_x': 0.5,'center_y': .5}
                     text_color: 0, 0, 0, 1
@@ -80,6 +81,7 @@ WindowManager:
                 pos_hint: {'center_x': 0.5,'center_y': 0.9}
                 MDTextField:
                     id: name
+                    max_text_length: 8
                     hint_text: "Přihlašovací jméno"
                     text_color: 0, 0, 0, 0.75
                     pos_hint: {'center_x': 0.5,'center_y': 0.5}
@@ -104,7 +106,7 @@ WindowManager:
                     text_size: None, None
                     text: 'Přihlásit'
                     on_press:
-                        root.login_user(name.text, password.text)
+                        if(root.login_user(name.text, password.text)):\
                         app.root.current = "main"
                         root.manager.transition.direction = "left"
 <MainWindow>:
@@ -192,3 +194,4 @@ WindowManager:
             on_press:
                 app.root.current = "login"
                 root.manager.transition.direction = "right"
+
