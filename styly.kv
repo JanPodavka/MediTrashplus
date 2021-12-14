@@ -8,15 +8,16 @@ WindowManager:
 <RegistFormular@BoxLayout>:
     BoxLayout:
         orientation: "horizontal"
-        pos_hint: {"center_x": .5, "center_y": .5}
-        size_hint: 1, .5
+        pos_hint: {"center_x": 1, "center_y": 1}
+        size_hint: 1, 1
         Button:
-            size_hint: .2, 1
+            size_hint: 1, 1
             pos_hint: {'center_x': .5, 'center_y': 1}
         Button:
-            size_hint: .3, 1
-            pos_hint: {'center_x': .5, 'center_y': 1}
+            size_hint: 1, 1
+            pos_hint: {'center_x': 1, 'center_y': 1}
 
+<Navbar@BoxLayout>:
 <LoginWindow>:
     name:'login'
     MDIconButton:
@@ -72,6 +73,7 @@ WindowManager:
                 pos_hint: {'center_x': 0.5,'center_y': 0.9}
                 MDTextField:
                     id: name
+                    max_text_length: 8
                     hint_text: "Přihlašovací jméno"
                     text_color: 0, 0 , 0, 0.75
                     pos_hint: {'center_x': 0.5,'center_y': 0.5}
@@ -96,7 +98,7 @@ WindowManager:
                     text_size: None, None
                     text: 'Přihlásit'
                     on_press:
-                        root.login_user(name.text, password.text)
+                        if(root.login_user(name.text, password.text)):\
                         app.root.current = "main"
                         root.manager.transition.direction = "left"
 <MainWindow>:
@@ -142,12 +144,8 @@ WindowManager:
             orientation: "vertical"
             pos_hint: {"center_x": .5, "center_y": .5}
             size_hint: 0.5, 0.5
-            RegistFormular:
-            RegistFormular:
-            RegistFormular:
-            RegistFormular:
-            RegistFormular:
-            RegistFormular:
+
+
 
 
     MDBoxLayout:

@@ -29,10 +29,15 @@ class LoginWindow(Screen):
                 # Vymazání text inputů
                 self.ids['name'].text = ""
                 self.ids['password'].text = ""
+                self.ids['password'].helper_text = ""
+                self.ids['password'].error = False
+
                 return True
         print("Špatné údaje")
+        self.ids['password'].error = True
         self.ids['name'].text = ""
         self.ids['password'].text = ""
+        self.ids['password'].helper_text = "Zadejte správné údaje"
         return False
 
 
@@ -52,10 +57,6 @@ class MyApp(MDApp):
     def build(self):
         usernameL = StringProperty(None)
         passwordL = StringProperty(None)
-
-
-
-
         self.theme_cls.theme_style = "Light"
         self.theme_cls.primary_palette = "Gray"
         screen = Builder.load_file("styly.kv")
