@@ -37,6 +37,9 @@ class LoginWindow(Screen):
 class MainWindow(Screen):
     pass
 
+class RegistrationWindow(Screen):
+    pass
+
 class WindowManager(ScreenManager):
     pass
 
