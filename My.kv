@@ -3,13 +3,10 @@ WindowManager:
     LoginWindow:
     MainWindow
 
-
-
 <LoginWindow>:
     name:'login'
 
     MDBoxLayout:
-
         padding: 10
         spacing: "25dp"
         orientation: 'vertical'
@@ -19,17 +16,16 @@ WindowManager:
             pos_hint: {"center_x": .5, "center_y": .3}
             size_hint_y: 3
             size_hint_x:0.5
-            FitImage:
+            Image:
                 source: 'obrazky/logo.png'
                 allow_stretch: True
                 pos_hint: {"center_x": .5, "center_y": .3}
 
-
-
         MDBoxLayout:
             orientation: 'horizontal'
             pos_hint: {"center_x": .5, "center_y": .5}
-
+            padding: 100
+            spacing: 25
 
             MDRoundFlatButton:
                 text: "Přihlásit"
