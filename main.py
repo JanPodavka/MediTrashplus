@@ -25,8 +25,8 @@ class MyApp(MDApp):
 
     def build(self):
         self.theme_cls.theme_style = "Light"
-        self.theme_cls.primary_palette = "Blue"
-        screen = Builder.load_file("my.kv")
+        self.theme_cls.primary_palette = "Gray"
+        screen = Builder.load_file("styly.kv")
         return screen
 
 
