@@ -2,9 +2,20 @@
 
 WindowManager:
     LoginWindow:
-    MainWindow
+    MainWindow:
+    RegistrationWindow:
 
-
+<RegistFormular@BoxLayout>:
+    BoxLayout:
+        orientation: "horizontal"
+        pos_hint: {"center_x": .5, "center_y": .5}
+        size_hint: 1, .5
+        Button:
+            size_hint: .2, 1
+            pos_hint: {'center_x': .5, 'center_y': 1}
+        Button:
+            size_hint: .3, 1
+            pos_hint: {'center_x': .5, 'center_y': 1}
 
 <LoginWindow>:
     name:'login'
@@ -52,6 +63,8 @@ WindowManager:
                     text_size: None, None
                     text: 'Registrace'
                     on_press:
+                        app.root.current = "registrace"
+                        root.manager.transition.direction = "left"
 
             BoxLayout:
                 orientation: "vertical"
@@ -111,4 +124,39 @@ WindowManager:
             app.root.current = "login"
             root.manager.transition.direction = "right"
 
+
+<RegistrationWindow>:
+    name:"registrace"
+
+    BoxLayout:
+        orientation: "vertical"
+        padding: 2
+        BoxLayout:
+            pos_hint: {"center_x": .5, "center_y": .5}
+            size_hint_y: 0.4
+            Image:
+                source: 'obrazky/cover.png'
+                allow_stretch: True
+                pos_hint: {"center_x": .5, "center_y": .3}
+        BoxLayout:
+            orientation: "vertical"
+            pos_hint: {"center_x": .5, "center_y": .5}
+            size_hint: 0.5, 0.5
+            RegistFormular:
+            RegistFormular:
+            RegistFormular:
+            RegistFormular:
+            RegistFormular:
+            RegistFormular:
+
+
+    MDBoxLayout:
+        orientation: "vertical"
+
+        MDRaisedButton:
+            text: "Zpět"
+            font_size: 32
+            on_press:
+                app.root.current = "login"
+                root.manager.transition.direction = "right"
 
