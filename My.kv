@@ -8,40 +8,48 @@ WindowManager:
 <LoginWindow>:
     name:'login'
 
-
     MDBoxLayout:
-        padding:10
-        spacing: "5dp"
+
+        padding: 10
+        spacing: "25dp"
         orientation: 'vertical'
+        size: root.width, root.height
 
-        Image:
-            source: 'obrazky/logo2.png'
-            allow_stretch: True
-            pos_hint_x: .5
-            pos_hint_y: .5
-            #allow_stretch: True
+        BoxLayout:
+            pos_hint: {"center_x": .5, "center_y": .3}
+            size_hint_y: 3
+            size_hint_x:0.5
+            FitImage:
+                source: 'obrazky/logo.png'
+                allow_stretch: True
+                pos_hint: {"center_x": .5, "center_y": .3}
 
-        MDRoundFlatButton:
-            text: "Přihlásit"
-            font_size: 32
-            size_hint_x: None
-            width: .3 * self.parent.width
-            on_release : print("Přihlášení")
-            line_color: (0, 0, 0, 0)
-            on_press:
-                app.root.current = "main"
-                root.manager.transition.direction = "left"
 
-        MDRoundFlatButton:
-            text: "Registrovat"
-            font_size: 32
-            size_hint_x: None
-            width: .3 * self.parent.width
-            on_release : print("Přihlášení")
-            line_color: (0, 0, 0, 0)
-            on_press:
-                app.root.current = "main"
-                root.manager.transition.direction = "left"
+
+        MDBoxLayout:
+            orientation: 'horizontal'
+            pos_hint: {"center_x": .5, "center_y": .5}
+
+
+            MDRoundFlatButton:
+                text: "Přihlásit"
+                font_size: 32
+                size_hint_x: None
+                width: .3 * self.parent.width
+                on_release : print("Přihlášení")
+                on_press:
+                    app.root.current = "main"
+                    root.manager.transition.direction = "left"
+
+            MDRoundFlatButton:
+                text: "Registrovat"
+                font_size: 32
+                size_hint_x: None
+                width: .3 * self.parent.width
+                on_release : print("Přihlášení")
+                on_press:
+                    app.root.current = "main"
+                    root.manager.transition.direction = "left"
 
         MDTextField:
             hint_text: "Přihlašovací jméno"
@@ -68,12 +76,20 @@ WindowManager:
     name:"main"
 
     MDBoxLayout:
-        padding:10
-        spacing: "5dp"
         orientation: 'vertical'
 
-        MDBottomAppBar:
+        MDToolbar:
+            title: "Volba obrazku"
+            left_action_items: [['menu', lambda x: None]]
+            elevation: 10
 
-            MDToolBar:
+        MDBoxLayout:
+            orientation: "vertical"
 
-
+            MDRaisedButton:
+                text: "zpatky"
+                font_size: 32
+                on_release : print("zpatky")
+                on_press:
+                    app.root.current = "login"
+                    root.manager.transition.direction = "right"
