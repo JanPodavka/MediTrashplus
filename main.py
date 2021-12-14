@@ -57,6 +57,7 @@ class MyApp(MDApp):
     def build(self):
         usernameL = StringProperty(None)
         passwordL = StringProperty(None)
+
         self.theme_cls.theme_style = "Light"
         self.theme_cls.primary_palette = "Gray"
         screen = Builder.load_file("styly.kv")
