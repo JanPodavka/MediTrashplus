@@ -4,8 +4,6 @@ WindowManager:
     LoginWindow:
     MainWindow
 
-
-
 <LoginWindow>:
     name:'login'
 
@@ -79,6 +77,15 @@ WindowManager:
         Image:
             source: 'obrazky/logo.png'
 
+    MDBoxLayout:
+            orientation: "vertical"
 
+            MDRaisedButton:
+                text: "zpatky"
+                font_size: 32
+                on_release : print("zpatky")
+                on_press:
+                    app.root.current = "login"
+                    root.manager.transition.direction = "right"
 
 
