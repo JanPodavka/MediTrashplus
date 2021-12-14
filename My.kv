@@ -7,59 +7,71 @@ WindowManager:
 
 <LoginWindow>:
     name:'login'
-    RelativeLayout:
-        orientation: "horizontal"
-        padding: 16
 
-        MDCard:
-            pos_hint: {"center_x": .5, "center_y": .5}
-            size_hint: .7, .75
-            elevation: 10
-            padding: 10
+    MDCard:
+        pos_hint: {"center_x": .5, "center_y": .5}
+        size_hint: .7, .75
+        elevation: 10
+        padding: 10
+        MDBoxLayout:
+            row:5
+            col:1
+            padding:10
+            spacing: "25dp"
+            orientation: 'vertical'
+            size: root.width, root.height
+
+            FitImage:
+                source: 'obrazky/logo.png'
+
             MDBoxLayout:
-                row:2
-                col:2
-                padding:10
+                row:1
+                col:1
                 spacing: "25dp"
-                orientation: 'vertical'
-                size: root.width, root.height
+                orientation: 'horizontal'
+                pos_hint: {"center_x": .5, "center_y": .5}
 
-                FitImage:
-                    source: 'obrazky/logo.png'
-
-                MDTextField:
-                    hint_text: "Zadejte jméno"
-                    helper_text: "ICO"
-                    helper_text_mode: "on_focus"
-
-                MDTextField:
-                    hint_text: "Zadejte heslo"
-                    helper_text: "heslo"
-                    helper_text_mode: "on_focus"
 
                 MDRoundFlatButton:
-                    text: "Login"
-
+                    text: "Přihlásit"
                     font_size: 32
                     size_hint_x: None
                     width: .3 * self.parent.width
-                    pos_hint: {"center_x": .15, "center_y": .0}
                     on_release : print("Přihlášení")
                     on_press:
                         app.root.current = "main"
                         root.manager.transition.direction = "left"
 
-
-                MDFillRoundFlatButton:
-                    text: "Ukončit"
+                MDRoundFlatButton:
+                    text: "Registrovat"
                     font_size: 32
-                    size_hint_x: 1.0
                     size_hint_x: None
-                    width: .75 * self.parent.width
-                    pos_hint: {"center_x": .5, "center_y": .0}
-                    md_bg_color: 1, 0, 0, .5 #red
-                    on_release : print("Konec programu")
-                    on_press: quit()
+                    width: .3 * self.parent.width
+                    on_release : print("Přihlášení")
+                    on_press:
+                        app.root.current = "main"
+                        root.manager.transition.direction = "left"
+
+            MDTextField:
+                hint_text: "Přihlašovací jméno"
+                pos_hint: {"center_x": .35, "center_y": .5}
+                size_hint_x: 0.6
+
+            MDTextField:
+                hint_text: "Heslo"
+                pos_hint: {"center_x": .35, "center_y": .5}
+                size_hint_x: 0.6
+
+            MDFillRoundFlatButton:
+                text: "Ukončit"
+                font_size: 32
+                size_hint_x: 1.0
+                size_hint_x: None
+                width: .75 * self.parent.width
+                pos_hint: {"center_x": .5, "center_y": .0}
+                md_bg_color: 1, 0, 0, .5 #red
+                on_release : print("Konec programu")
+                on_press: quit()
 
 <MainWindow>:
     name:"main"
