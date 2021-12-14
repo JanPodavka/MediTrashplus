@@ -8,70 +8,69 @@ WindowManager:
 <LoginWindow>:
     name:'login'
 
-    MDCard:
-        pos_hint: {"center_x": .5, "center_y": .5}
-        size_hint: .7, .75
-        elevation: 10
-        padding: 10
-        MDBoxLayout:
-            row:5
-            col:1
-            padding:10
-            spacing: "25dp"
-            orientation: 'vertical'
-            size: root.width, root.height
+    MDBoxLayout:
 
+        padding: 10
+        spacing: "25dp"
+        orientation: 'vertical'
+        size: root.width, root.height
+
+        BoxLayout:
+            pos_hint: {"center_x": .5, "center_y": .3}
+            size_hint_y: 3
+            size_hint_x:0.5
             FitImage:
                 source: 'obrazky/logo.png'
-
-            MDBoxLayout:
-                row:1
-                col:1
-                spacing: "25dp"
-                orientation: 'horizontal'
-                pos_hint: {"center_x": .5, "center_y": .5}
+                allow_stretch: True
+                pos_hint: {"center_x": .5, "center_y": .3}
 
 
-                MDRoundFlatButton:
-                    text: "Přihlásit"
-                    font_size: 32
-                    size_hint_x: None
-                    width: .3 * self.parent.width
-                    on_release : print("Přihlášení")
-                    on_press:
-                        app.root.current = "main"
-                        root.manager.transition.direction = "left"
 
-                MDRoundFlatButton:
-                    text: "Registrovat"
-                    font_size: 32
-                    size_hint_x: None
-                    width: .3 * self.parent.width
-                    on_release : print("Přihlášení")
-                    on_press:
-                        app.root.current = "main"
-                        root.manager.transition.direction = "left"
+        MDBoxLayout:
+            orientation: 'horizontal'
+            pos_hint: {"center_x": .5, "center_y": .5}
 
-            MDTextField:
-                hint_text: "Přihlašovací jméno"
-                pos_hint: {"center_x": .35, "center_y": .5}
-                size_hint_x: 0.6
 
-            MDTextField:
-                hint_text: "Heslo"
-                pos_hint: {"center_x": .35, "center_y": .5}
-                size_hint_x: 0.6
-
-            MDFillRoundFlatButton:
-                text: "Ukončit"
+            MDRoundFlatButton:
+                text: "Přihlásit"
                 font_size: 32
-                size_hint_x: 1.0
                 size_hint_x: None
-                width: .75 * self.parent.width
-                pos_hint: {"center_x": .5, "center_y": .0}
-                md_bg_color: 1, 0, 0, .5 #red
-                on_release : print("Konec programu")
-                on_press: quit()
+                width: .3 * self.parent.width
+                on_release : print("Přihlášení")
+                on_press:
+                    app.root.current = "main"
+                    root.manager.transition.direction = "left"
+
+            MDRoundFlatButton:
+                text: "Registrovat"
+                font_size: 32
+                size_hint_x: None
+                width: .3 * self.parent.width
+                on_release : print("Přihlášení")
+                on_press:
+                    app.root.current = "main"
+                    root.manager.transition.direction = "left"
+
+        MDTextField:
+            hint_text: "Přihlašovací jméno"
+            pos_hint: {"center_x": .35, "center_y": .5}
+            size_hint_x: 0.6
+
+        MDTextField:
+            hint_text: "Heslo"
+            pos_hint: {"center_x": .35, "center_y": .5}
+            size_hint_x: 0.6
+
+        MDFillRoundFlatButton:
+            text: "Ukončit"
+            font_size: 32
+            size_hint_x: 1.0
+            size_hint_x: None
+            width: .75 * self.parent.width
+            pos_hint: {"center_x": .5, "center_y": .0}
+            md_bg_color: 1, 0, 0, .5 #red
+            on_release : print("Konec programu")
+            on_press: quit()
 
 <MainWindow>:
     name:"main"
