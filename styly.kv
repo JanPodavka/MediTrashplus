@@ -48,6 +48,7 @@ WindowManager:
                     text_size: None, None
                     text: 'Přihlášení'
                     on_press:
+                        app.root.current = "main"
 
                 MDRoundFlatButton:
                     pos_hint: {'center_x': 0.5,'center_y': .5}
@@ -79,20 +80,7 @@ WindowManager:
                     pos_hint: {'center_x': 0.5,'center_y': 0.5}
                     size_hint_x: 0.6
 
-            BoxLayout:
-                orientation: "vertical"
-                size_hint_y: 0.5
-                pos_hint: {'center_x': 0.5,'center_y': 0.5}
-                MDFillRoundFlatButton:
-                    pos_hint: {'center_x': 0.5,'center_y': 0.5}
-                    text_color: 0, 0, 0, 1
-                    size_hint: 0.25, 0.25
-                    text_size: None, None
-                    text: 'Přihlásit'
-                    on_press:
-                        if(root.login_user(name.text, password.text)):\
-                        app.root.current = "main"
-                        root.manager.transition.direction = "left"
+
 <MainWindow>:
     name:"main"
 
