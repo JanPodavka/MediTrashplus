@@ -1,0 +1,84 @@
+<LoginWindow>:
+    name:'login'
+
+    MDIconButton:
+        icon: "Obrazky/exit-to-app.png"
+        on_press: quit()
+
+    MDCard:
+        pos_hint: {"center_x": .5, "center_y": .5}
+        size_hint: .8, .8
+        elevation: 10
+        padding: 10
+        MDBoxLayout:
+            padding: 10
+            spacing: "25dp"
+            orientation: 'vertical'
+            size: root.width, root.height
+
+            BoxLayout:
+                pos_hint: {"center_x": .5, "center_y": .5}
+                size_hint_y: 3
+                Image:
+                    source: 'obrazky/cover.png'
+                    allow_stretch: True
+                    pos_hint: {"center_x": .5, "center_y": .3}
+
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint_x: 0.6
+                pos_hint: {"center_x": .5, "center_y": 1}
+                spacing:20
+
+                MDRoundFlatButton:
+                    pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                    size_hint: 0.5, 0.5
+                    text_color: 0, 0, 0, 1
+                    text_size: None, None
+                    text: 'Přihlášení'
+                    on_press:
+
+                MDRoundFlatButton:
+                    pos_hint: {'center_x': 0.5,'center_y': .5}
+                    text_color: 0, 0, 0, 1
+                    size_hint: 0.5, 0.5
+                    text_size: None, None
+                    text: 'Registrace'
+                    on_press:
+                        app.root.current = "registrace"
+                        root.manager.transition.direction = "left"
+
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_y: 1
+                pos_hint: {'center_x': 0.5,'center_y': 0.9}
+                MDTextField:
+                    id: name
+                    max_text_length: 8
+                    hint_text: "IČO"
+                    text_color: 0, 0 , 0, 0.75
+                    pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                    size_hint_x: 0.6
+
+                MDTextField:
+                    id:password
+                    password: True
+                    hint_text: "Heslo"
+                    text_color: 0, 0, 0, 0.75
+                    pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                    size_hint_x: 0.6
+
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_y: 0.5
+                pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                MDFillRoundFlatButton:
+                    pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                    text_color: 0, 0, 0, 1
+                    size_hint: 0.25, 0.25
+                    text_size: None, None
+                    text: 'Přihlásit'
+                    on_press:
+                        if(root.login_user(name.text, password.text)):\
+                        app.root.current = "main"
+                        root.manager.transition.direction = "left"

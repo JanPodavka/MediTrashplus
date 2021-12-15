@@ -1,233 +1,29 @@
 #:import App kivymd.app.MDApp
 #:import NoTransition kivy.uix.screenmanager.NoTransition
+#:include screen_main.kv
+#:include screen_registration.kv
+#:include screen_log.kv
 
 WindowManager:
     LoginWindow:
     MainWindow:
     RegistrationWindow:
 
+#Nastavení
+
 <ScreenManager>:
     transition: NoTransition()
 
+#Tamplaty
 <Navbar@BoxLayout>:
+
+#Screeny
+
 <LoginWindow>:
-    name:'login'
-    MDIconButton:
-        icon: "Obrazky/exit-to-app.png"
-        on_press: quit()
-
-    MDCard:
-        pos_hint: {"center_x": .5, "center_y": .5}
-        size_hint: .8, .8
-        elevation: 10
-        padding: 10
-        MDBoxLayout:
-            padding: 10
-            spacing: "25dp"
-            orientation: 'vertical'
-            size: root.width, root.height
-
-            BoxLayout:
-                pos_hint: {"center_x": .5, "center_y": .5}
-                size_hint_y: 3
-                Image:
-                    source: 'obrazky/cover.png'
-                    allow_stretch: True
-                    pos_hint: {"center_x": .5, "center_y": .3}
-
-            BoxLayout:
-                orientation: 'horizontal'
-                size_hint_x: 0.6
-                pos_hint: {"center_x": .5, "center_y": 1}
-                spacing:20
-
-                MDRoundFlatButton:
-                    pos_hint: {'center_x': 0.5,'center_y': 0.5}
-                    size_hint: 0.5, 0.5
-                    text_color: 0, 0, 0, 1
-                    text_size: None, None
-                    text: 'Přihlášení'
-                    on_press:
-                        app.root.current = "main"
-
-                MDRoundFlatButton:
-                    pos_hint: {'center_x': 0.5,'center_y': .5}
-                    text_color: 0, 0, 0, 1
-                    size_hint: 0.5, 0.5
-                    text_size: None, None
-                    text: 'Registrace'
-                    on_press:
-                        app.root.current = "registrace"
-                        root.manager.transition.direction = "left"
-
-            BoxLayout:
-                orientation: "vertical"
-                size_hint_y: 1
-                pos_hint: {'center_x': 0.5,'center_y': 0.9}
-                MDTextField:
-                    id: name
-                    max_text_length: 8
-                    hint_text: "Přihlašovací jméno"
-                    text_color: 0, 0, 0, 0.75
-                    pos_hint: {'center_x': 0.5,'center_y': 0.5}
-                    size_hint_x: 0.6
-
-                MDTextField:
-                    id:password
-                    password: True
-                    hint_text: "Heslo"
-                    text_color: 0, 0, 0, 0.75
-                    pos_hint: {'center_x': 0.5,'center_y': 0.5}
-                    size_hint_x: 0.6
-
-
 <MainWindow>:
-    name:"main"
-
-    MDCard:
-        pos_hint: {"center_x": .5, "center_y": .5}
-        size_hint: .8, .8
-        elevation: 10
-        padding: 10
-        BoxLayout:
-            orientation: 'vertical'
-            MDBoxLayout:
-                pos_hint: {"center_x": .5, "center_y": .5}
-                size_hint: 1, .1
-                md_bg_color: .0, .0, .0, .15
-                Button:
-                    text: "Profil"
-                Button:
-                    text: "Vložit odpad"
-                Button:
-                    text: "Historie"
-                Button:
-                    text: "Statistika"
-                Image:
-                    source: 'obrazky/logo.png'
-
-            MDBoxLayout:
-                orientation: "vertical"
-
-                MDRaisedButton:
-                    text: "Odhlásit"
-                    font_size: 32
-                    on_release : print("zpatky")
-                    on_press:
-                        app.root.current = "login"
-                        root.manager.transition.direction = "left"
-
 <RegistrationWindow>:
-    name:"registrace"
-
-    MDCard:
-        pos_hint: {"center_x": .5, "center_y": .5}
-        size_hint: .8, .8
-        elevation: 10
-        padding: 10
-        BoxLayout:
-            orientation: "vertical"
-            pos_hint: {"center_x": .5, "center_y": .5}
-            BoxLayout:
-                orientation: "vertical"
-                BoxLayout:
-                    pos_hint: {"center_x": .5, "center_y": .5}
-                    size_hint_y: .3
-                    Image:
-                        source: 'obrazky/cover.png'
-                        allow_stretch: True
-                        pos_hint: {"center_x": .5, "center_y": .4}
 
 
-
-                BoxLayout:
-                    size_hint: .7, .5
-                    pos_hint: {"center_x": .43, "center_y": .5}
-                    orientation: "horizontal"
-                    spacing: 20
-                    BoxLayout:
-                        orientation: "vertical"
-                        size_hint: .3, 1
-                        pos_hint: {"center_x": .5, "center_y": .5}
-                        spacing: 20
-                        MDLabel:
-                            text: "Jméno"
-                            halign: "right"
-                            size_hint: 1, .8
-                            pos_hint: {"center_x": .5, "center_y": .5}
-                        MDLabel:
-                            text: "IČO"
-                            halign: "right"
-                            size_hint: 1, .8
-                            pos_hint: {"center_x": .5, "center_y": .5}
-                        MDLabel:
-                            text: "Adresa"
-                            halign: "right"
-                            size_hint: 1, .8
-                            pos_hint: {"center_x": .5, "center_y": .5}
-                        MDLabel:
-                            text: "Telefon"
-                            halign: "right"
-                            size_hint: 1, .8
-                            pos_hint: {"center_x": .5, "center_y": .5}
-                        MDLabel:
-                            text: "Heslo"
-                            halign: "right"
-                            size_hint: 1, .8
-                            pos_hint: {"center_x": .5, "center_y": .5}
-                        MDLabel:
-                            text: "Heslo znovu"
-                            halign: "right"
-                            size_hint: 1, .8
-                            pos_hint: {"center_x": .5, "center_y": .5}
-
-                    BoxLayout:
-                        size_hint: .7, 1
-                        orientation: "vertical"
-                        pos_hint: {"center_x": .5, "center_y": .5}
-                        spacing: 20
-                        MDTextFieldRect:
-                            font_size: 0.65 * self.height
-                            size_hint: 1, .8
-                            pos_hint: {"center_x": .5, "center_y": .5}
-                        MDTextFieldRect:
-                            font_size: 0.65 * self.height
-                            size_hint: 1, .8
-                            max_text_length: 9
-                            pos_hint: {"center_x": .5, "center_y": .5}
-                        MDTextFieldRect:
-                            font_size: 0.65 * self.height
-                            size_hint: 1, .8
-                            pos_hint: {"center_x": .5, "center_y": .5}
-                        MDTextFieldRect:
-                            font_size: 0.65 * self.height
-                            size_hint: 1, .8
-                            pos_hint: {"center_x": .5, "center_y": .5}
-                        MDTextFieldRect:
-                            font_size: 0.65 * self.height
-                            size_hint: 1, .8
-                            pos_hint: {"center_x": .5, "center_y": .5}
-                        MDTextFieldRect:
-                            font_size: 0.65 * self.height
-                            size_hint: 1, .8
-                            pos_hint: {"center_x": .5, "center_y": .5}
-
-                BoxLayout:
-                    size_hint: .5, .2
-                    pos_hint: {"center_x": .54, "center_y": .5}
-                    Button:
-                        pos_hint: {"center_x": .5, "center_y": .5}
-                        text_color: 0, 0, 0, 1
-                        size_hint: .5, .5
-                        text: 'Registrace'
-
-                    Button:
-                        pos_hint: {"center_x": .5, "center_y": .5}
-                        text_color: 0, 0, 0, 1
-                        text: 'Zpět'
-                        size_hint: .5, .5
-                        on_press:
-                            app.root.current = "login"
 
 
 
