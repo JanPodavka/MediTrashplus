@@ -1,4 +1,5 @@
 #:import App kivymd.app.MDApp
+#:import NoTransition kivy.uix.screenmanager.NoTransition
 
 WindowManager:
     LoginWindow:
@@ -65,7 +66,7 @@ WindowManager:
                 MDTextField:
                     id: name
                     max_text_length: 8
-                    hint_text: "Přihlašovací jméno"
+                    hint_text: "IČO"
                     text_color: 0, 0 , 0, 0.75
                     pos_hint: {'center_x': 0.5,'center_y': 0.5}
                     size_hint_x: 0.6
@@ -155,7 +156,7 @@ WindowManager:
                         orientation: "vertical"
                         size_hint: .3, 1
                         pos_hint: {"center_x": .5, "center_y": .5}
-                        spacing: 50
+                        spacing: 20
                         MDLabel:
                             text: "Jméno"
                             halign: "right"
@@ -191,49 +192,50 @@ WindowManager:
                         size_hint: .7, 1
                         orientation: "vertical"
                         pos_hint: {"center_x": .5, "center_y": .5}
-                        spacing: 40
+                        spacing: 20
                         MDTextFieldRect:
-                            font_size: 0.05 * self.parent.width
+                            font_size: 0.65 * self.height
                             size_hint: 1, .8
                             pos_hint: {"center_x": .5, "center_y": .5}
                         MDTextFieldRect:
-                            font_size: 0.05 * self.parent.width
+                            font_size: 0.65 * self.height
                             size_hint: 1, .8
                             max_text_length: 9
                             pos_hint: {"center_x": .5, "center_y": .5}
                         MDTextFieldRect:
-                            font_size: 0.05 * self.parent.width
+                            font_size: 0.65 * self.height
                             size_hint: 1, .8
                             pos_hint: {"center_x": .5, "center_y": .5}
                         MDTextFieldRect:
-                            font_size: 0.05 * self.parent.width
+                            font_size: 0.65 * self.height
                             size_hint: 1, .8
                             pos_hint: {"center_x": .5, "center_y": .5}
                         MDTextFieldRect:
-                            font_size: 0.05 * self.parent.width
+                            font_size: 0.65 * self.height
                             size_hint: 1, .8
                             pos_hint: {"center_x": .5, "center_y": .5}
                         MDTextFieldRect:
-                            font_size: 0.05 * self.parent.width
+                            font_size: 0.65 * self.height
                             size_hint: 1, .8
                             pos_hint: {"center_x": .5, "center_y": .5}
 
                 BoxLayout:
-                    size_hint: .5, .2
-                    pos_hint: {"center_x": .54, "center_y": .5}
-                    Button:
-                        pos_hint: {"center_x": .5, "center_y": .5}
-                        text_color: 0, 0, 0, 1
-                        size_hint: .5, .5
-                        text: 'Registrace'
+                    size_hint: 1, .2
+                    pos_hint: {"center_x": .65, "center_y": .5}
 
-                    Button:
-                        pos_hint: {"center_x": .5, "center_y": .5}
+                    MDFlatButton:
+                        pos_hint: {"center_x": 0.5, "center_y": 0.5}
                         text_color: 0, 0, 0, 1
                         text: 'Zpět'
-                        size_hint: .5, .5
                         on_press:
                             app.root.current = "login"
+
+                    MDRaisedButton:
+                        pos_hint: {"center_x": 0.75, "center_y": 0.5}
+                        text_color: 0, 0, 0, 1
+                        text: 'Registrace'
+
+
 
 
 
