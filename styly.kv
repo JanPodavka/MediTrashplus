@@ -98,33 +98,38 @@ WindowManager:
 <MainWindow>:
     name:"main"
 
-    BoxLayout:
-        orientation: 'vertical'
-        MDBoxLayout:
-            pos_hint: {"center_x": .5, "center_y": .5}
-            size_hint: 1, .1
-            md_bg_color: .0, .0, .0, .15
-            Button:
-                text: "Profil"
-            Button:
-                text: "Vložit odpad"
-            Button:
-                text: "Historie"
-            Button:
-                text: "Statistika"
-            Image:
-                source: 'obrazky/logo.png'
+    MDCard:
+        pos_hint: {"center_x": .5, "center_y": .5}
+        size_hint: .8, .8
+        elevation: 10
+        padding: 10
+        BoxLayout:
+            orientation: 'vertical'
+            MDBoxLayout:
+                pos_hint: {"center_x": .5, "center_y": .5}
+                size_hint: 1, .1
+                md_bg_color: .0, .0, .0, .15
+                Button:
+                    text: "Profil"
+                Button:
+                    text: "Vložit odpad"
+                Button:
+                    text: "Historie"
+                Button:
+                    text: "Statistika"
+                Image:
+                    source: 'obrazky/logo.png'
 
-        MDBoxLayout:
-            orientation: "vertical"
+            MDBoxLayout:
+                orientation: "vertical"
 
-            MDRaisedButton:
-                text: "Odhlásit"
-                font_size: 32
-                on_release : print("zpatky")
-                on_press:
-                    app.root.current = "login"
-                    root.manager.transition.direction = "left"
+                MDRaisedButton:
+                    text: "Odhlásit"
+                    font_size: 32
+                    on_release : print("zpatky")
+                    on_press:
+                        app.root.current = "login"
+                        root.manager.transition.direction = "left"
 
 <RegistrationWindow>:
     name:"registrace"
@@ -158,7 +163,7 @@ WindowManager:
                         orientation: "vertical"
                         size_hint: .3, 1
                         pos_hint: {"center_x": .5, "center_y": .5}
-                        spacing: 50
+                        spacing: 20
                         MDLabel:
                             text: "Jméno"
                             halign: "right"
@@ -194,30 +199,30 @@ WindowManager:
                         size_hint: .7, 1
                         orientation: "vertical"
                         pos_hint: {"center_x": .5, "center_y": .5}
-                        spacing: 40
+                        spacing: 20
                         MDTextFieldRect:
-                            font_size: 0.05 * self.parent.width
+                            font_size: 0.65 * self.height
                             size_hint: 1, .8
                             pos_hint: {"center_x": .5, "center_y": .5}
                         MDTextFieldRect:
-                            font_size: 0.05 * self.parent.width
+                            font_size: 0.65 * self.height
                             size_hint: 1, .8
                             max_text_length: 9
                             pos_hint: {"center_x": .5, "center_y": .5}
                         MDTextFieldRect:
-                            font_size: 0.05 * self.parent.width
+                            font_size: 0.65 * self.height
                             size_hint: 1, .8
                             pos_hint: {"center_x": .5, "center_y": .5}
                         MDTextFieldRect:
-                            font_size: 0.05 * self.parent.width
+                            font_size: 0.65 * self.height
                             size_hint: 1, .8
                             pos_hint: {"center_x": .5, "center_y": .5}
                         MDTextFieldRect:
-                            font_size: 0.05 * self.parent.width
+                            font_size: 0.65 * self.height
                             size_hint: 1, .8
                             pos_hint: {"center_x": .5, "center_y": .5}
                         MDTextFieldRect:
-                            font_size: 0.05 * self.parent.width
+                            font_size: 0.65 * self.height
                             size_hint: 1, .8
                             pos_hint: {"center_x": .5, "center_y": .5}
 
