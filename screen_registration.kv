@@ -68,34 +68,40 @@
                         pos_hint: {"center_x": .5, "center_y": .5}
                         spacing: 20
                         MDTextFieldRect:
+                            id: reg_name
                             font_size: 0.65 * self.height
                             size_hint: 1, .8
                             pos_hint: {"center_x": .5, "center_y": .5}
                         MDTextFieldRect:
+                            id: reg_ico
                             font_size: 0.65 * self.height
                             size_hint: 1, .8
                             max_text_length: 9
                             pos_hint: {"center_x": .5, "center_y": .5}
                         MDTextFieldRect:
+                            id: reg_address
                             font_size: 0.65 * self.height
                             size_hint: 1, .8
                             pos_hint: {"center_x": .5, "center_y": .5}
                         MDTextFieldRect:
+                            id: reg_number
                             font_size: 0.65 * self.height
                             size_hint: 1, .8
                             pos_hint: {"center_x": .5, "center_y": .5}
                         MDTextFieldRect:
+                            id: reg_password
                             font_size: 0.65 * self.height
                             size_hint: 1, .8
                             pos_hint: {"center_x": .5, "center_y": .5}
                         MDTextFieldRect:
+                            id: reg_password_check
                             font_size: 0.65 * self.height
                             size_hint: 1, .8
                             pos_hint: {"center_x": .5, "center_y": .5}
 
                 BoxLayout:
                     size_hint: 1, .2
-                    pos_hint: {"center_x": .65, "center_y": .5}
+                    pos_hint: {"center_x": 1.1, "center_y": .5}
 
                     MDFlatButton:
                         pos_hint: {"center_x": 0.5, "center_y": 0.5}
@@ -108,3 +114,6 @@
                         pos_hint: {"center_x": 0.75, "center_y": 0.5}
                         text_color: 0, 0, 0, 1
                         text: 'Registrace'
+                        on_press:
+                            root.reg_user()
+

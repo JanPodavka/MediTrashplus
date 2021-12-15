@@ -37,6 +37,7 @@
                     text_size: None, None
                     text: 'Přihlášení'
                     on_press:
+                        app.root.current = "main"
 
                 MDRoundFlatButton:
                     pos_hint: {'center_x': 0.5,'center_y': .5}
@@ -51,7 +52,7 @@
             BoxLayout:
                 orientation: "vertical"
                 size_hint_y: 1
-                pos_hint: {'center_x': 0.5,'center_y': 0.9}
+                pos_hint: {'center_x': 0.5,'center_y': 1}
                 MDTextField:
                     id: name
                     max_text_length: 8
@@ -69,16 +70,32 @@
                     size_hint_x: 0.6
 
             BoxLayout:
-                orientation: "vertical"
-                size_hint_y: 0.5
-                pos_hint: {'center_x': 0.5,'center_y': 0.5}
+                orientation: "horizontal"
+                size_hint: 0.5, 0.45
+                pos_hint: {'center_x': 0.37,'center_y':1}
+                MDLabel:
+                    text: "Zapamatovat"
+                    font_size: 25
+                    theme_text_color: "Custom"
+                    text_color: 0, 0, 0, .6
+                    size_hint: 0.3, 1
+                    halign: "right"
+                    Button:
+                MDCheckbox:
+                    text_color: 0, 0, 0, 0.50
+                    size: "24dp", "24dp"
+                    size_hint: 0.1, 1
+                BoxLayout:
+                    size_hint: 0.1, 1
                 MDFillRoundFlatButton:
-                    pos_hint: {'center_x': 0.5,'center_y': 0.5}
                     text_color: 0, 0, 0, 1
-                    size_hint: 0.25, 0.25
+                    size_hint: 0.5, 1
                     text_size: None, None
                     text: 'Přihlásit'
                     on_press:
                         if(root.login_user(name.text, password.text)):\
                         app.root.current = "main"
                         root.manager.transition.direction = "left"
+            BoxLayout:
+                size_hint: 1, 0.2
+

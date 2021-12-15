@@ -46,13 +46,23 @@ class MainWindow(Screen):
     pass
 
 class RegistrationWindow(Screen):
-    pass
+
+    def reg_user(self):
+        app = MDApp.get_running_app()
+        if self.ids['reg_name'].text == "":
+            self.ids['reg_name'].error = True
+            self.ids['reg_name'].text = "Povinný údaj"
+        if self.ids['reg_password'].text != self.ids['reg_password_check']:
+            self.ids['reg_password'].helper_text = ""
+            self.ids['reg_password_check'].helper_text = ""
+            self.ids['reg_password'].error = True
+            self.ids['reg_password_check'].error = True
 
 class WindowManager(ScreenManager):
     pass
 
 
-class MyApp(MDApp):
+class MeditrashApp(MDApp):
 
     def build(self):
         usernameL = StringProperty(None)
@@ -65,4 +75,4 @@ class MyApp(MDApp):
 
 
 if __name__ == '__main__':
-    MyApp().run()
+    MeditrashApp().run()
