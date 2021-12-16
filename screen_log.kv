@@ -75,13 +75,14 @@
                 pos_hint: {'center_x': 0.37,'center_y':1}
                 MDLabel:
                     text: "Zapamatovat"
-                    font_size: 25
+                    font_size: 0.40 * self.height
                     theme_text_color: "Custom"
                     text_color: 0, 0, 0, .6
                     size_hint: 0.3, 1
                     halign: "right"
                     Button:
                 MDCheckbox:
+                    id: log_remember_user
                     text_color: 0, 0, 0, 0.50
                     size: "24dp", "24dp"
                     size_hint: 0.1, 1
@@ -95,6 +96,8 @@
                     on_press:
                         if(root.login_user(name.text, password.text)):\
                         app.root.current = "main"
+                        root.login_remember_user()
+                        root.login_clear_input()
                         root.manager.transition.direction = "left"
             BoxLayout:
                 size_hint: 1, 0.2

@@ -172,7 +172,12 @@
                         text: 'Registrace'
                         on_press:
                             root.reg_clear_error()
-                            root.reg_check()
-
+                            valid = root.reg_check()
+                            if (valid == 1):\
+                            root.reg_clear_label()
+                            if (valid == 1):\
+                            app.root.current = "login"
+                            if (valid == 1):\
+                            root.show_alert_reg()
 
 
