@@ -1,5 +1,4 @@
 from kivy import Config
-
 Config.set('graphics', 'width', '800')
 Config.set('graphics', 'height', '600')
 Config.set('graphics', 'minimum_width', '800')
@@ -40,21 +39,34 @@ class LoginWindow(Screen):
         return False
 
 
+
 class MainWindow(Screen):
     pass
 
-
 class RegistrationWindow(Screen):
 
-    def reg_user(self, name):
-        pass
+    def reg_user(self):
+        app = MDApp.get_running_app()
+        if self.ids['reg_name'].text == "":
+            self.ids['reg_name'].error = True
+            self.ids['reg_name'].text == ""
+            self.ids['reg_name'].helper_text = "Povinné pole"
+
+    def reg_clear_after_button(self):
+        app = MDApp.get_running_app()
+        self.ids['reg_name'].text =""
+        self.ids['reg_ico'].text = ""
+        self.ids['reg_address'].text = ""
+        self.ids['reg_number'].text = ""
+        self.ids['reg_password'].text = ""
+        self.ids['reg_password_check'].text = ""
 
 
 class WindowManager(ScreenManager):
     pass
 
 
-class MyApp(MDApp):
+class MeditrashApp(MDApp):
 
     def build(self):
         usernameL = StringProperty(None)
@@ -82,4 +94,4 @@ class MyApp(MDApp):
 
 
 if __name__ == '__main__':
-    MyApp().run()
+    MeditrashApp().run()

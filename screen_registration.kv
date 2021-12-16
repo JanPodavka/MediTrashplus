@@ -19,8 +19,6 @@
                         allow_stretch: True
                         pos_hint: {"center_x": .5, "center_y": .4}
 
-
-
                 BoxLayout:
                     size_hint: .7, .5
                     pos_hint: {"center_x": .43, "center_y": .5}
@@ -72,15 +70,14 @@
                             font_size: 0.65 * self.height
                             size_hint: 1, .8
                             pos_hint: {"center_x": .5, "center_y": .5}
-
                         MDTextFieldRect:
-                            id: reg_ico #Následně uživatelské jmeno
+                            id: reg_ico
                             font_size: 0.65 * self.height
                             size_hint: 1, .8
                             max_text_length: 9
                             pos_hint: {"center_x": .5, "center_y": .5}
                         MDTextFieldRect:
-                            id: reg_adress
+                            id: reg_address
                             font_size: 0.65 * self.height
                             size_hint: 1, .8
                             pos_hint: {"center_x": .5, "center_y": .5}
@@ -90,16 +87,17 @@
                             size_hint: 1, .8
                             pos_hint: {"center_x": .5, "center_y": .5}
                         MDTextFieldRect:
-                            id: reg_pass
+                            id: reg_password
+                            password: True
                             font_size: 0.65 * self.height
                             size_hint: 1, .8
                             pos_hint: {"center_x": .5, "center_y": .5}
                         MDTextFieldRect:
-                            id: reg_pass_conf
+                            password: True
+                            id: reg_password_check
                             font_size: 0.65 * self.height
                             size_hint: 1, .8
                             pos_hint: {"center_x": .5, "center_y": .5}
-
                 BoxLayout:
                     size_hint: 1, .2
                     pos_hint: {"center_x": 1.1, "center_y": .5}
@@ -109,6 +107,7 @@
                         text_color: 0, 0, 0, 1
                         text: 'Zpět'
                         on_press:
+                            root.reg_clear_after_button()
                             app.root.current = "login"
 
                     MDRaisedButton:
@@ -116,4 +115,6 @@
                         text_color: 0, 0, 0, 1
                         text: 'Registrace'
                         on_press:
+                            root.reg_user()
+                            root.reg_clear_after_button()
 
