@@ -47,21 +47,65 @@ class MainWindow(Screen):
 
 class RegistrationWindow(Screen):
 
-    def reg_user(self):
-        app = MDApp.get_running_app()
-        if self.ids['reg_name'].text == "":
-            self.ids['reg_name'].error = True
-            self.ids['reg_name'].text == ""
-            self.ids['reg_name'].helper_text = "Povinné pole"
+    def reg_ico_validity(ico):
+        if len(ico) != 8:
+            return -1
+        try:
+            digits = map(int, list(ico.rjust(8, "0")))
+        except ValueError:
+            return -1
+        remainder = sum([digits[i] * (8 - i) for i in range(7)]) % 11
+        cksum = {0: 1, 10: 1, 1: 0}.get(remainder, 11 - remainder)
+        if digits[7] != cksum:
+            return -1
+        return 1
 
-    def reg_clear_after_button(self):
+    def reg_check(self):
         app = MDApp.get_running_app()
-        self.ids['reg_name'].text =""
+        #jmeno
+        if self.ids['reg_name'].text == "":
+            self.ids['reg_error_name'].text = "* Povinné pole"
+        #ico
+        if self.ids['reg_ico'].text == "":
+            self.ids['reg_error_ico'].text = "* Povinné pole"
+        elif reg_ico_validity(self.ids['reg_ico'].text) != 1:
+            self.ids['reg_error_ico'].text = "* Nevalidni ICO"
+        #adresa
+        if self.ids['reg_address'].text == "":
+            self.ids['reg_error_address'].text = "* Povinné pole"
+        #telefoni cislo
+        if self.ids['reg_number'].text == "":
+            self.ids['reg_error_number'].text = "* Povinné pole"
+        elif len(self.ids['reg_number'].text) != 9:
+            self.ids['reg_error_number'].text = "* Neplatné číslo"
+            self.ids['reg_number'].text = ""
+        #heslo
+        if self.ids['reg_password'].text == "":
+           self.ids['reg_error_password'].text = "* Povinné pole"
+        #heslo2
+        if self.ids['reg_password_check'].text == "":
+           self.ids['reg_error_password_check'].text = "* Povinné pole"
+        if self.ids['reg_password_check'].text != self.ids['reg_password'].text:
+                self.ids['reg_password_check'].text = ""
+                self.ids['reg_password'].text = ""
+                self.ids['reg_error_password'].text = "* Hesla se neshodují"
+
+    def reg_clear_label(self):
+        app = MDApp.get_running_app()
+        self.ids['reg_name'].text = ""
         self.ids['reg_ico'].text = ""
         self.ids['reg_address'].text = ""
         self.ids['reg_number'].text = ""
         self.ids['reg_password'].text = ""
         self.ids['reg_password_check'].text = ""
+
+    def reg_clear_error(self):
+        self.ids['reg_error_name'].text = ""
+        self.ids['reg_error_ico'].text = ""
+        self.ids['reg_error_address'].text = ""
+        self.ids['reg_error_number'].text = ""
+        self.ids['reg_error_password'].text = ""
+        self.ids['reg_error_password_check'].text = ""
 
 
 class WindowManager(ScreenManager):
