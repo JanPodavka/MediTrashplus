@@ -9,6 +9,7 @@
         BoxLayout:
             orientation: "vertical"
             pos_hint: {"center_x": .5, "center_y": .5}
+            size_hint: 1, 1
             BoxLayout:
                 orientation: "vertical"
                 BoxLayout:
@@ -20,15 +21,15 @@
                         pos_hint: {"center_x": .5, "center_y": .4}
 
                 BoxLayout:
-                    size_hint: .7, .5
-                    pos_hint: {"center_x": .43, "center_y": .5}
                     orientation: "horizontal"
                     spacing: 20
+                    size_hint: 1, .6
+                    pos_hint: {"center_x": .5, "center_y": .5}
                     BoxLayout:
+                        size_hint: .22,1
+                        pos_hint: {"center_x": 0, "center_y": .5}
+                        spacing:20
                         orientation: "vertical"
-                        size_hint: .3, 1
-                        pos_hint: {"center_x": .5, "center_y": .5}
-                        spacing: 20
                         MDLabel:
                             text: "Jméno"
                             halign: "right"
@@ -59,12 +60,11 @@
                             halign: "right"
                             size_hint: 1, .8
                             pos_hint: {"center_x": .5, "center_y": .5}
-
                     BoxLayout:
-                        size_hint: .7, 1
+                        spacing:20
+                        size_hint: .4,1
+                        pos_hint: {"center_x": .2, "center_y": .5}
                         orientation: "vertical"
-                        pos_hint: {"center_x": .5, "center_y": .5}
-                        spacing: 20
                         MDTextFieldRect:
                             id: reg_name
                             font_size: 0.65 * self.height
@@ -98,6 +98,61 @@
                             font_size: 0.65 * self.height
                             size_hint: 1, .8
                             pos_hint: {"center_x": .5, "center_y": .5}
+                    BoxLayout:
+                        spacing:20
+                        size_hint: .2,1
+                        pos_hint: {"center_x": .6, "center_y": .5}
+                        orientation: "vertical"
+                        MDLabel:
+                            id: reg_error_name
+                            theme_text_color: "Custom"
+                            text_color: 1,0,0,1
+                            font_size: 0.40 * self.height
+                            halign: "left"
+                            size_hint: 1, .8
+                            pos_hint: {"center_x": .5, "center_y": .5}
+                        MDLabel:
+                            id: reg_error_ico
+                            theme_text_color: "Custom"
+                            text_color: 1,0,0,1
+                            font_size: 0.40 * self.height
+                            halign: "left"
+                            size_hint: 1, .8
+                            pos_hint: {"center_x": .5, "center_y": .5}
+                        MDLabel:
+                            id: reg_error_address
+                            theme_text_color: "Custom"
+                            text_color: 1,0,0,1
+                            font_size: 0.40 * self.height
+                            halign: "left"
+                            size_hint: 1, .8
+                            pos_hint: {"center_x": .5, "center_y": .5}
+                        MDLabel:
+                            id: reg_error_number
+                            theme_text_color: "Custom"
+                            text_color: 1,0,0,1
+                            font_size: 0.40 * self.height
+                            halign: "left"
+                            size_hint: 1, .8
+                            pos_hint: {"center_x": .5, "center_y": .5}
+                        MDLabel:
+                            id: reg_error_password
+                            theme_text_color: "Custom"
+                            text_color: 1,0,0,1
+                            font_size: 0.40 * self.height
+                            text: ""
+                            halign: "left"
+                            size_hint: 1, .8
+                            pos_hint: {"center_x": .5, "center_y": .5}
+                        MDLabel:
+                            id: reg_error_password_check
+                            theme_text_color: "Custom"
+                            text_color: 1,0,0,1
+                            font_size: 0.40 * self.height
+                            halign: "left"
+                            size_hint: 1, .8
+                            pos_hint: {"center_x": .5, "center_y": .5}
+
                 BoxLayout:
                     size_hint: 1, .2
                     pos_hint: {"center_x": 1.1, "center_y": .5}
@@ -107,7 +162,8 @@
                         text_color: 0, 0, 0, 1
                         text: 'Zpět'
                         on_press:
-                            root.reg_clear_after_button()
+                            root.reg_clear_label()
+                            root.reg_clear_error()
                             app.root.current = "login"
 
                     MDRaisedButton:
@@ -115,6 +171,8 @@
                         text_color: 0, 0, 0, 1
                         text: 'Registrace'
                         on_press:
-                            root.reg_user()
-                            root.reg_clear_after_button()
+                            root.reg_clear_error()
+                            root.reg_check()
+
+
 
