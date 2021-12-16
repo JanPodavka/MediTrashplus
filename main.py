@@ -13,21 +13,28 @@ from kivymd.uix.dialog import MDDialog
 
 class LoginWindow(Screen):
 
-    def login_write_ico(self):
+    def login_write(self):
+        print("true")
         app = MDApp.get_running_app()
         with open('data/reg_remember_user.txt') as f:
             lines = f.readlines()
-        udaje = line.split(" ")
-        self.ids['ico'].text = udaje[0]
-        self.ids['password'].text = udaje[1]
+        if len(lines) > 0:
+            for line in lines:
+                udaje = line.split(" ")
+            self.ids['name'].text = udaje[0]
+            self.ids['password'].text = udaje[1]
+            self.ids['log_remember_user'].active = True
 
     def login_remember_user(self):
         app = MDApp.get_running_app()
         if(self.ids['log_remember_user'].active):
-            ulozit = [self.ids['ico'].text,self.ids['password'].text]
-            print(' '.join(ulozit))
+            ulozit = [self.ids['name'].text,self.ids['password'].text]
             f = open("data/reg_remember_user.txt", "w")
             f.write(' '.join(ulozit))
+            f.close()
+        else:
+            f = open("data/reg_remember_user.txt", "w")
+            f.write("")
             f.close()
 
     def login_user(self, loginText, passwordText):
@@ -49,7 +56,6 @@ class LoginWindow(Screen):
                 self.ids['password'].error = False
 
                 return True
-        print("Špatné údaje")
         self.ids['password'].error = True
         self.ids['password'].helper_text = "Zadejte správné údaje"
         return False
@@ -57,6 +63,7 @@ class LoginWindow(Screen):
     def login_clear_input(self):
         self.ids['name'].text = ""
         self.ids['password'].text = ""
+        self.ids['log_remember_user'].active = False
 
 
 class MainWindow(Screen):
