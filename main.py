@@ -51,12 +51,18 @@ class RegistrationWindow(Screen):
         app = MDApp.get_running_app()
         if self.ids['reg_name'].text == "":
             self.ids['reg_name'].error = True
-            self.ids['reg_name'].text = "Povinný údaj"
-        if self.ids['reg_password'].text != self.ids['reg_password_check']:
-            self.ids['reg_password'].helper_text = ""
-            self.ids['reg_password_check'].helper_text = ""
-            self.ids['reg_password'].error = True
-            self.ids['reg_password_check'].error = True
+            self.ids['reg_name'].text == ""
+            self.ids['reg_name'].helper_text = "Povinné pole"
+
+    def reg_clear_after_button(self):
+        app = MDApp.get_running_app()
+        self.ids['reg_name'].text =""
+        self.ids['reg_ico'].text = ""
+        self.ids['reg_address'].text = ""
+        self.ids['reg_number'].text = ""
+        self.ids['reg_password'].text = ""
+        self.ids['reg_password_check'].text = ""
+
 
 class WindowManager(ScreenManager):
     pass
