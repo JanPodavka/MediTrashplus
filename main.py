@@ -14,7 +14,6 @@ from kivymd.uix.dialog import MDDialog
 class LoginWindow(Screen):
 
     def login_write(self):
-        print("true")
         app = MDApp.get_running_app()
         with open('data/reg_remember_user.txt') as f:
             lines = f.readlines()
