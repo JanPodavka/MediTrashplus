@@ -36,6 +36,15 @@ class LoginWindow(Screen):
             f.write("")
             f.close()
 
+    def login_show_password(self):
+        self.ids['password'].password = not self.ids['password'].password
+
+    def login_show_password_icon(self):
+        if self.ids['password'].password == True:
+            self.ids['lock_button'].icon = "Obrazky/lock.png"
+        else:
+            self.ids['lock_button'].icon = "Obrazky/lock-unlocked.png"
+
     def login_user(self, loginText, passwordText):
         app = MDApp.get_running_app()
         #Otevři soubor
