@@ -1,4 +1,5 @@
 from kivy import Config
+
 Config.set('graphics', 'width', '800')
 Config.set('graphics', 'height', '600')
 Config.set('graphics', 'minimum_width', '800')
@@ -7,21 +8,19 @@ from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager
 from kivymd.app import MDApp
 from kivymd.uix.screen import Screen
-from kivy.properties import StringProperty
+from kivy.properties import StringProperty, ObjectProperty
+import pyodbc
 
 
 class LoginWindow(Screen):
 
     def login_user(self, loginText, passwordText):
         app = MDApp.get_running_app()
-        #Otevři soubor
-        with open('data/pass.txt') as f:
-            lines = f.readlines()
-        # porovnaj zda je v DTB (zatím txt)
-        for line in lines:
-            line = line.replace("\n", "")
-            udaje = line.split(" ")
-            if self.ids['name'].text == udaje[0] and self.ids['password'].text == udaje[1]:
+        # Otevři soubor
+        app.cursor.execute('SELECT * FROM Zdravotnicke_zarizeni')
+        for row in app.cursor:
+            print(row)
+            if self.ids['name'].text == row[3] and self.ids['password'].text == row[0]:
                 print("úspěšně přihlášeno")
                 # Náhrání do údajů aktivnního uživatele
                 app.usernameL = loginText
@@ -41,12 +40,15 @@ class LoginWindow(Screen):
         return False
 
 
-
 class MainWindow(Screen):
     pass
 
+
 class RegistrationWindow(Screen):
-    pass
+
+    def reg_user(self, name):
+        pass
+
 
 class WindowManager(ScreenManager):
     pass
@@ -57,10 +59,25 @@ class MyApp(MDApp):
     def build(self):
         usernameL = StringProperty(None)
         passwordL = StringProperty(None)
+        cursor = ObjectProperty(None)
 
         self.theme_cls.theme_style = "Light"
         self.theme_cls.primary_palette = "Gray"
         screen = Builder.load_file("styly.kv")
+
+        # Načtení databáze
+
+        connection_string = ("Driver={SQL Server Native Client 11.0};"
+                             "Server=LAPTOP-JD638UP5;"
+                             "Database=MediTrash;"
+                             "Trusted_Connection=yes;")
+        connection = pyodbc.connect(connection_string)
+        self.cursor = connection.cursor()
+        print(cursor)
+        # cursor.execute('SELECT * FROM Zdravotnicke_zarizeni')
+        # for row in cursor:
+        # print(row)
+
         return screen
 
 
