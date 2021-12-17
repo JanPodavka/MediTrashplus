@@ -1,4 +1,5 @@
 from kivy import Config
+
 Config.set('graphics', 'width', '800')
 Config.set('graphics', 'height', '600')
 Config.set('graphics', 'minimum_width', '800')
@@ -39,54 +40,60 @@ class LoginWindow(Screen):
         return False
 
 
-
 class MainWindow(Screen):
     pass
 
+
 class RegistrationWindow(Screen):
 
-    def reg_ico_validity(ico):
-        if len(ico) != 8:
-            return -1
-        try:
-            digits = map(int, list(ico.rjust(8, "0")))
-        except ValueError:
-            return -1
-        remainder = sum([digits[i] * (8 - i) for i in range(7)]) % 11
-        cksum = {0: 1, 10: 1, 1: 0}.get(remainder, 11 - remainder)
-        if digits[7] != cksum:
-            return -1
-        return 1
 
     def reg_check(self):
+
+        def reg_ico_validity(ico):
+            if len(ico) != 8:
+                return -1
+            try:
+                digits = map(int, list(ico.rjust(8, "0")))
+            except ValueError:
+                return -1
+            remainder = sum([digits[i] * (8 - i) for i in range(7)]) % 11
+            cksum = {0: 1, 10: 1, 1: 0}.get(remainder, 11 - remainder)
+            if digits[7] != cksum:
+                return -1
+            return 1
+
+
+
         app = MDApp.get_running_app()
-        #jmeno
+        # jmeno
         if self.ids['reg_name'].text == "":
             self.ids['reg_error_name'].text = "* Povinné pole"
-        #ico
+        # ico
         if self.ids['reg_ico'].text == "":
             self.ids['reg_error_ico'].text = "* Povinné pole"
         elif reg_ico_validity(self.ids['reg_ico'].text) != 1:
             self.ids['reg_error_ico'].text = "* Nevalidni ICO"
-        #adresa
+        # adresa
         if self.ids['reg_address'].text == "":
             self.ids['reg_error_address'].text = "* Povinné pole"
-        #telefoni cislo
+        # telefoni cislo
         if self.ids['reg_number'].text == "":
             self.ids['reg_error_number'].text = "* Povinné pole"
         elif len(self.ids['reg_number'].text) != 9:
             self.ids['reg_error_number'].text = "* Neplatné číslo"
             self.ids['reg_number'].text = ""
-        #heslo
+        # heslo
         if self.ids['reg_password'].text == "":
-           self.ids['reg_error_password'].text = "* Povinné pole"
-        #heslo2
+            self.ids['reg_error_password'].text = "* Povinné pole"
+        # heslo2
         if self.ids['reg_password_check'].text == "":
-           self.ids['reg_error_password_check'].text = "* Povinné pole"
+            self.ids['reg_error_password_check'].text = "* Povinné pole"
         if self.ids['reg_password_check'].text != self.ids['reg_password'].text:
-                self.ids['reg_password_check'].text = ""
-                self.ids['reg_password'].text = ""
-                self.ids['reg_error_password'].text = "* Hesla se neshodují"
+            self.ids['reg_password_check'].text = ""
+            self.ids['reg_password'].text = ""
+            self.ids['reg_error_password'].text = "* Hesla se neshodují"
+
+
 
     def reg_clear_label(self):
         app = MDApp.get_running_app()
