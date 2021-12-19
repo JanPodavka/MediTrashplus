@@ -37,7 +37,9 @@
             BoxLayout:
                 orientation: 'vertical'
                 size_hint: .45,1
-                Button:
+                MDList:
+                    id: scroll
+                    name :"scroll"
                     text: "select odpad"
                     size_hint: 1,.6
                 MDFillRoundFlatButton:
@@ -67,7 +69,9 @@
             BoxLayout:
                 orientation: 'horizontal'
                 size_hint: .125,1
-                Button:
+                MDDropDownItem:
+                    id: drop_item
                     size_hint: 1,.1
-                    text: "KG/L"
+                    text: "KG"
                     pos_hint: {"center_x": .75, "center_y": .8}
+                    on_release: app.open_menu(self)

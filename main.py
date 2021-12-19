@@ -5,12 +5,21 @@ Config.set('graphics', 'height', '600')
 Config.set('graphics', 'minimum_width', '800')
 Config.set('graphics', 'minimum_height', '600')
 from kivy.lang import Builder
+from functools import partial
+from kivymd.uix.list import OneLineListItem
+
+from kivymd.uix.dropdownitem import MDDropDownItem
+from kivymd.uix.list import IRightBodyTouch
 from kivy.uix.screenmanager import ScreenManager
 from kivymd.app import MDApp
 from kivymd.uix.screen import Screen
 import pyodbc
 from kivy.properties import StringProperty
+from kivymd.toast import toast
+
 from kivymd.uix.dialog import MDDialog
+from kivymd.uix.list import OneLineIconListItem
+from kivymd.uix.menu import MDDropdownMenu
 
 
 class LoginWindow(Screen):
@@ -75,6 +84,7 @@ class LoginWindow(Screen):
 
 class MainWindow(Screen):
     pass
+
 
 
 class RegistrationWindow(Screen):
@@ -179,11 +189,15 @@ class RegistrationWindow(Screen):
 
 
 class AddTrashWindow(Screen):
-    pass
-
+    def on_enter(self, *args):
+        for i in range(20):
+            self.ids['scroll'].add_widget(
+                OneLineListItem(text=f"Single-line item {i}")
+            )
 
 class WindowManager(ScreenManager):
     pass
+
 
 
 class MeditrashApp(MDApp):
@@ -194,12 +208,15 @@ class MeditrashApp(MDApp):
             'DRIVER={ODBC Driver 17 for SQL Server};SERVER=' + '147.230.21.34' + ';DATABASE=' + 'DBS2021_JanPodavka' + ';UID=' + 'student' + ';PWD=' + 'student')
         self.cursor = connection.cursor()
 
+
     def build(self):
         usernameL = StringProperty(None)
         passwordL = StringProperty(None)
         self.theme_cls.theme_style = "Light"
         self.theme_cls.primary_palette = "Gray"
         screen = Builder.load_file("styly.kv")
+
+
 
         # Načtení databáze
         self.cursor.execute('SELECT * FROM Zdravotnicke_zarizeni')
