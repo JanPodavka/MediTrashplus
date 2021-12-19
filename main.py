@@ -1,5 +1,4 @@
 from kivy import Config
-
 Config.set('graphics', 'width', '800')
 Config.set('graphics', 'height', '600')
 Config.set('graphics', 'minimum_width', '800')
@@ -8,7 +7,6 @@ from kivy.lang import Builder
 from kivy.uix.screenmanager import ScreenManager
 from kivymd.app import MDApp
 from kivymd.uix.screen import Screen
-from kivy.properties import StringProperty, ObjectProperty
 import pyodbc
 from kivy.properties import StringProperty
 from kivymd.uix.dialog import MDDialog
@@ -29,8 +27,8 @@ class LoginWindow(Screen):
 
     def login_remember_user(self):
         app = MDApp.get_running_app()
-        if(self.ids['log_remember_user'].active):
-            ulozit = [self.ids['name'].text,self.ids['password'].text]
+        if (self.ids['log_remember_user'].active):
+            ulozit = [self.ids['name'].text, self.ids['password'].text]
             f = open("data/reg_remember_user.txt", "w")
             f.write(' '.join(ulozit))
             f.close()
@@ -50,7 +48,7 @@ class LoginWindow(Screen):
 
     def login_user(self, loginText, passwordText):
         app = MDApp.get_running_app()
-        #Otevři soubor
+        # Otevři soubor
         app.cursor.execute('SELECT * FROM Zdravotnicke_zarizeni')
         for row in app.cursor:
             print(row)
@@ -73,6 +71,7 @@ class LoginWindow(Screen):
         self.ids['password'].text = ""
         self.ids['log_remember_user'].active = False
 
+
 class MainWindow(Screen):
     pass
 
@@ -93,23 +92,24 @@ class RegistrationWindow(Screen):
             if digits[7] != cksum:
                 return -1
             return 1
+
         reg_validity = 1
-        #jmeno
+        # jmeno
         if self.ids['reg_name'].text == "":
             self.ids['reg_error_name'].text = "* Povinné pole"
             reg_validity = 0
-        #ico
+        # ico
         if self.ids['reg_ico'].text == "":
             self.ids['reg_error_ico'].text = "* Povinné pole"
             reg_validity = 0
-        #elif reg_ico_validity(self.ids['reg_ico'].text) != 1:
+        # elif reg_ico_validity(self.ids['reg_ico'].text) != 1:
         #    self.ids['reg_error_ico'].text = "* Nevalidni ICO"
         #    reg_validity = False
-        #adresa
+        # adresa
         if self.ids['reg_address'].text == "":
             self.ids['reg_error_address'].text = "* Povinné pole"
             reg_validity = 0
-        #telefoni cislo
+        # telefoni cislo
         if self.ids['reg_number'].text == "":
             self.ids['reg_error_number'].text = "* Povinné pole"
             reg_validity = 0
@@ -121,19 +121,19 @@ class RegistrationWindow(Screen):
             self.ids['reg_error_number'].text = "* Neplatné číslo"
             self.ids['reg_number'].text = ""
             reg_validity = 0
-        #heslo
+        # heslo
         if self.ids['reg_password'].text == "":
-           self.ids['reg_error_password'].text = "* Povinné pole"
-           reg_validity = 0
-        #heslo2
+            self.ids['reg_error_password'].text = "* Povinné pole"
+            reg_validity = 0
+        # heslo2
         if self.ids['reg_password_check'].text == "":
-           self.ids['reg_error_password_check'].text = "* Povinné pole"
-           reg_validity = 0
+            self.ids['reg_error_password_check'].text = "* Povinné pole"
+            reg_validity = 0
         if self.ids['reg_password_check'].text != self.ids['reg_password'].text:
-                self.ids['reg_password_check'].text = ""
-                self.ids['reg_password'].text = ""
-                self.ids['reg_error_password'].text = "* Hesla se neshodují"
-                reg_validity = 0
+            self.ids['reg_password_check'].text = ""
+            self.ids['reg_password'].text = ""
+            self.ids['reg_error_password'].text = "* Hesla se neshodují"
+            reg_validity = 0
         return reg_validity
 
     def reg_clear_label(self):
@@ -163,6 +163,7 @@ class RegistrationWindow(Screen):
             type="custom",
         )
         self.dialog.open()
+
 
 class WindowManager(ScreenManager):
     pass
