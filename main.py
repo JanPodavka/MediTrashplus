@@ -178,8 +178,9 @@ class RegistrationWindow(Screen):
         app.cursor.commit()
 
 
-class AddTrash(Screen):
+class AddTrashWindow(Screen):
     pass
+
 
 class WindowManager(ScreenManager):
     pass
