@@ -1,4 +1,5 @@
 from kivy import Config
+
 Config.set('graphics', 'width', '800')
 Config.set('graphics', 'height', '600')
 Config.set('graphics', 'minimum_width', '800')
@@ -164,6 +165,21 @@ class RegistrationWindow(Screen):
         )
         self.dialog.open()
 
+    def reg_to_dbs(self):
+        app = MDApp.get_running_app()
+        sql = "INSERT INTO Zdravotnicke_zarizeni (heslo, nazev, mesto, ico, telefon) VALUES (?, ?, ?, ?, ?)"
+        val = (self.ids['reg_password'].text,
+               self.ids['reg_name'].text,
+               self.ids['reg_address'].text,
+               self.ids['reg_ico'].text,
+               self.ids['reg_number'].text
+               )
+        app.cursor.execute(sql, val)
+        app.cursor.commit()
+
+
+class AddTrash(Screen):
+    pass
 
 class WindowManager(ScreenManager):
     pass
