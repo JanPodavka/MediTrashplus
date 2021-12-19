@@ -51,13 +51,10 @@ class LoginWindow(Screen):
     def login_user(self, loginText, passwordText):
         app = MDApp.get_running_app()
         #Otevři soubor
-        with open('data/pass.txt') as f:
-            lines = f.readlines()
-        # porovnaj zda je v DTB (zatím txt)
-        for line in lines:
-            line = line.replace("\n", "")
-            udaje = line.split(" ")
-            if self.ids['name'].text == udaje[0] and self.ids['password'].text == udaje[1]:
+        app.cursor.execute('SELECT * FROM Zdravotnicke_zarizeni')
+        for row in app.cursor:
+            print(row)
+            if self.ids['name'].text == row[3] and self.ids['password'].text == row[0]:
                 print("úspěšně přihlášeno")
                 # Náhrání do údajů aktivnního uživatele
                 app.usernameL = loginText
@@ -96,23 +93,6 @@ class RegistrationWindow(Screen):
             if digits[7] != cksum:
                 return -1
             return 1
-
-    def reg_check(self):
-
-        def reg_ico_validity(ico):
-            if len(ico) != 8:
-                return -1
-            try:
-                digits = map(int, list(ico.rjust(8, "0")))
-            except ValueError:
-                return -1
-            remainder = sum([digits[i] * (8 - i) for i in range(7)]) % 11
-            cksum = {0: 1, 10: 1, 1: 0}.get(remainder, 11 - remainder)
-            if digits[7] != cksum:
-                return -1
-            return 1
-
-        app = MDApp.get_running_app()
         reg_validity = 1
         #jmeno
         if self.ids['reg_name'].text == "":
@@ -156,8 +136,6 @@ class RegistrationWindow(Screen):
                 reg_validity = 0
         return reg_validity
 
-
-
     def reg_clear_label(self):
         app = MDApp.get_running_app()
         self.ids['reg_name'].text = ""
@@ -176,6 +154,7 @@ class RegistrationWindow(Screen):
         self.ids['reg_error_password_check'].text = ""
 
     dialog = None
+
     def show_alert_reg(self):
         self.dialog = MDDialog(
             title="Úspěšná registrace",
@@ -191,27 +170,23 @@ class WindowManager(ScreenManager):
 
 class MeditrashApp(MDApp):
 
+    def __init__(self, **kwargs):
+        super().__init__()
+        connection = pyodbc.connect(
+            'DRIVER={ODBC Driver 17 for SQL Server};SERVER=' + '147.230.21.34' + ';DATABASE=' + 'DBS2021_JanPodavka' + ';UID=' + 'student' + ';PWD=' + 'student')
+        self.cursor = connection.cursor()
+
     def build(self):
         usernameL = StringProperty(None)
         passwordL = StringProperty(None)
-        cursor = ObjectProperty(None)
-
         self.theme_cls.theme_style = "Light"
         self.theme_cls.primary_palette = "Gray"
         screen = Builder.load_file("styly.kv")
 
         # Načtení databáze
-
-        connection_string = ("Driver={SQL Server Native Client 11.0};"
-                             "Server=LAPTOP-JD638UP5;"
-                             "Database=MediTrash;"
-                             "Trusted_Connection=yes;")
-        connection = pyodbc.connect(connection_string)
-        self.cursor = connection.cursor()
-        print(cursor)
-        # cursor.execute('SELECT * FROM Zdravotnicke_zarizeni')
-        # for row in cursor:
-        # print(row)
+        self.cursor.execute('SELECT * FROM Zdravotnicke_zarizeni')
+        for row in self.cursor:
+            print(row)
 
         return screen
 
