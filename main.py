@@ -17,21 +17,19 @@ from os.path import exists
 
 class LoginWindow(Screen):
 
-    def on_enter(self):
-        app = MDApp.get_running_app()
-        if (exists('data/reg_remember_user.txt')):
+    def remember_user(self, *args):
+        if exists('data/reg_remember_user.txt'):
             with open('data/reg_remember_user.txt') as f:
                 lines = f.readlines()
             if len(lines) > 0:
                 for line in lines:
                     udaje = line.split(" ")
-                    self.ids['log_name'].text = udaje[0]
-                    self.ids['log_password'].text = udaje[1]
+                    self.ids['name'].text = udaje[0]
+                    self.ids['password'].text = udaje[1]
                     self.ids['log_remember_user'].active = True
 
     def login_remember_user(self):
-        app = MDApp.get_running_app()
-        if (self.ids['log_remember_user'].active):
+        if self.ids['log_remember_user'].active:
             ulozit = [self.ids['name'].text, self.ids['password'].text]
             f = open("data/reg_remember_user.txt", "w")
             f.write(' '.join(ulozit))
@@ -45,7 +43,7 @@ class LoginWindow(Screen):
         self.ids['password'].password = not self.ids['password'].password
 
     def login_show_password_icon(self):
-        if self.ids['password'].password == True:
+        if self.ids['password'].password:
             self.ids['lock_button'].icon = "Obrazky/lock.png"
         else:
             self.ids['lock_button'].icon = "Obrazky/lock-unlocked.png"
@@ -55,9 +53,7 @@ class LoginWindow(Screen):
         # Otevři soubor
         app.cursor.execute('SELECT * FROM Zdravotnicke_zarizeni')
         for row in app.cursor:
-            print(row)
             if self.ids['name'].text == row[3] and self.ids['password'].text == row[0]:
-                print("úspěšně přihlášeno")
                 # Náhrání do údajů aktivnního uživatele
                 app.usernameL = loginText
                 app.passwordL = passwordText
@@ -214,8 +210,6 @@ class MeditrashApp(MDApp):
 
         # Načtení databáze
         self.cursor.execute('SELECT * FROM Zdravotnicke_zarizeni')
-        for row in self.cursor:
-            print(row)
 
         return screen
 
