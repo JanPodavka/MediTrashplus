@@ -17,19 +17,20 @@ from os.path import exists
 
 class LoginWindow(Screen):
 
-    def remember_user(self, *args):
-        if exists('data/reg_remember_user.txt'):
-            with open('data/reg_remember_user.txt') as f:
-                lines = f.readlines()
-            if len(lines) > 0:
-                for line in lines:
-                    udaje = line.split(" ")
-                    self.ids['name'].text = udaje[0]
-                    self.ids['password'].text = udaje[1]
-                    self.ids['log_remember_user'].active = True
+    def login_write(self):
+        app = MDApp.get_running_app()
+        with open('data/reg_remember_user.txt') as f:
+            lines = f.readlines()
+        if len(lines) > 0:
+            for line in lines:
+                udaje = line.split(" ")
+            self.ids['name'].text = udaje[0]
+            self.ids['password'].text = udaje[1]
+            self.ids['log_remember_user'].active = True
 
     def login_remember_user(self):
-        if self.ids['log_remember_user'].active:
+        app = MDApp.get_running_app()
+        if (self.ids['log_remember_user'].active):
             ulozit = [self.ids['name'].text, self.ids['password'].text]
             f = open("data/reg_remember_user.txt", "w")
             f.write(' '.join(ulozit))
@@ -184,7 +185,7 @@ class AddTrashWindow(Screen):
         app.cursor.execute('SELECT * FROM Katalog_odpadu')
         for row in app.cursor:
             self.ids['scroll'].add_widget(
-                TwoLineListItem(text=f"{row[0]}", secondary_text=f"{row[1]}")
+                TwoLineListItem(text=f"{row[0]}", secondary_text=f"{row[1]}", on_press=lambda x, item=row: print("item number", item))
             )
 
 class WindowManager(ScreenManager):
@@ -208,8 +209,12 @@ class MeditrashApp(MDApp):
         self.theme_cls.primary_palette = "Gray"
         screen = Builder.load_file("styly.kv")
 
+
+
         # Načtení databáze
         self.cursor.execute('SELECT * FROM Zdravotnicke_zarizeni')
+        for row in self.cursor:
+            print(row)
 
         return screen
 

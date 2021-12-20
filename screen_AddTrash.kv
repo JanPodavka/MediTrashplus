@@ -27,7 +27,7 @@
             pos_hint: {"center_x": .5, "center_y": .5}
             size_hint: 1, .9
             BoxLayout:
-                size_hint: .15,1
+                size_hint: .25,1
                 orientation: 'vertical'
                 MDLabel:
                     text: "Druh Odpadu:"
@@ -40,11 +40,16 @@
                 ScrollView:
                     do_scroll_x: False
                     do_scroll_y: True
-                    MDSelectionList:
+                    size_hint: 1,.6
+                    MDList:
                         id: scroll
                         name :"scroll"
                         text: "select odpad"
                         size_hint: 1,.5
+                MDCard:
+                    size_hint: 1,.2
+                    focus_behavior: True
+                    text: "test"
                 MDFillRoundFlatButton:
                     pos_hint: {"center_x": .75, "center_y": .5}
                     text: "Vložit odpad"
@@ -55,27 +60,22 @@
                 BoxLayout:
                     size_hint: 1,.2
             BoxLayout:
-                BoxLayout:
-                    orientation: 'horizontal'
-                    size_hint: .125,1
-                    MDLabel:
-                        size_hint: 1,.1
-                        halign: 'center'
-                        text: "Množství"
-                        pos_hint: {"center_y": .8}
+                spacing:5
+                size_hint: .25,1
+                MDLabel:
+                    size_hint: 1,.1
+                    halign: 'right'
+                    text: "Množství"
+                    pos_hint: {"center_y": .8}
 
-                BoxLayout:
-                    orientation: 'horizontal'
-                    size_hint: .125,1
-                    MDTextFieldRect:
-                        size_hint: 1,.1
-                        pos_hint: {"center_x": .5,"center_y": .8}
-                BoxLayout:
-                    orientation: 'horizontal'
-                    size_hint: .125,1
-                    MDDropDownItem:
-                        id: drop_item
-                        size_hint: 1,.1
-                        text: "KG"
-                        pos_hint: {"center_x": .75, "center_y": .8}
-                        on_release: app.open_menu(self)
+                MDTextFieldRect:
+                    halign: "center"
+                    font_size: 0.6 * self.height
+                    size_hint: 1,.05
+                    pos_hint: {"center_x": .5,"center_y": .8}
+                MDDropDownItem:
+                    id: drop_item
+                    size_hint: 1,.05
+                    text: "KG"
+                    pos_hint: {"center_x": .75, "center_y": .8}
+                    on_release: app.open_menu(self)
