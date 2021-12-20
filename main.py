@@ -1,12 +1,15 @@
 from kivy import Config
+
 Config.set('graphics', 'width', '800')
 Config.set('graphics', 'height', '600')
 Config.set('graphics', 'minimum_width', '800')
 Config.set('graphics', 'minimum_height', '600')
 from kivy.lang import Builder
+from kivymd.uix.list import TwoLineListItem
 from kivy.uix.screenmanager import ScreenManager
 from kivymd.app import MDApp
 from kivymd.uix.screen import Screen
+import pyodbc
 from kivy.properties import StringProperty
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.navigationdrawer import MDNavigationDrawer
@@ -30,8 +33,8 @@ class LoginWindow(Screen):
 
     def login_remember_user(self):
         app = MDApp.get_running_app()
-        if(self.ids['log_remember_user'].active):
-            ulozit = [self.ids['name'].text,self.ids['password'].text]
+        if (self.ids['log_remember_user'].active):
+            ulozit = [self.ids['name'].text, self.ids['password'].text]
             f = open("data/reg_remember_user.txt", "w")
             f.write(' '.join(ulozit))
             f.close()
@@ -51,14 +54,11 @@ class LoginWindow(Screen):
 
     def login_user(self, loginText, passwordText):
         app = MDApp.get_running_app()
-        #Otevři soubor
-        with open('data/pass.txt') as f:
-            lines = f.readlines()
-        # porovnaj zda je v DTB (zatím txt)
-        for line in lines:
-            line = line.replace("\n", "")
-            udaje = line.split(" ")
-            if self.ids['name'].text == udaje[0] and self.ids['password'].text == udaje[1]:
+        # Otevři soubor
+        app.cursor.execute('SELECT * FROM Zdravotnicke_zarizeni')
+        for row in app.cursor:
+            print(row)
+            if self.ids['name'].text == row[3] and self.ids['password'].text == row[0]:
                 print("úspěšně přihlášeno")
                 # Náhrání do údajů aktivnního uživatele
                 app.usernameL = loginText
@@ -81,6 +81,8 @@ class LoginWindow(Screen):
 class MainWindow(Screen):
     pass
 
+
+
 class RegistrationWindow(Screen):
 
     def reg_check(self):
@@ -98,24 +100,23 @@ class RegistrationWindow(Screen):
                 return -1
             return 1
 
-        app = MDApp.get_running_app()
         reg_validity = 1
-        #jmeno
+        # jmeno
         if self.ids['reg_name'].text == "":
             self.ids['reg_error_name'].text = "* Povinné pole"
             reg_validity = 0
-        #ico
+        # ico
         if self.ids['reg_ico'].text == "":
             self.ids['reg_error_ico'].text = "* Povinné pole"
             reg_validity = 0
-        #elif reg_ico_validity(self.ids['reg_ico'].text) != 1:
+        # elif reg_ico_validity(self.ids['reg_ico'].text) != 1:
         #    self.ids['reg_error_ico'].text = "* Nevalidni ICO"
         #    reg_validity = False
-        #adresa
+        # adresa
         if self.ids['reg_address'].text == "":
             self.ids['reg_error_address'].text = "* Povinné pole"
             reg_validity = 0
-        #telefoni cislo
+        # telefoni cislo
         if self.ids['reg_number'].text == "":
             self.ids['reg_error_number'].text = "* Povinné pole"
             reg_validity = 0
@@ -127,19 +128,19 @@ class RegistrationWindow(Screen):
             self.ids['reg_error_number'].text = "* Neplatné číslo"
             self.ids['reg_number'].text = ""
             reg_validity = 0
-        #heslo
+        # heslo
         if self.ids['reg_password'].text == "":
-           self.ids['reg_error_password'].text = "* Povinné pole"
-           reg_validity = 0
-        #heslo2
+            self.ids['reg_error_password'].text = "* Povinné pole"
+            reg_validity = 0
+        # heslo2
         if self.ids['reg_password_check'].text == "":
-           self.ids['reg_error_password_check'].text = "* Povinné pole"
-           reg_validity = 0
+            self.ids['reg_error_password_check'].text = "* Povinné pole"
+            reg_validity = 0
         if self.ids['reg_password_check'].text != self.ids['reg_password'].text:
-                self.ids['reg_password_check'].text = ""
-                self.ids['reg_password'].text = ""
-                self.ids['reg_error_password'].text = "* Hesla se neshodují"
-                reg_validity = 0
+            self.ids['reg_password_check'].text = ""
+            self.ids['reg_password'].text = ""
+            self.ids['reg_error_password'].text = "* Hesla se neshodují"
+            reg_validity = 0
         return reg_validity
 
     def reg_clear_label(self):
@@ -160,6 +161,7 @@ class RegistrationWindow(Screen):
         self.ids['reg_error_password_check'].text = ""
 
     dialog = None
+
     def show_alert_reg(self):
         self.dialog = MDDialog(
             title="Úspěšná registrace",
@@ -169,19 +171,57 @@ class RegistrationWindow(Screen):
         )
         self.dialog.open()
 
+    def reg_to_dbs(self):
+        app = MDApp.get_running_app()
+        sql = "INSERT INTO Zdravotnicke_zarizeni (heslo, nazev, mesto, ico, telefon) VALUES (?, ?, ?, ?, ?)"
+        val = (self.ids['reg_password'].text,
+               self.ids['reg_name'].text,
+               self.ids['reg_address'].text,
+               self.ids['reg_ico'].text,
+               self.ids['reg_number'].text
+               )
+        app.cursor.execute(sql, val)
+        app.cursor.commit()
+
+
+class AddTrashWindow(Screen):
+    def on_enter(self, *args):
+        app = MDApp.get_running_app()
+        app.cursor.execute('SELECT * FROM Katalog_odpadu')
+        for row in app.cursor:
+            print(row)
+            self.ids['scroll'].add_widget(
+                TwoLineListItem(text=f"{row[0]}", secondary_text=f"{row[1]}")
+            )
+
 class WindowManager(ScreenManager):
     pass
 
 
+
 class MeditrashApp(MDApp):
+
+    def __init__(self, **kwargs):
+        super().__init__()
+        connection = pyodbc.connect(
+            'DRIVER={ODBC Driver 17 for SQL Server};SERVER=' + '147.230.21.34' + ';DATABASE=' + 'DBS2021_JanPodavka' + ';UID=' + 'student' + ';PWD=' + 'student')
+        self.cursor = connection.cursor()
+
 
     def build(self):
         usernameL = StringProperty(None)
         passwordL = StringProperty(None)
-
         self.theme_cls.theme_style = "Light"
         self.theme_cls.primary_palette = "Gray"
         screen = Builder.load_file("styly.kv")
+
+
+
+        # Načtení databáze
+        self.cursor.execute('SELECT * FROM Zdravotnicke_zarizeni')
+        for row in self.cursor:
+            print(row)
+
         return screen
 
 
