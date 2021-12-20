@@ -12,22 +12,20 @@ from kivymd.uix.screen import Screen
 import pyodbc
 from kivy.properties import StringProperty
 from kivymd.uix.dialog import MDDialog
-from os.path import exists
 
 
 class LoginWindow(Screen):
 
-    def on_enter(self):
+    def login_write(self):
         app = MDApp.get_running_app()
-        if (exists('data/reg_remember_user.txt')):
-            with open('data/reg_remember_user.txt') as f:
-                lines = f.readlines()
-            if len(lines) > 0:
-                for line in lines:
-                    udaje = line.split(" ")
-                    self.ids['log_name'].text = udaje[0]
-                    self.ids['log_password'].text = udaje[1]
-                    self.ids['log_remember_user'].active = True
+        with open('data/reg_remember_user.txt') as f:
+            lines = f.readlines()
+        if len(lines) > 0:
+            for line in lines:
+                udaje = line.split(" ")
+            self.ids['name'].text = udaje[0]
+            self.ids['password'].text = udaje[1]
+            self.ids['log_remember_user'].active = True
 
     def login_remember_user(self):
         app = MDApp.get_running_app()
@@ -187,6 +185,7 @@ class AddTrashWindow(Screen):
         app = MDApp.get_running_app()
         app.cursor.execute('SELECT * FROM Katalog_odpadu')
         for row in app.cursor:
+            print(row)
             self.ids['scroll'].add_widget(
                 TwoLineListItem(text=f"{row[0]}", secondary_text=f"{row[1]}", on_press=lambda x, item=row: print("item number", item))
             )
@@ -212,6 +211,8 @@ class MeditrashApp(MDApp):
         self.theme_cls.theme_style = "Light"
         self.theme_cls.primary_palette = "Gray"
         screen = Builder.load_file("styly.kv")
+
+
 
         # Načtení databáze
         self.cursor.execute('SELECT * FROM Zdravotnicke_zarizeni')
