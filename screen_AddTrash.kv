@@ -40,11 +40,15 @@
                 ScrollView:
                     do_scroll_x: False
                     do_scroll_y: True
-                    MDSelectionList:
+                    size_hint: 1,.6
+                    MDList:
                         id: scroll
                         name :"scroll"
                         text: "select odpad"
                         size_hint: 1,.5
+                MDCard:
+                    size_hint: 1,.2
+                    text: "test"
                 MDFillRoundFlatButton:
                     pos_hint: {"center_x": .75, "center_y": .5}
                     text: "Vložit odpad"

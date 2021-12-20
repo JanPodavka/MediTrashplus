@@ -187,8 +187,9 @@ class AddTrashWindow(Screen):
         for row in app.cursor:
             print(row)
             self.ids['scroll'].add_widget(
-                TwoLineListItem(text=f"{row[0]}", secondary_text=f"{row[1]}")
+                TwoLineListItem(text=f"{row[0]}", secondary_text=f"{row[1]}", on_press=lambda x, item=row: print("item number", item))
             )
+
 
 class WindowManager(ScreenManager):
     pass
