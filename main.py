@@ -5,21 +5,13 @@ Config.set('graphics', 'height', '600')
 Config.set('graphics', 'minimum_width', '800')
 Config.set('graphics', 'minimum_height', '600')
 from kivy.lang import Builder
-from functools import partial
-from kivymd.uix.list import OneLineListItem
-
-from kivymd.uix.dropdownitem import MDDropDownItem
-from kivymd.uix.list import IRightBodyTouch
+from kivymd.uix.list import TwoLineListItem
 from kivy.uix.screenmanager import ScreenManager
 from kivymd.app import MDApp
 from kivymd.uix.screen import Screen
 import pyodbc
 from kivy.properties import StringProperty
-from kivymd.toast import toast
-
 from kivymd.uix.dialog import MDDialog
-from kivymd.uix.list import OneLineIconListItem
-from kivymd.uix.menu import MDDropdownMenu
 
 
 class LoginWindow(Screen):
@@ -190,9 +182,12 @@ class RegistrationWindow(Screen):
 
 class AddTrashWindow(Screen):
     def on_enter(self, *args):
-        for i in range(20):
+        app = MDApp.get_running_app()
+        app.cursor.execute('SELECT * FROM Katalog_odpadu')
+        for row in app.cursor:
+            print(row)
             self.ids['scroll'].add_widget(
-                OneLineListItem(text=f"Single-line item {i}")
+                TwoLineListItem(text=f"{row[0]}", secondary_text=f"{row[1]}")
             )
 
 class WindowManager(ScreenManager):

@@ -37,11 +37,14 @@
             BoxLayout:
                 orientation: 'vertical'
                 size_hint: .45,1
-                MDList:
-                    id: scroll
-                    name :"scroll"
-                    text: "select odpad"
-                    size_hint: 1,.6
+                ScrollView:
+                    do_scroll_x: False
+                    do_scroll_y: True
+                    MDSelectionList:
+                        id: scroll
+                        name :"scroll"
+                        text: "select odpad"
+                        size_hint: 1,.5
                 MDFillRoundFlatButton:
                     pos_hint: {"center_x": .75, "center_y": .5}
                     text: "Vložit odpad"
