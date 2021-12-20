@@ -9,20 +9,24 @@ from kivymd.app import MDApp
 from kivymd.uix.screen import Screen
 from kivy.properties import StringProperty
 from kivymd.uix.dialog import MDDialog
+from kivymd.uix.navigationdrawer import MDNavigationDrawer
+from os.path import exists
 
 
 class LoginWindow(Screen):
 
     def login_write(self):
         app = MDApp.get_running_app()
-        with open('data/reg_remember_user.txt') as f:
-            lines = f.readlines()
-        if len(lines) > 0:
-            for line in lines:
-                udaje = line.split(" ")
-            self.ids['name'].text = udaje[0]
-            self.ids['password'].text = udaje[1]
-            self.ids['log_remember_user'].active = True
+
+        if (exists('data/reg_remember_user.txt')):
+            with open('data/reg_remember_user.txt') as f:
+                lines = f.readlines()
+            if len(lines) > 0:
+                for line in lines:
+                    udaje = line.split(" ")
+                self.ids['name'].text = udaje[0]
+                self.ids['password'].text = udaje[1]
+                self.ids['log_remember_user'].active = True
 
     def login_remember_user(self):
         app = MDApp.get_running_app()
