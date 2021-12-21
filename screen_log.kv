@@ -54,8 +54,8 @@
                         root.manager.transition.direction = "left"
             BoxLayout:
                 orientation: "horizontal"
-                size_hint: 0.65,1
-                pos_hint: {'center_x': 0.57,'center_y': 1}
+                size_hint: 0.55,1
+                pos_hint: {'center_x': 0.52,'center_y': 1}
                 BoxLayout:
                     orientation: "vertical"
                     size_hint: 1,1
@@ -73,18 +73,6 @@
                         text_color: 0, 0, 0, 0.75
                         pos_hint: {'center_x': 0.47,'center_y': 0.5}
 
-                BoxLayout:
-                    orientation: "vertical"
-                    size_hint: 0.18,0.5
-                    pos_hint: {'center_x': .5,'center_y': 0.35}
-                    MDIconButton:
-                        id: lock_button
-                        icon: "Obrazky/lock.png"
-                        user_font_size: "0.1sp"
-                        pos_hint: {'center_x': 0.27,'center_y': 0.3}
-                        on_press:
-                            root.login_show_password()
-                            root.login_show_password_icon()
 
             BoxLayout:
                 orientation: "horizontal"
@@ -119,4 +107,9 @@
             BoxLayout:
                 size_hint: 1, 0.2
 
-
+    MDIconButton:
+        icon: 'eye-off'
+        pos_hint: {"center_x": .68, "center_y": .35}
+        id: lock_button
+        on_press:
+            root.login_show_password()

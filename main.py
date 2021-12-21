@@ -12,7 +12,6 @@ from kivymd.uix.screen import Screen
 import pyodbc
 from kivy.properties import StringProperty
 from kivymd.uix.dialog import MDDialog
-from kivy.core.window import Window
 from datetime import date
 from datetime import datetime
 import locale
@@ -44,14 +43,14 @@ class LoginWindow(Screen):
             f.write("")
             f.close()
 
+
+
     def login_show_password(self):
         self.ids['password'].password = not self.ids['password'].password
-
-    def login_show_password_icon(self):
         if self.ids['password'].password:
-            self.ids['lock_button'].icon = "Obrazky/lock.png"
+            self.ids['lock_button'].icon = "eye-off"
         else:
-            self.ids['lock_button'].icon = "Obrazky/lock-unlocked.png"
+            self.ids['lock_button'].icon = "eye"
 
     def login_user(self, loginText, passwordText):
         app = MDApp.get_running_app()
@@ -82,7 +81,8 @@ class MainWindow(Screen):
     def on_enter(self, *args):
         self.ids['main_day_of_week'].text = 'Dnes je ' + datetime.today().strftime('%A') + ' ' +date.today().strftime("%d. %m. %Y")
 
-
+class ProfileWindow(Screen):
+    pass
 
 class RegistrationWindow(Screen):
 
