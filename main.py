@@ -13,7 +13,9 @@ import pyodbc
 from kivy.properties import StringProperty
 from kivymd.uix.dialog import MDDialog
 from datetime import date
+from kivymd.uix.snackbar import Snackbar
 from datetime import datetime
+from kivymd.uix.list import OneLineListItem
 import locale
 locale.setlocale(locale.LC_TIME, "cs_CZ")
 
@@ -185,23 +187,36 @@ class RegistrationWindow(Screen):
 
 
 class AddTrashWindow(Screen):
-    def add_active(self, item):
-        self.ids['selected_trash'].text = ' '.join(map(str, item))
 
-    def on_enter(self, *args):
+    def on_pre_enter(self, *args):
         app = MDApp.get_running_app()
         app.cursor.execute('SELECT * FROM Katalog_odpadu')
         for row in app.cursor:
-            print(row)
-            self.ids['scroll'].add_widget(
-                TwoLineListItem(text=f"{row[0]}", secondary_text=f"{row[1]}", on_press=lambda x,
-                item=row: self.add_active(item))
-            )
+            self.ids['container'].add_widget(TwoLineListItem(text=f"{row[0]}", secondary_text=f"{row[1]}"))
+
+
+    def trash_change_spinner_icon(self):
+       if  self.ids['spinner_icon'].icon == 'menu-down':
+           self.ids['spinner_icon'].icon = 'menu-up'
+       else:
+           self.ids['spinner_icon'].icon = 'menu-down'
+
+    def trash_successfulAdd(self):
+        Snackbar(
+            text="Úspěšně vloženo",
+            snackbar_x="10dp",
+            snackbar_y="10dp",
+            bg_color=(0, 0, 0, .2)
+        ).open()
 
 
 class WindowManager(ScreenManager):
     pass
 
+class TestListItemButton(TwoLineListItem):
+    def __init__(self, **kwargs):
+        super(TwoLineListItem, self).__init__(**kwargs)
+        self.height = "100dp"
 
 class MeditrashApp(MDApp):
 

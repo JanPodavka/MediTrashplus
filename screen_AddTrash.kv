@@ -1,90 +1,93 @@
+#:import Factory kivy.factory.Factory
+#:set color_button (0, 0, 0, .5)
+#:set color_button_pressed (0, 0, 0, .35)
+<MySpinnerOption@SpinnerOption>:
+    background_color: color_button if self.state == 'down' else color_button_pressed
+
+
 <AddTrashWindow>:
     name: 'addtrash'
 
+    MDBoxLayout:
+        pos_hint: {"center_x": .5, "center_y": .965}
+        size_hint: 1, .08
+        Button:
+            text: "Profil"
+            background_color: (.0, .0, .0, .45)
+            font_size: 0.32 * self.height
+            on_press:
+                app.root.current = 'profile'
+        Button:
+            text: "Vložit odpad"
+            background_color: (.0, .0, .0, .6)
+            font_size: 0.32 * self.height
+            on_press:
+                app.root.current = 'addtrash'
+        Button:
+            text: "Historie"
+            background_color: (.0, .0, .0, .45)
+            font_size: 0.32 * self.height
+        Button:
+            text: "Statistika"
+            background_color: (.0, .0, .0, .45)
+            font_size: 0.32 * self.height
+        Image:
+            source: 'obrazky/logo.png'
+            background_color: (.0, .0, .0, .45)
+
+
     BoxLayout:
-        orientation: 'vertical'
-        MDBoxLayout:
-            pos_hint: {"center_x": .5, "center_y": .5}
-            size_hint: 1, .1
-            md_bg_color: .0, .0, .0, .15
-            Button:
-                text: "Profil"
-                on_press:
-                    app.root.current = 'profile'
-            Button:
-                text: "Vložit odpad"
-                on_press:
-                    app.root.current = 'addtrash'
-            Button:
-                text: "Historie"
-            Button:
-                text: "Statistika"
-            Image:
-                source: 'obrazky/logo.png'
+        spacing:15
+        size_hint: .32, .05
+        pos_hint: {"center_x": .75,"center_y": .75}
+        MDLabel:
+            size_hint_x: .28
+            halign: 'right'
+            text: "Množství"
+            font_size: 0.5 * self.height
 
-        MDBoxLayout:
-            orientation: "horizontal"
-            pos_hint: {"center_x": .5, "center_y": .5}
-            size_hint: 1, .9
-            BoxLayout:
-                size_hint: .25,1
-                orientation: 'vertical'
-                MDLabel:
-                    text: "Druh Odpadu:"
-                    halign: 'center'
-                BoxLayout:
-                BoxLayout:
-            BoxLayout:
-                spacing:20
-                orientation: 'vertical'
-                size_hint: .45,1
-                ScrollView:
-                    do_scroll_x: False
-                    size_hint: 1,.6
-                    MDList:
-                        id: scroll
-                        name :"scroll"
-                        text: "select odpad"
-                        size_hint: 1,.8
-                BoxLayout:
-                    size_hint: 1,.05
-                MDCard:
-                    size_hint: 1,.1
-                    focus_behavior: True
-                    text: "test"
-                    MDLabel:
-                        size_hint: 1,.5
-                        id: selected_trash
-                        text: "Vyber odpad"
-                        halign: "center"
-                MDFillRoundFlatButton:
-                    pos_hint: {"center_x": .75, "center_y": .5}
-                    text: "Vložit odpad"
-                    text_size: None, None
-                    size_hint_y: .1
-                    font_size: 0.5 * self.height
+        MDTextFieldRect:
+            halign: "center"
+            text: "0"
+            font_size: 0.6 * self.height
+            size_hint_x: .5
+        Spinner:
+            id: drop_item
+            text: "kg"
+            values: ["kg","dg","g"]
+            size_hint_x: .22
+            font_size: 0.5 * self.height
+            sync_height: True
+            height: 60
+            background_color: color_button if self.state == 'normal' else color_button_pressed
+            option_cls: Factory.get("MySpinnerOption")
+    ScrollView:
+        size_hint: .4, .45
+        pos_hint: {"center_x": .3, "center_y": .6}
+        bar_inactive_color: 0, 0, 0, .6
+        effect_cls: "ScrollEffect"
+        bar_width: 20
+        scroll_type: ['bars']
+        MDList:
+            id: container
+            size_hint_y: None
+            height: .5
 
-                    width: self.parent.width * 0.5
-                BoxLayout:
-                    size_hint: 1,.1
-            BoxLayout:
-                spacing:5
-                size_hint: .25,1
-                MDLabel:
-                    size_hint: 1,.1
-                    halign: 'right'
-                    text: "Množství"
-                    pos_hint: {"center_y": .8}
 
-                MDTextFieldRect:
-                    halign: "center"
-                    text: "0"
-                    font_size: 0.6 * self.height
-                    size_hint: 1,.05
-                    pos_hint: {"center_x": .5,"center_y": .8}
-                MDDropDownItem:
-                    id: drop_item
-                    size_hint: 1,.05
-                    text: "KG"
-                    pos_hint: {"center_x": .75, "center_y": .8}
-                    on_release: app.open_menu(self)
+    MDRoundFlatButton:
+        text: "Vložit"
+        size_hint: .2,.07
+        font_size: 0.4 * self.height
+        pos_hint: {"center_x": .76, "center_y": .2}
+        on_press:
+            root.trash_successfulAdd()
+
+    #MDIconButton:
+        #id: spinner_icon
+        #pos_hint: {"center_x": .895, "center_y": .75}
+        #disabled: True
+
+    Image:
+        source: 'obrazky/line3.png'
+        size_hint_x: 1
+        pos_hint: {"center_x": .5, "center_y": .09}

@@ -1,26 +1,34 @@
 <ProfileWindow>:
     name:'profile'
-    BoxLayout:
-        orientation: 'vertical'
-        MDBoxLayout:
-            pos_hint: {"center_x": .5, "center_y": .5}
-            size_hint: 1, .1
-            md_bg_color: .0, .0, .0, .15
-            Button:
-                text: "Profil"
-                on_press:
-                    app.root.current = 'profile'
-            Button:
-                text: "Vložit odpad"
-                on_press:
-                    app.root.current = 'addtrash'
-            Button:
-                text: "Historie"
-            Button:
-                text: "Statistika"
-            Image:
-                source: 'obrazky/logo.png'
-        MDBoxLayout:
-            orientation: "horizontal"
-            pos_hint: {"center_x": .5, "center_y": .5}
-            size_hint: 1, .9
+
+    MDBoxLayout:
+        pos_hint: {"center_x": .5, "center_y": .965}
+        size_hint: 1, .08
+        Button:
+            text: "Profil"
+            background_color: (.0, .0, .0, .6)
+            font_size: 0.32 * self.height
+            on_press:
+                app.root.current = 'profile'
+        Button:
+            text: "Vložit odpad"
+            background_color: (.0, .0, .0, .45)
+            font_size: 0.32 * self.height
+            on_press:
+                app.root.current = 'addtrash'
+        Button:
+            text: "Historie"
+            background_color: (.0, .0, .0, .45)
+            font_size: 0.32 * self.height
+        Button:
+            text: "Statistika"
+            background_color: (.0, .0, .0, .45)
+            font_size: 0.32 * self.height
+        Image:
+            source: 'obrazky/logo.png'
+            background_color: (.0, .0, .0, .45)
+
+    Image:
+        source: 'obrazky/line3.png'
+        size_hint_x: 1
+        pos_hint: {"center_x": .5, "center_y": .09}
