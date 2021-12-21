@@ -77,7 +77,8 @@ class LoginWindow(Screen):
 class MainWindow(Screen):
     pass
 
-
+class ProfileWindow(Screen):
+    pass
 
 class RegistrationWindow(Screen):
 
