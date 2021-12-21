@@ -43,8 +43,6 @@ class LoginWindow(Screen):
             f.write("")
             f.close()
 
-
-
     def login_show_password(self):
         self.ids['password'].password = not self.ids['password'].password
         if self.ids['password'].password:
@@ -58,6 +56,7 @@ class LoginWindow(Screen):
         app.cursor.execute('SELECT * FROM Zdravotnicke_zarizeni')
         for row in app.cursor:
             if self.ids['name'].text == row[3] and self.ids['password'].text == row[0]:
+                print("úspěšně přihlášeno")
                 # Náhrání do údajů aktivnního uživatele
                 app.usernameL = loginText
                 app.passwordL = passwordText
@@ -193,10 +192,12 @@ class AddTrashWindow(Screen):
         app = MDApp.get_running_app()
         app.cursor.execute('SELECT * FROM Katalog_odpadu')
         for row in app.cursor:
+            print(row)
             self.ids['scroll'].add_widget(
                 TwoLineListItem(text=f"{row[0]}", secondary_text=f"{row[1]}", on_press=lambda x,
                 item=row: self.add_active(item))
             )
+
 
 class WindowManager(ScreenManager):
     pass
