@@ -1,41 +1,49 @@
 <MainWindow>:
     name:"main"
 
+    background_color: (0,1,0,.5)
+    MDBoxLayout:
+        pos_hint: {"center_x": .5, "center_y": .965}
+        size_hint: 1, .08
+        md_bg_color: .0, .0, .0, .15
+        Button:
+            text: "Profil"
+            on_press:
+                app.root.current = 'main'
+        Button:
+            text: "Vložit odpad"
+            on_press:
+                app.root.current = 'addtrash'
+        Button:
+            text: "Historie"
+        Button:
+            text: "Statistika"
+        Image:
+            source: 'obrazky/logo.png'
+
     BoxLayout:
         orientation: 'vertical'
-        MDBoxLayout:
+        pos_hint: {"center_x": .5, "center_y": .5}
+        size_hint: .5, .4
+        MDLabel:
             pos_hint: {"center_x": .5, "center_y": .5}
-            size_hint: 1, .1
-            md_bg_color: .0, .0, .0, .15
-            Button:
-                text: "Profil"
-                on_press:
-                    app.root.current = 'main'
-            Button:
-                text: "Vložit odpad"
-                on_press:
-                    app.root.current = 'addtrash'
-            Button:
-                text: "Historie"
-            Button:
-                text: "Statistika"
-            Image:
-                source: 'obrazky/logo.png'
-
-        MDCard:
+            size_hint: .7, .2
+            text: "VÍTEJTE ZPĚT"
+            halign: "center"
+            font_size: .7 * self.height
+        MDLabel:
+            id: main_day_of_week
+            size_hint: 1, .2
             pos_hint: {"center_x": .5, "center_y": .5}
-            size_hint: .5, .4
-            elevation: 20
-            Button:
-        MDBoxLayout:
-            orientation: "vertical"
-            pos_hint: {"center_x": .5, "center_y": .5}
-            size_hint: 1, .9
-            MDRaisedButton:
-                text: "Odhlásit"
-                pos_hint: {"center_x": .5, "center_y": .5}
-                font_size: 32
-                on_release : print("zpatky")
-                on_press:
-                    app.root.current = "login"
-                    root.manager.transition.direction = "left"
+            halign: "center"
+        BoxLayout:
+            size_hint: .1,.6
+    Image:
+        source: 'obrazky/logo_plus.png'
+        size_hint_x: .25
+        elevation: 10
+        pos_hint: {"center_x": .2, "center_y": .65}
+    Image:
+        source: 'obrazky/wave.png'
+        size_hint_x: 1.4
+        pos_hint: {"center_x": .65, "center_y": .2}

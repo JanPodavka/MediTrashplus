@@ -12,7 +12,11 @@ from kivymd.uix.screen import Screen
 import pyodbc
 from kivy.properties import StringProperty
 from kivymd.uix.dialog import MDDialog
-from os.path import exists
+from kivy.core.window import Window
+from datetime import date
+from datetime import datetime
+import locale
+locale.setlocale(locale.LC_TIME, "cs_CZ")
 
 
 class LoginWindow(Screen):
@@ -74,7 +78,9 @@ class LoginWindow(Screen):
 
 
 class MainWindow(Screen):
-    pass
+
+    def on_enter(self, *args):
+        self.ids['main_day_of_week'].text = 'Dnes je ' + datetime.today().strftime('%A') + ' ' +date.today().strftime("%d. %m. %Y")
 
 
 
@@ -208,8 +214,6 @@ class MeditrashApp(MDApp):
         self.theme_cls.theme_style = "Light"
         self.theme_cls.primary_palette = "Gray"
         screen = Builder.load_file("styly.kv")
-
-
 
         # Načtení databáze
         self.cursor.execute('SELECT * FROM Zdravotnicke_zarizeni')

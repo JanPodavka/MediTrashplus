@@ -1,4 +1,9 @@
 <RegistrationWindow>:
+    canvas.before:
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            source: 'obrazky/line.png'
     name:"registrace"
 
     MDCard:
@@ -14,9 +19,9 @@
                 orientation: "vertical"
                 BoxLayout:
                     pos_hint: {"center_x": .5, "center_y": .5}
-                    size_hint_y: .3
+                    size_hint_y: .25
                     Image:
-                        source: 'obrazky/cover.png'
+                        source: 'obrazky/logo.png'
                         allow_stretch: True
                         pos_hint: {"center_x": .5, "center_y": .4}
 
