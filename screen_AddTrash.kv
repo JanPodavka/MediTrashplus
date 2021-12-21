@@ -35,30 +35,38 @@
                 BoxLayout:
                 BoxLayout:
             BoxLayout:
+                spacing:20
                 orientation: 'vertical'
                 size_hint: .45,1
                 ScrollView:
                     do_scroll_x: False
-                    do_scroll_y: True
                     size_hint: 1,.6
                     MDList:
                         id: scroll
                         name :"scroll"
                         text: "select odpad"
-                        size_hint: 1,.5
+                        size_hint: 1,.8
+                BoxLayout:
+                    size_hint: 1,.05
                 MDCard:
-                    size_hint: 1,.2
+                    size_hint: 1,.1
                     focus_behavior: True
                     text: "test"
+                    MDLabel:
+                        size_hint: 1,.5
+                        id: selected_trash
+                        text: "Vyber odpad"
+                        halign: "center"
                 MDFillRoundFlatButton:
                     pos_hint: {"center_x": .75, "center_y": .5}
                     text: "Vložit odpad"
                     text_size: None, None
+                    size_hint_y: .1
                     font_size: 0.5 * self.height
-                    #size_hint_y: .1
+
                     width: self.parent.width * 0.5
                 BoxLayout:
-                    size_hint: 1,.2
+                    size_hint: 1,.1
             BoxLayout:
                 spacing:5
                 size_hint: .25,1
@@ -70,6 +78,7 @@
 
                 MDTextFieldRect:
                     halign: "center"
+                    text: "0"
                     font_size: 0.6 * self.height
                     size_hint: 1,.05
                     pos_hint: {"center_x": .5,"center_y": .8}

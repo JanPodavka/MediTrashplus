@@ -186,17 +186,20 @@ class RegistrationWindow(Screen):
 
 
 class AddTrashWindow(Screen):
+    def add_active(self, item):
+        self.ids['selected_trash'].text = ' '.join(map(str, item))
+
     def on_enter(self, *args):
         app = MDApp.get_running_app()
         app.cursor.execute('SELECT * FROM Katalog_odpadu')
         for row in app.cursor:
             self.ids['scroll'].add_widget(
-                TwoLineListItem(text=f"{row[0]}", secondary_text=f"{row[1]}", on_press=lambda x, item=row: print("item number", item))
+                TwoLineListItem(text=f"{row[0]}", secondary_text=f"{row[1]}", on_press=lambda x,
+                item=row: self.add_active(item))
             )
 
 class WindowManager(ScreenManager):
     pass
-
 
 
 class MeditrashApp(MDApp):
