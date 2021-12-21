@@ -213,11 +213,6 @@ class AddTrashWindow(Screen):
 class WindowManager(ScreenManager):
     pass
 
-class TestListItemButton(TwoLineListItem):
-    def __init__(self, **kwargs):
-        super(TwoLineListItem, self).__init__(**kwargs)
-        self.height = "100dp"
-
 class MeditrashApp(MDApp):
 
     def __init__(self, **kwargs):
