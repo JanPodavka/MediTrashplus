@@ -1,6 +1,6 @@
 <ProfileWindow>:
     name:'profile'
-
+# Navbbar
     MDBoxLayout:
         pos_hint: {"center_x": .5, "center_y": .965}
         size_hint: 1, .08
@@ -28,6 +28,101 @@
             source: 'obrazky/logo.png'
             background_color: (.0, .0, .0, .45)
 
+#    MDLabel:
+#        text:"uživatelské údaje:"
+#        pos_hint: {"center_x": .5, "center_y": .8}
+#        size_hint: 1, .1
+    BoxLayout:
+        size_hint: 1, .4
+        pos_hint: {"center_x": .5, "center_y": .6}
+        spacing:10
+        BoxLayout: ## Labely
+            size_hint:.05,1
+            orientation: "vertical"
+            MDLabel:
+                text: "Jméno"
+                halign: "center"
+                size_hint: 1, .8
+                pos_hint: {"center_x": .5, "center_y": .5}
+            MDLabel:
+                text: "IČO"
+                halign: "right"
+                size_hint: 1, .8
+                pos_hint: {"center_x": .5, "center_y": .5}
+            MDLabel:
+                text: "Adresa"
+                halign: "right"
+                size_hint: 1, .8
+                pos_hint: {"center_x": .5, "center_y": .5}
+            MDLabel:
+                text: "Telefon"
+                halign: "right"
+                size_hint: 1, .8
+                pos_hint: {"center_x": .5, "center_y": .5}
+        BoxLayout: ## Textfieldy
+            orientation: "vertical"
+            spacing:20
+            size_hint: .3,1
+            pos_hint: {"center_x": .2, "center_y": .5}
+            MDTextField:
+                mode: "rectangle"
+                id: reg_name
+                size_hint: 1, .8
+                font_size: 0.65 * self.height
+                pos_hint: {"center_x": .5, "center_y": .5}
+            MDTextField:
+                id: reg_ico
+                font_size: 0.65 * self.height
+                size_hint: 1, .8
+                max_text_length: 9
+                pos_hint: {"center_x": .5, "center_y": .5}
+            MDTextField:
+                id: reg_address
+                font_size: 0.65 * self.height
+                size_hint: 1, .8
+                pos_hint: {"center_x": .5, "center_y": .5}
+            MDTextFieldRect:
+                id: reg_number
+                font_size: 0.65 * self.height
+                size_hint: 1, .8
+                pos_hint: {"center_x": .5, "center_y": .5}
+        BoxLayout:
+            spacing:20
+            size_hint: .2,1
+            pos_hint: {"center_x": .6, "center_y": .5}
+            orientation: "vertical"
+            MDLabel:
+                id: reg_error_name
+                theme_text_color: "Custom"
+                text_color: 1,0,0,1
+                font_size: 0.40 * self.height
+                halign: "left"
+                size_hint: 1, .8
+                pos_hint: {"center_x": .5, "center_y": .5}
+            MDLabel:
+                id: reg_error_ico
+                theme_text_color: "Custom"
+                text_color: 1,0,0,1
+                font_size: 0.40 * self.height
+                halign: "left"
+                size_hint: 1, .8
+                pos_hint: {"center_x": .5, "center_y": .5}
+            MDLabel:
+                id: reg_error_address
+                theme_text_color: "Custom"
+                text_color: 1,0,0,1
+                font_size: 0.40 * self.height
+                halign: "left"
+                size_hint: 1, .8
+                pos_hint: {"center_x": .5, "center_y": .5}
+            MDLabel:
+                id: reg_error_number
+                theme_text_color: "Custom"
+                text_color: 1,0,0,1
+                font_size: 0.40 * self.height
+                halign: "left"
+                size_hint: 1, .8
+                pos_hint: {"center_x": .5, "center_y": .5}
     Image:
         source: 'obrazky/line3.png'
         size_hint_x: 1

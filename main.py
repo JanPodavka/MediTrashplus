@@ -15,8 +15,8 @@ from kivymd.uix.dialog import MDDialog
 from datetime import date
 from kivymd.uix.snackbar import Snackbar
 from datetime import datetime
-from kivymd.uix.list import OneLineListItem
 import locale
+
 locale.setlocale(locale.LC_TIME, "cs_CZ")
 
 
@@ -80,10 +80,13 @@ class LoginWindow(Screen):
 class MainWindow(Screen):
 
     def on_enter(self, *args):
-        self.ids['main_day_of_week'].text = 'Dnes je ' + datetime.today().strftime('%A') + ' ' +date.today().strftime("%d. %m. %Y")
+        self.ids['main_day_of_week'].text = 'Dnes je ' + datetime.today().strftime('%A') + ' ' + date.today().strftime(
+            "%d. %m. %Y")
+
 
 class ProfileWindow(Screen):
     pass
+
 
 class RegistrationWindow(Screen):
 
@@ -194,12 +197,11 @@ class AddTrashWindow(Screen):
         for row in app.cursor:
             self.ids['container'].add_widget(TwoLineListItem(text=f"{row[0]}", secondary_text=f"{row[1]}"))
 
-
     def trash_change_spinner_icon(self):
-       if  self.ids['spinner_icon'].icon == 'menu-down':
-           self.ids['spinner_icon'].icon = 'menu-up'
-       else:
-           self.ids['spinner_icon'].icon = 'menu-down'
+        if self.ids['spinner_icon'].icon == 'menu-down':
+            self.ids['spinner_icon'].icon = 'menu-up'
+        else:
+            self.ids['spinner_icon'].icon = 'menu-down'
 
     def trash_successfulAdd(self):
         Snackbar(
@@ -213,6 +215,7 @@ class AddTrashWindow(Screen):
 class WindowManager(ScreenManager):
     pass
 
+
 class MeditrashApp(MDApp):
 
     def __init__(self, **kwargs):
@@ -221,19 +224,12 @@ class MeditrashApp(MDApp):
             'DRIVER={ODBC Driver 17 for SQL Server};SERVER=' + '147.230.21.34' + ';DATABASE=' + 'DBS2021_JanPodavka' + ';UID=' + 'student' + ';PWD=' + 'student')
         self.cursor = connection.cursor()
 
-
     def build(self):
         usernameL = StringProperty(None)
         passwordL = StringProperty(None)
         self.theme_cls.theme_style = "Light"
         self.theme_cls.primary_palette = "Gray"
         screen = Builder.load_file("styly.kv")
-
-        # Načtení databáze
-        self.cursor.execute('SELECT * FROM Zdravotnicke_zarizeni')
-        for row in self.cursor:
-            print(row)
-
         return screen
 
 

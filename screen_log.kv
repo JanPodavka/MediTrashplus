@@ -69,9 +69,11 @@
                     MDTextField:
                         id: password
                         password: True
+                        #icon_right: 'eye-off'
                         hint_text: "Heslo"
                         text_color: 0, 0, 0, 0.75
                         pos_hint: {'center_x': 0.47,'center_y': 0.5}
+                        #on_icon_right: print("tests")
 
 
             BoxLayout:
@@ -104,7 +106,7 @@
                         root.login_clear_input()
                         root.manager.transition.direction = "left"
             BoxLayout:
-                size_hint: 1, 0.2
+                size_hint: 1    , 0.2
 
     MDIconButton:
         icon: 'eye-off'
