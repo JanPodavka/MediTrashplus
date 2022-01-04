@@ -16,6 +16,7 @@ from datetime import date
 from kivymd.uix.snackbar import Snackbar
 from datetime import datetime
 import locale
+
 locale.setlocale(locale.LC_TIME, "cs_CZ")
 
 
@@ -43,7 +44,6 @@ class LoginWindow(Screen):
             f = open("data/reg_remember_user.txt", "w")
             f.write("")
             f.close()
-
 
     def login_show_password(self):
         self.ids['password'].password = not self.ids['password'].password
@@ -88,18 +88,48 @@ class ProfileWindow(Screen):
 
     def clear_info(self):
         self.ids['user_name'].text = ""
-        self.ids['user_ico'].text = ""
+        self.ids['user_heslo'].text = ""
         self.ids['user_address'].text = ""
         self.ids['user_number'].text = ""
 
-    def on_pre_enter(self, *args):
-        app = MDApp.get_running_app()
-        app.cursor.execute('SELECT * FROM Zdravotnicke_zarizeni WHERE ico = ? ', app.usernameL)
-        for row in app.cursor:
+    def set_info(self, select):
+        for row in select:
             self.ids['user_name'].hint_text = row[1]
-            self.ids['user_ico'].hint_text = row[3]
+            self.ids['user_heslo'].hint_text = row[3]
             self.ids['user_address'].hint_text = row[2]
             self.ids['user_number'].hint_text = row[4]
+
+    def change_info(self, select):
+        app = MDApp.get_running_app()
+
+        i = 0
+        for info in select:
+            print(info)
+            if info is not "":
+                if i == 0:
+                    sql = "UPDATE Zdravotnicke_zarizeni SET nazev = (?)  WHERE ico = (?)"
+                    val = (info, app.usernameL)
+                    app.cursor.execute(sql, val)
+                if i == 1:
+                    sql = "UPDATE Zdravotnicke_zarizeni SET mesto = (?)  WHERE ico = (?)"
+                    val = (info, app.usernameL)
+                    app.cursor.execute(sql, val)
+                if i == 2:
+                    sql = "UPDATE Zdravotnicke_zarizeni SET heslo = (?)  WHERE ico = (?)"
+                    val = (info, app.usernameL)
+                    app.cursor.execute(sql, val)
+                if i == 3:
+                    sql = "UPDATE Zdravotnicke_zarizeni SET telefon = (?)  WHERE ico = (?)"
+                    val = (info, app.usernameL)
+                    app.cursor.execute(sql, val)
+            i += 1
+
+        app.cursor.commit()
+
+    def on_pre_enter(self, *args):
+        app = MDApp.get_running_app()
+        select = app.cursor.execute('SELECT * FROM Zdravotnicke_zarizeni WHERE ico = ? ', app.usernameL)
+        self.set_info(select)
 
 
 class RegistrationWindow(Screen):
@@ -228,8 +258,6 @@ class AddTrashWindow(Screen):
             self.ids['spinner_icon'].icon = 'menu-down'
 
     def trash_successfulAdd(self):
-        app = MDApp.get_running_app()
-
         if self.ids['vybrany_odpad'].text == "":
             self.ids['Add_error_mess_Trash'].text = "* Povinné pole"
         elif self.ids['Add_trash_pole_mnozstvi'].text == "0":
@@ -246,6 +274,7 @@ class AddTrashWindow(Screen):
                 mnostvi = float(self.ids['Add_trash_pole_mnozstvi'].text) * 100
             else:
                 mnostvi = float(self.ids['Add_trash_pole_mnozstvi'].text)
+
             Snackbar(
                 text="Úspěšně vloženo",
                 snackbar_x="10dp",
