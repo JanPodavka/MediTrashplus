@@ -64,25 +64,26 @@
             spacing:20
             size_hint: .3,1
             pos_hint: {"center_x": .2, "center_y": .5}
-            MDTextField:
+            MDTextFieldRect:
                 mode: "rectangle"
-                id: reg_name
+                #hint_text: "Name"
+                id: user_name
                 size_hint: 1, .8
                 font_size: 0.65 * self.height
                 pos_hint: {"center_x": .5, "center_y": .5}
-            MDTextField:
-                id: reg_ico
+            MDTextFieldRect:
+                id: user_ico
                 font_size: 0.65 * self.height
                 size_hint: 1, .8
                 max_text_length: 9
                 pos_hint: {"center_x": .5, "center_y": .5}
-            MDTextField:
-                id: reg_address
+            MDTextFieldRect:
+                id: user_address
                 font_size: 0.65 * self.height
                 size_hint: 1, .8
                 pos_hint: {"center_x": .5, "center_y": .5}
             MDTextFieldRect:
-                id: reg_number
+                id: user_number
                 font_size: 0.65 * self.height
                 size_hint: 1, .8
                 pos_hint: {"center_x": .5, "center_y": .5}
@@ -92,7 +93,16 @@
             pos_hint: {"center_x": .6, "center_y": .5}
             orientation: "vertical"
             MDLabel:
-                id: reg_error_name
+                id: user_name_info
+                theme_text_color: "Custom"
+                text_color: 1,0,0,1
+
+                font_size: 0.40 * self.height
+                halign: "left"
+                size_hint: 1, .8
+                pos_hint: {"center_x": .5, "center_y": .5}
+            MDLabel:
+                id: user_ico_info
                 theme_text_color: "Custom"
                 text_color: 1,0,0,1
                 font_size: 0.40 * self.height
@@ -100,7 +110,7 @@
                 size_hint: 1, .8
                 pos_hint: {"center_x": .5, "center_y": .5}
             MDLabel:
-                id: reg_error_ico
+                id: user_address_info
                 theme_text_color: "Custom"
                 text_color: 1,0,0,1
                 font_size: 0.40 * self.height
@@ -108,21 +118,22 @@
                 size_hint: 1, .8
                 pos_hint: {"center_x": .5, "center_y": .5}
             MDLabel:
-                id: reg_error_address
+                id: user_number_info
                 theme_text_color: "Custom"
                 text_color: 1,0,0,1
                 font_size: 0.40 * self.height
                 halign: "left"
                 size_hint: 1, .8
                 pos_hint: {"center_x": .5, "center_y": .5}
-            MDLabel:
-                id: reg_error_number
-                theme_text_color: "Custom"
-                text_color: 1,0,0,1
-                font_size: 0.40 * self.height
-                halign: "left"
-                size_hint: 1, .8
-                pos_hint: {"center_x": .5, "center_y": .5}
+
+    Button:
+        id: change_info
+        pos_hint: {"center_x": .5, "center_y": .2}
+        size_hint:.05,.05
+        text: "upravit"
+        on_press:
+            root.clear_info()
+
     Image:
         source: 'obrazky/line3.png'
         size_hint_x: 1

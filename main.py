@@ -85,7 +85,21 @@ class MainWindow(Screen):
 
 
 class ProfileWindow(Screen):
-    pass
+
+    def clear_info(self):
+        self.ids['user_name'].text = ""
+        self.ids['user_ico'].text = ""
+        self.ids['user_address'].text = ""
+        self.ids['user_number'].text = ""
+
+    def on_pre_enter(self, *args):
+        app = MDApp.get_running_app()
+        app.cursor.execute('SELECT * FROM Zdravotnicke_zarizeni WHERE ico = ? ', app.usernameL)
+        for row in app.cursor:
+            self.ids['user_name'].hint_text = row[1]
+            self.ids['user_ico'].hint_text = row[3]
+            self.ids['user_address'].hint_text = row[2]
+            self.ids['user_number'].hint_text = row[4]
 
 
 class RegistrationWindow(Screen):
@@ -211,6 +225,9 @@ class AddTrashWindow(Screen):
             snackbar_y="10dp",
             bg_color=(0, 0, 0, .2)
         ).open()
+
+    def remove_item(self):
+        self.ids.container.clear_widgets()
 
 
 class WindowManager(ScreenManager):
