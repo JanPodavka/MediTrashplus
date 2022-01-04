@@ -185,6 +185,7 @@ class RegistrationWindow(Screen):
                self.ids['reg_ico'].text,
                self.ids['reg_number'].text
                )
+
         app.cursor.execute(sql, val)
         app.cursor.commit()
 
