@@ -206,12 +206,15 @@ class RegistrationWindow(Screen):
 
 class AddTrashWindow(Screen):
 
+
     def choosenTrash(self,n):
         self.ids['vybrany_odpad'].text = n[0]
         self.ids['Add_error_mess_Trash'].text = ""
 
     def on_pre_enter(self, *args):
         app = MDApp.get_running_app()
+        self.ids['vybrany_odpad'].text = ""
+        self.ids['Add_trash_pole_mnozstvi'].text = "0"
         app.cursor.execute('SELECT * FROM Katalog_odpadu')
         for row in app.cursor:
             widget = TwoLineListItem(text=f"{row[0]}", secondary_text=f"{row[1]}", on_release = lambda x,n=row: self.choosenTrash(n))
@@ -225,6 +228,8 @@ class AddTrashWindow(Screen):
             self.ids['spinner_icon'].icon = 'menu-down'
 
     def trash_successfulAdd(self):
+        app = MDApp.get_running_app()
+
         if self.ids['vybrany_odpad'].text == "":
             self.ids['Add_error_mess_Trash'].text = "* Povinné pole"
         elif self.ids['Add_trash_pole_mnozstvi'].text == "0":
@@ -241,7 +246,6 @@ class AddTrashWindow(Screen):
                 mnostvi = float(self.ids['Add_trash_pole_mnozstvi'].text) * 100
             else:
                 mnostvi = float(self.ids['Add_trash_pole_mnozstvi'].text)
-
             Snackbar(
                 text="Úspěšně vloženo",
                 snackbar_x="10dp",
