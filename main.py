@@ -237,6 +237,7 @@ class AddTrashWindow(Screen):
 
     def choosenTrash(self, n):
         self.ids['vybrany_odpad'].text = n[0]
+        self.ids['Add_error_mess_Trash'].text = ""
 
     def on_pre_enter(self, *args):
         app = MDApp.get_running_app()
@@ -254,12 +255,29 @@ class AddTrashWindow(Screen):
             self.ids['spinner_icon'].icon = 'menu-down'
 
     def trash_successfulAdd(self):
-        Snackbar(
-            text="Úspěšně vloženo",
-            snackbar_x="10dp",
-            snackbar_y="10dp",
-            bg_color=(0, 0, 0, .2)
-        ).open()
+        if self.ids['vybrany_odpad'].text == "":
+            self.ids['Add_error_mess_Trash'].text = "* Povinné pole"
+        elif self.ids['Add_trash_pole_mnozstvi'].text == "0":
+            self.ids['Add_error_mess_Vaha'].text = "* Povinné pole"
+        elif self.ids['Add_trash_pole_mnozstvi'].text == "":
+            self.ids['Add_error_mess_Vaha'].text = "* Povinné pole"
+        elif not self.ids['Add_trash_pole_mnozstvi'].text.isnumeric():
+            self.ids['Add_error_mess_Vaha'].text = "* Nečíselná hodnota"
+        else:
+            self.ids['Add_error_mess_Vaha'].text = ""
+            if self.ids['drop_item'].text == "kg":
+                mnostvi = float(self.ids['Add_trash_pole_mnozstvi'].text) * 1000
+            elif self.ids['drop_item'].text == "dg":
+                mnostvi = float(self.ids['Add_trash_pole_mnozstvi'].text) * 100
+            else:
+                mnostvi = float(self.ids['Add_trash_pole_mnozstvi'].text)
+
+            Snackbar(
+                text="Úspěšně vloženo",
+                snackbar_x="10dp",
+                snackbar_y="10dp",
+                bg_color=(0, 0, 0, .2)
+            ).open()
 
     def remove_item(self):
         self.ids.container.clear_widgets()

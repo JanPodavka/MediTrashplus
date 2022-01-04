@@ -24,7 +24,6 @@
             font_size: 0.32 * self.height
             on_press:
                 app.root.current = 'addtrash'
-                root.remove_item()
         Button:
             text: "Historie"
             background_color: (.0, .0, .0, .45)
@@ -46,9 +45,10 @@
             size_hint_x: .28
             halign: 'right'
             text: "Množství"
-            font_size: 0.5 * self.height
+            font_size: 0.53 * self.height
 
         MDTextFieldRect:
+            id: Add_trash_pole_mnozstvi
             halign: "center"
             text: "0"
             font_size: 0.6 * self.height
@@ -57,8 +57,8 @@
             size_hint_y: 1.1
             size_hint_x: .22
             id: drop_item
-            text: "kg"
-            values: ["kg","dg","g"]
+            text: "g"
+            values: ["g","dg","kg"]
             font_size: 0.5 * self.height
             sync_height: True
             background_color: color_button if self.state == 'normal' else color_button_pressed
@@ -74,9 +74,6 @@
         MDList:
             id: container
 
-
-
-
     MDRoundFlatButton:
         text: "Vložit"
         size_hint: .2,.07
@@ -87,10 +84,29 @@
 
     MDTextFieldRect:
         id: vybrany_odpad
-        halign: "center"
-        font_size: 0.55 * self.height
-        size_hint: .3, .05
-        pos_hint: {"center_x": .75, "center_y": .5}
+        readonly: True
+        halign: "left"
+        font_size: 0.57 * self.height
+        size_hint: .31, .05
+        pos_hint: {"center_x": .75, "center_y": .3}
+
+    MDLabel:
+        id: Add_error_mess_Trash
+        theme_text_color: "Custom"
+        text_color: 1,0,0,1
+        font_size: 0.1 * self.height
+        halign: "left"
+        size_hint: .2, .2
+        pos_hint: {"center_x": .9, "center_y": .3}
+
+    MDLabel:
+        id: Add_error_mess_Vaha
+        theme_text_color: "Custom"
+        text_color: 1,0,0,1
+        font_size: 0.1 * self.height
+        halign: "left"
+        size_hint: .2, .2
+        pos_hint: {"center_x": .84, "center_y": .70}
 
     Image:
         source: 'obrazky/line3.png'
