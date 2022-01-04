@@ -16,7 +16,6 @@ from datetime import date
 from kivymd.uix.snackbar import Snackbar
 from datetime import datetime
 import locale
-
 locale.setlocale(locale.LC_TIME, "cs_CZ")
 
 
