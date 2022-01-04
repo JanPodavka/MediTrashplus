@@ -19,7 +19,6 @@ import locale
 
 locale.setlocale(locale.LC_TIME, "cs_CZ")
 
-
 class LoginWindow(Screen):
 
     def login_write(self):
@@ -76,13 +75,11 @@ class LoginWindow(Screen):
         self.ids['password'].text = ""
         self.ids['log_remember_user'].active = False
 
-
 class MainWindow(Screen):
 
     def on_enter(self, *args):
         self.ids['main_day_of_week'].text = 'Dnes je ' + datetime.today().strftime('%A') + ' ' + date.today().strftime(
             "%d. %m. %Y")
-
 
 class ProfileWindow(Screen):
 
@@ -130,7 +127,6 @@ class ProfileWindow(Screen):
         app = MDApp.get_running_app()
         select = app.cursor.execute('SELECT * FROM Zdravotnicke_zarizeni WHERE ico = ? ', app.usernameL)
         self.set_info(select)
-
 
 class RegistrationWindow(Screen):
 
@@ -233,12 +229,12 @@ class RegistrationWindow(Screen):
         app.cursor.execute(sql, val)
         app.cursor.commit()
 
-
 class AddTrashWindow(Screen):
 
-
     def choosenTrash(self,n):
+        app = MDApp.get_running_app()
         self.ids['vybrany_odpad'].text = n[0]
+        app.vybrany_odpad = n[1]
         self.ids['Add_error_mess_Trash'].text = ""
 
     def on_pre_enter(self, *args):
@@ -258,6 +254,7 @@ class AddTrashWindow(Screen):
             self.ids['spinner_icon'].icon = 'menu-down'
 
     def trash_successfulAdd(self):
+        app = MDApp.get_running_app()
         if self.ids['vybrany_odpad'].text == "":
             self.ids['Add_error_mess_Trash'].text = "* Povinné pole"
         elif self.ids['Add_trash_pole_mnozstvi'].text == "0":
@@ -269,12 +266,31 @@ class AddTrashWindow(Screen):
         else:
             self.ids['Add_error_mess_Vaha'].text = ""
             if self.ids['drop_item'].text == "kg":
-                mnostvi = float(self.ids['Add_trash_pole_mnozstvi'].text) * 1000
+                mnozstvi = float(self.ids['Add_trash_pole_mnozstvi'].text) * 1000
             elif self.ids['drop_item'].text == "dg":
-                mnostvi = float(self.ids['Add_trash_pole_mnozstvi'].text) * 100
+                mnozstvi = float(self.ids['Add_trash_pole_mnozstvi'].text) * 100
             else:
-                mnostvi = float(self.ids['Add_trash_pole_mnozstvi'].text)
+                mnozstvi = float(self.ids['Add_trash_pole_mnozstvi'].text)
 
+            SQL = ('SELECT COUNT(*) FROM Odpad WHERE zdravotnicke_zarizeni_ico = (?)')
+            val = (app.usernameL)
+            pocet = app.cursor.execute(SQL, val)
+
+            if pocet.fetchone()[0] == 0:
+                id_odpadu = 1
+            else:
+                SQL = ('SELECT max(id) FROM Odpad WHERE zdravotnicke_zarizeni_ico = (?)')
+                val = (app.usernameL)
+                nacteny = app.cursor.execute(SQL, val)
+                id_odpadu = nacteny.fetchone()[0] + 1
+
+
+
+
+            SQL = ('INSERT INTO Odpad (id, mnozstvi, datum_uskladneni, katalogove_cislo,zdravotnicke_zarizeni_ico,odevezeno) VALUES (?,?,?,?,?,?)')
+            val = (id_odpadu, int(mnozstvi),date.today().strftime("%d. %m. %Y"), app.vybrany_odpad,app.usernameL,"ne")
+            app.cursor.execute(SQL,val)
+            app.cursor.commit()
             Snackbar(
                 text="Úspěšně vloženo",
                 snackbar_x="10dp",
@@ -289,7 +305,6 @@ class AddTrashWindow(Screen):
 class WindowManager(ScreenManager):
     pass
 
-
 class MeditrashApp(MDApp):
 
     def __init__(self, **kwargs):
@@ -299,6 +314,7 @@ class MeditrashApp(MDApp):
         self.cursor = connection.cursor()
 
     def build(self):
+        vybrany_odpad = StringProperty(None)
         usernameL = StringProperty(None)
         passwordL = StringProperty(None)
         self.theme_cls.theme_style = "Light"
