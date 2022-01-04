@@ -44,6 +44,7 @@ class LoginWindow(Screen):
             f.write("")
             f.close()
 
+
     def login_show_password(self):
         self.ids['password'].password = not self.ids['password'].password
         if self.ids['password'].password:
