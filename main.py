@@ -88,14 +88,14 @@ class ProfileWindow(Screen):
 
     def clear_info(self):
         self.ids['user_name'].text = ""
-        self.ids['user_ico'].text = ""
+        self.ids['user_heslo'].text = ""
         self.ids['user_address'].text = ""
         self.ids['user_number'].text = ""
 
     def set_info(self, select):
         for row in select:
             self.ids['user_name'].hint_text = row[1]
-            self.ids['user_ico'].hint_text = row[3]
+            self.ids['user_heslo'].hint_text = row[3]
             self.ids['user_address'].hint_text = row[2]
             self.ids['user_number'].hint_text = row[4]
 
@@ -115,15 +115,16 @@ class ProfileWindow(Screen):
                     val = (info, app.usernameL)
                     app.cursor.execute(sql, val)
                 if i == 2:
-                    sql = "UPDATE Zdravotnicke_zarizeni SET ico = (?)  WHERE ico = (?)"
+                    sql = "UPDATE Zdravotnicke_zarizeni SET heslo = (?)  WHERE ico = (?)"
                     val = (info, app.usernameL)
                     app.cursor.execute(sql, val)
-                    app.cursor.commit()
                 if i == 3:
                     sql = "UPDATE Zdravotnicke_zarizeni SET telefon = (?)  WHERE ico = (?)"
                     val = (info, app.usernameL)
                     app.cursor.execute(sql, val)
             i += 1
+
+        app.cursor.commit()
 
     def on_pre_enter(self, *args):
         app = MDApp.get_running_app()
