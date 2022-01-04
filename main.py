@@ -16,7 +16,6 @@ from datetime import date
 from kivymd.uix.snackbar import Snackbar
 from datetime import datetime
 import locale
-
 locale.setlocale(locale.LC_TIME, "cs_CZ")
 
 
@@ -206,11 +205,16 @@ class RegistrationWindow(Screen):
 
 class AddTrashWindow(Screen):
 
+    def choosenTrash(self,n):
+        self.ids['vybrany_odpad'].text = n[0]
+
     def on_pre_enter(self, *args):
         app = MDApp.get_running_app()
         app.cursor.execute('SELECT * FROM Katalog_odpadu')
         for row in app.cursor:
-            self.ids['container'].add_widget(TwoLineListItem(text=f"{row[0]}", secondary_text=f"{row[1]}"))
+            widget = TwoLineListItem(text=f"{row[0]}", secondary_text=f"{row[1]}", on_release = lambda x,n=row: self.choosenTrash(n))
+            self.ids['container'].add_widget(widget)
+            #self.ids['container'].add_widget(TwoLineListItem(text=f"{row[0]}", secondary_text=f"{row[1]}"))
 
     def trash_change_spinner_icon(self):
         if self.ids['spinner_icon'].icon == 'menu-down':
@@ -228,6 +232,8 @@ class AddTrashWindow(Screen):
 
     def remove_item(self):
         self.ids.container.clear_widgets()
+
+
 
 
 class WindowManager(ScreenManager):
