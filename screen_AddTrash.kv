@@ -61,6 +61,7 @@
             height: 60
             background_color: color_button if self.state == 'normal' else color_button_pressed
             option_cls: Factory.get("MySpinnerOption")
+
     ScrollView:
         size_hint: .4, .45
         pos_hint: {"center_x": .3, "center_y": .6}
@@ -70,8 +71,6 @@
         scroll_type: ['bars']
         MDList:
             id: container
-            size_hint_y: None
-            height: .5
 
 
     MDRoundFlatButton:
