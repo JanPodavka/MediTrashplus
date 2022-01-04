@@ -41,7 +41,7 @@
             orientation: "vertical"
             MDLabel:
                 text: "Jméno"
-                halign: "center"
+                halign: "right"
                 size_hint: 1, .8
                 pos_hint: {"center_x": .5, "center_y": .5}
             MDLabel:
@@ -132,7 +132,8 @@
         size_hint:.05,.05
         text: "upravit"
         on_press:
-            root.clear_info()
+            #root.clear_info()
+            root.change_info([user_name.text,user_address.text,user_ico.text,user_number.text])
 
     Image:
         source: 'obrazky/line3.png'

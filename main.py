@@ -16,6 +16,7 @@ from datetime import date
 from kivymd.uix.snackbar import Snackbar
 from datetime import datetime
 import locale
+
 locale.setlocale(locale.LC_TIME, "cs_CZ")
 
 
@@ -43,7 +44,6 @@ class LoginWindow(Screen):
             f = open("data/reg_remember_user.txt", "w")
             f.write("")
             f.close()
-
 
     def login_show_password(self):
         self.ids['password'].password = not self.ids['password'].password
@@ -92,14 +92,43 @@ class ProfileWindow(Screen):
         self.ids['user_address'].text = ""
         self.ids['user_number'].text = ""
 
-    def on_pre_enter(self, *args):
-        app = MDApp.get_running_app()
-        app.cursor.execute('SELECT * FROM Zdravotnicke_zarizeni WHERE ico = ? ', app.usernameL)
-        for row in app.cursor:
+    def set_info(self, select):
+        for row in select:
             self.ids['user_name'].hint_text = row[1]
             self.ids['user_ico'].hint_text = row[3]
             self.ids['user_address'].hint_text = row[2]
             self.ids['user_number'].hint_text = row[4]
+
+    def change_info(self, select):
+        app = MDApp.get_running_app()
+
+        i = 0
+        for info in select:
+            print(info)
+            if info is not "":
+                if i == 0:
+                    sql = "UPDATE Zdravotnicke_zarizeni SET nazev = (?)  WHERE ico = (?)"
+                    val = (info, app.usernameL)
+                    app.cursor.execute(sql, val)
+                if i == 1:
+                    sql = "UPDATE Zdravotnicke_zarizeni SET mesto = (?)  WHERE ico = (?)"
+                    val = (info, app.usernameL)
+                    app.cursor.execute(sql, val)
+                if i == 2:
+                    sql = "UPDATE Zdravotnicke_zarizeni SET ico = (?)  WHERE ico = (?)"
+                    val = (info, app.usernameL)
+                    app.cursor.execute(sql, val)
+                    app.cursor.commit()
+                if i == 3:
+                    sql = "UPDATE Zdravotnicke_zarizeni SET telefon = (?)  WHERE ico = (?)"
+                    val = (info, app.usernameL)
+                    app.cursor.execute(sql, val)
+            i += 1
+
+    def on_pre_enter(self, *args):
+        app = MDApp.get_running_app()
+        select = app.cursor.execute('SELECT * FROM Zdravotnicke_zarizeni WHERE ico = ? ', app.usernameL)
+        self.set_info(select)
 
 
 class RegistrationWindow(Screen):
@@ -206,16 +235,17 @@ class RegistrationWindow(Screen):
 
 class AddTrashWindow(Screen):
 
-    def choosenTrash(self,n):
+    def choosenTrash(self, n):
         self.ids['vybrany_odpad'].text = n[0]
 
     def on_pre_enter(self, *args):
         app = MDApp.get_running_app()
         app.cursor.execute('SELECT * FROM Katalog_odpadu')
         for row in app.cursor:
-            widget = TwoLineListItem(text=f"{row[0]}", secondary_text=f"{row[1]}", on_release = lambda x,n=row: self.choosenTrash(n))
+            widget = TwoLineListItem(text=f"{row[0]}", secondary_text=f"{row[1]}",
+                                     on_release=lambda x, n=row: self.choosenTrash(n))
             self.ids['container'].add_widget(widget)
-            #self.ids['container'].add_widget(TwoLineListItem(text=f"{row[0]}", secondary_text=f"{row[1]}"))
+            # self.ids['container'].add_widget(TwoLineListItem(text=f"{row[0]}", secondary_text=f"{row[1]}"))
 
     def trash_change_spinner_icon(self):
         if self.ids['spinner_icon'].icon == 'menu-down':
@@ -233,8 +263,6 @@ class AddTrashWindow(Screen):
 
     def remove_item(self):
         self.ids.container.clear_widgets()
-
-
 
 
 class WindowManager(ScreenManager):
