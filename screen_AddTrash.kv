@@ -52,13 +52,13 @@
             font_size: 0.6 * self.height
             size_hint_x: .5
         Spinner:
+            size_hint_y: 1.1
+            size_hint_x: .22
             id: drop_item
             text: "kg"
             values: ["kg","dg","g"]
-            size_hint_x: .22
             font_size: 0.5 * self.height
             sync_height: True
-            height: 60
             background_color: color_button if self.state == 'normal' else color_button_pressed
             option_cls: Factory.get("MySpinnerOption")
 
@@ -81,10 +81,6 @@
         on_press:
             root.trash_successfulAdd()
 
-    #MDIconButton:
-        #id: spinner_icon
-        #pos_hint: {"center_x": .895, "center_y": .75}
-        #disabled: True
 
     Image:
         source: 'obrazky/line3.png'
