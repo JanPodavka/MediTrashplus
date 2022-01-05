@@ -1,4 +1,5 @@
 from kivy import Config
+from kivymd.uix.datatables import MDDataTable
 
 Config.set('graphics', 'width', '800')
 Config.set('graphics', 'height', '600')
@@ -21,10 +22,49 @@ import locale
 
 locale.setlocale(locale.LC_TIME, "cs_CZ")
 
+
+class HistoryWindow(Screen):
+    def on_pre_enter(self, *args):
+        app = MDApp.get_running_app()
+        print(app.usernameL)
+        print(app.passwordL)
+        SQL = "SELECT nazev,mnozstvi,kategorie,datum_uskladneni,ISNULL(datum_odvozu,'neodvezeno') FROM Odpad," \
+              "Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = (?) "
+        val = app.passwordL
+        data = app.cursor.execute(SQL, val)
+        hist_data = []
+        for row in data:
+            print(row)
+            hist_data.append(row)
+
+        print(hist_data)
+        table = MDDataTable(
+            pos_hint={'center_x': 0.5, 'center_y': 0.5},
+            size_hint=(0.9, 0.6),
+            use_pagination=True,
+            rows_num=5,
+            pagination_menu_height='240dp',
+            pagination_menu_pos="auto",
+            background_color=[1, 0, 0, .5],
+            column_data=[
+                ("Název", 30),
+                ("Váha (g)", 30),
+                ("Kategorie", 30),
+                ("Uskladněno", 30),
+                ("Datum odvozu", 30),
+            ],
+            row_data=hist_data,
+        )
+        self.ids['table'].add_widget(table)
+
+
+class OdvozWindow(Screen):
+    pass
+
+
 class LoginWindow(Screen):
 
     def login_write(self):
-        app = MDApp.get_running_app()
         with open('data/reg_remember_user.txt') as f:
             lines = f.readlines()
         if len(lines) > 0:
@@ -120,6 +160,7 @@ class ProfileWindow(Screen):
                 if i == 2:
                     sql = "UPDATE Zdravotnicke_zarizeni SET heslo = (?)  WHERE ico = (?)"
                     val = (info, app.usernameL)
+                    app.passwordL = info
                     app.cursor.execute(sql, val)
                 if i == 3:
                     sql = "UPDATE Zdravotnicke_zarizeni SET telefon = (?)  WHERE ico = (?)"
