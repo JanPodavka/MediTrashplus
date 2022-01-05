@@ -39,13 +39,12 @@
         pos_hint: {"center_x": .5, "center_y": .09}
 
     MDFloatingActionButtonSpeedDial:
-        hint_animation: True
         data: app.data
-        root_button_anim: True
-        label_text_color: 0,0,0,1
-        bg_hint_color: 0,0,0,.2
-        icon: "pencil"
+        hint_animation: True
         right_pad: True
+        root_button_anim: True
+        bg_hint_color: app.theme_cls.primary_light
+        icon: "pencil"
         callback: app.callback_update_profile
 
 
