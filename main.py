@@ -139,6 +139,9 @@ class MainWindow(Screen):
 class Popup_psswd(BoxLayout):
     pass
 
+class Popup_info(BoxLayout):
+    pass
+
 class ProfileWindow(Screen):
 
 
@@ -375,7 +378,25 @@ class MeditrashApp(MDApp):
             )
             self.dialog.open()
         elif instance.icon == "account-edit-outline":
-            pass
+            self.dialog = MDDialog(
+                title="Upravit profil",
+                radius=[20, 20, 20, 20],
+                size_hint=[.5, .8],
+                type="custom",
+                auto_dismiss=False,
+                content_cls=Popup_info(),
+                buttons=[
+                    MDFlatButton(
+                        text="Zpět",
+                        on_release=self.close_dialog
+                    ),
+                    MDFlatButton(
+                        text="Uložit",
+                        #on_release=self.update_psswd
+                    ),
+                ],
+            )
+            self.dialog.open()
         else:
             self.root.current = "login"
             #self.current = "login"
