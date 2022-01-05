@@ -53,6 +53,7 @@ class HistoryWindow(Screen):
         )
         self.ids['table'].add_widget(table)
 
+
     def on_leave(self, *args):
         self.ids.table.clear_widgets()
 
