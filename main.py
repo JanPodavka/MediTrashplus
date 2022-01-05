@@ -1,6 +1,4 @@
 from kivy import Config
-from kivy.uix.anchorlayout import AnchorLayout
-from kivymd.uix.datatables import MDDataTable
 
 Config.set('graphics', 'width', '800')
 Config.set('graphics', 'height', '600')
@@ -9,7 +7,6 @@ Config.set('graphics', 'minimum_height', '600')
 from kivy.lang import Builder
 from kivymd.uix.list import TwoLineListItem
 from kivy.uix.screenmanager import ScreenManager
-from kivymd.app import MDApp
 from kivymd.uix.screen import Screen
 import pyodbc
 from kivy.properties import StringProperty
@@ -17,6 +14,9 @@ from kivymd.uix.dialog import MDDialog
 from datetime import date
 from kivymd.uix.snackbar import Snackbar
 from datetime import datetime
+from kivymd.app import MDApp
+from kivymd.uix.button import MDFlatButton
+from kivy.uix.boxlayout import BoxLayout
 import locale
 
 locale.setlocale(locale.LC_TIME, "cs_CZ")
@@ -113,13 +113,14 @@ class LoginWindow(Screen):
         self.ids['password'].text = ""
         self.ids['log_remember_user'].active = False
 
-
 class MainWindow(Screen):
 
     def on_enter(self, *args):
         self.ids['main_day_of_week'].text = 'Dnes je ' + datetime.today().strftime('%A') + ' ' + date.today().strftime(
             "%d. %m. %Y")
 
+class Content(BoxLayout):
+    pass
 
 class ProfileWindow(Screen):
 
@@ -129,6 +130,7 @@ class ProfileWindow(Screen):
         self.ids['user_address'].text = ""
         self.ids['user_number'].text = ""
 
+    dialog = None
     def set_info(self, select):
         for row in select:
             self.ids['user_name'].hint_text = row[1]
@@ -169,6 +171,68 @@ class ProfileWindow(Screen):
         select = app.cursor.execute('SELECT * FROM Zdravotnicke_zarizeni WHERE ico = ? ', app.usernameL)
         self.set_info(select)
 
+    def dialog_close(self, *args):
+        self.dialog.dismiss(force=True)
+
+    def update_psswd(self, *args):
+        app = MDApp.get_running_app()
+        valid = True
+        SQL_heslo = ('SELECT heslo FROM Zdravotnicke_zarizeni WHERE ico = ?')
+        val = (app.usernameL)
+        nacteny = app.cursor.execute(SQL_heslo, val)
+        stare_heslo = nacteny.fetchone()[0]
+        if self.dialog.content_cls.ids.profile_old_psswd.text != stare_heslo:
+            self.dialog.content_cls.ids.profile_old_psswd.error = True
+            self.dialog.content_cls.ids.profile_old_psswd.helper_text = "Chybné heslo"
+            valid = False
+        if self.dialog.content_cls.ids.profile_new_psswd.text == "":
+            self.dialog.content_cls.ids.profile_new_psswd.error = True
+            self.dialog.content_cls.ids.profile_new_psswd.helper_text = "Povinné pole"
+            valid = False
+        if self.dialog.content_cls.ids.profile_new_psswd_check.text == "":
+            self.dialog.content_cls.ids.profile_new_psswd_check.error = True
+            self.dialog.content_cls.ids.profile_new_psswd_check.helper_text = "Povinné pole"
+            valid = False
+        elif self.dialog.content_cls.ids.profile_new_psswd.text != self.dialog.content_cls.ids.profile_new_psswd_check.text:
+            self.dialog.content_cls.ids.profile_new_psswd.error = True
+            self.dialog.content_cls.ids.profile_new_psswd.helper_text = "Hesla se neshodují"
+            valid = False
+
+        if valid:
+            sql = "UPDATE Zdravotnicke_zarizeni SET heslo = (?) WHERE ico = ? "
+            val = (self.dialog.content_cls.ids.profile_new_psswd.text,app.usernameL)
+            app.cursor.execute(sql, val)
+            app.cursor.commit()
+            self.dialog.dismiss(force=True)
+            Snackbar(
+                text="Heslo úspěšně změněno",
+                snackbar_x="10dp",
+                snackbar_y="10dp",
+                bg_color=(0, 0, 0, .2)
+            ).open()
+
+
+    def change_psswd(self):
+        app = MDApp.get_running_app()
+        self.dialog = MDDialog(
+            title="Změnit heslo",
+            radius=[20, 20, 20, 20],
+            size_hint=[.5, .6],
+            type="custom",
+            auto_dismiss=False,
+            content_cls=Content(),
+            buttons=[
+                MDFlatButton(
+                    text="Zpět",
+                    on_release=self.dialog_close
+                ),
+                MDFlatButton(
+                    text="Uložit",
+                    on_release=self.update_psswd
+                ),
+            ],
+        )
+        self.dialog.open()
 
 class RegistrationWindow(Screen):
 
@@ -271,21 +335,23 @@ class RegistrationWindow(Screen):
         app.cursor.execute(sql, val)
         app.cursor.commit()
 
-
 class AddTrashWindow(Screen):
 
-    def choosenTrash(self, n):
+    def choosenTrash(self,n):
+        app = MDApp.get_running_app()
         self.ids['vybrany_odpad'].text = n[0]
+        app.vybrany_odpad = n[1]
         self.ids['Add_error_mess_Trash'].text = ""
 
     def on_pre_enter(self, *args):
         app = MDApp.get_running_app()
+        self.ids['vybrany_odpad'].text = ""
+        self.ids['Add_trash_pole_mnozstvi'].text = "0"
         app.cursor.execute('SELECT * FROM Katalog_odpadu')
         for row in app.cursor:
-            widget = TwoLineListItem(text=f"{row[0]}", secondary_text=f"{row[1]}",
-                                     on_release=lambda x, n=row: self.choosenTrash(n))
+            widget = TwoLineListItem(text=f"{row[0]}", secondary_text=f"{row[1]}", on_release = lambda x,n=row: self.choosenTrash(n))
             self.ids['container'].add_widget(widget)
-            # self.ids['container'].add_widget(TwoLineListItem(text=f"{row[0]}", secondary_text=f"{row[1]}"))
+            #self.ids['container'].add_widget(TwoLineListItem(text=f"{row[0]}", secondary_text=f"{row[1]}"))
 
     def trash_change_spinner_icon(self):
         if self.ids['spinner_icon'].icon == 'menu-down':
@@ -294,6 +360,7 @@ class AddTrashWindow(Screen):
             self.ids['spinner_icon'].icon = 'menu-down'
 
     def trash_successfulAdd(self):
+        app = MDApp.get_running_app()
         if self.ids['vybrany_odpad'].text == "":
             self.ids['Add_error_mess_Trash'].text = "* Povinné pole"
         elif self.ids['Add_trash_pole_mnozstvi'].text == "0":
@@ -305,12 +372,31 @@ class AddTrashWindow(Screen):
         else:
             self.ids['Add_error_mess_Vaha'].text = ""
             if self.ids['drop_item'].text == "kg":
-                mnostvi = float(self.ids['Add_trash_pole_mnozstvi'].text) * 1000
+                mnozstvi = float(self.ids['Add_trash_pole_mnozstvi'].text) * 1000
             elif self.ids['drop_item'].text == "dg":
-                mnostvi = float(self.ids['Add_trash_pole_mnozstvi'].text) * 100
+                mnozstvi = float(self.ids['Add_trash_pole_mnozstvi'].text) * 100
             else:
-                mnostvi = float(self.ids['Add_trash_pole_mnozstvi'].text)
+                mnozstvi = float(self.ids['Add_trash_pole_mnozstvi'].text)
 
+            SQL = ('SELECT COUNT(*) FROM Odpad WHERE zdravotnicke_zarizeni_ico = (?)')
+            val = (app.usernameL)
+            pocet = app.cursor.execute(SQL, val)
+
+            if pocet.fetchone()[0] == 0:
+                id_odpadu = 1
+            else:
+                SQL = ('SELECT max(id) FROM Odpad WHERE zdravotnicke_zarizeni_ico = (?)')
+                val = (app.usernameL)
+                nacteny = app.cursor.execute(SQL, val)
+                id_odpadu = nacteny.fetchone()[0] + 1
+
+
+
+
+            SQL = ('INSERT INTO Odpad (id, mnozstvi, datum_uskladneni, katalogove_cislo,zdravotnicke_zarizeni_ico,odevezeno) VALUES (?,?,?,?,?,?)')
+            val = (id_odpadu, int(mnozstvi),date.today().strftime("%d. %m. %Y"), app.vybrany_odpad,app.usernameL,"ne")
+            app.cursor.execute(SQL,val)
+            app.cursor.commit()
             Snackbar(
                 text="Úspěšně vloženo",
                 snackbar_x="10dp",
@@ -321,10 +407,8 @@ class AddTrashWindow(Screen):
     def remove_item(self):
         self.ids.container.clear_widgets()
 
-
 class WindowManager(ScreenManager):
     pass
-
 
 class MeditrashApp(MDApp):
 
@@ -335,6 +419,7 @@ class MeditrashApp(MDApp):
         self.cursor = connection.cursor()
 
     def build(self):
+        vybrany_odpad = StringProperty(None)
         usernameL = StringProperty(None)
         passwordL = StringProperty(None)
         self.theme_cls.theme_style = "Light"

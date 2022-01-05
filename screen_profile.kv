@@ -1,6 +1,6 @@
 <ProfileWindow>:
     name:'profile'
-# Navbbar
+
     MDBoxLayout:
         pos_hint: {"center_x": .5, "center_y": .965}
         size_hint: 1, .08
@@ -32,10 +32,7 @@
             source: 'obrazky/logo.png'
             background_color: (.0, .0, .0, .45)
 
-#    MDLabel:
-#        text:"uživatelské údaje:"
-#        pos_hint: {"center_x": .5, "center_y": .8}
-#        size_hint: 1, .1
+
     BoxLayout:
         size_hint: 1, .4
         pos_hint: {"center_x": .5, "center_y": .6}
@@ -134,12 +131,45 @@
         id: change_info
         pos_hint: {"center_x": .5, "center_y": .2}
         size_hint:.05,.05
-        text: "upravit"
+        text: "Upravit Informace"
         on_press:
             #root.clear_info()
             root.change_info([user_name.text,user_address.text,user_heslo.text,user_number.text])
+
+    MDFillRoundFlatButton:
+        id: profile_change_psswd
+        pos_hint: {"center_x": .8, "center_y": .2}
+        size_hint:.09,.06
+        text: "Změnit heslo"
+        on_press:
+            root.change_psswd()
+
 
     Image:
         source: 'obrazky/line3.png'
         size_hint_x: 1
         pos_hint: {"center_x": .5, "center_y": .09}
+
+
+<Content>:
+    id: checker
+    orientation: "vertical"
+    spacing: "1dp"
+    size_hint_y: None
+    height: "180dp"
+
+    MDTextField:
+        id: profile_old_psswd
+        hint_text: "Původní heslo"
+        password: True
+
+    MDTextField:
+        id: profile_new_psswd
+        hint_text: "Nové heslo"
+        password: True
+
+    MDTextField:
+        id: profile_new_psswd_check
+        hint_text: "Nové heslo znovu"
+        password: True
+
