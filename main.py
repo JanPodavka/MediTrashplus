@@ -130,7 +130,20 @@ class Popup_psswd(BoxLayout):
     pass
 
 class ProfileWindow(Screen):
-    pass
+
+
+
+    def on_pre_enter(self, *args):
+        app = MDApp.get_running_app()
+        SQL = "SELECT * FROM Zdravotnicke_zarizeni WHERE ico = ? "
+        val = app.usernameL
+        data = app.cursor.execute(SQL, val)
+        for row in data:
+            udaje = row
+        self.ids['nazev_organizace'].text = udaje[1]
+        self.ids['adresa'].text = udaje[2]
+        self.ids['ico'].text = udaje[3]
+        self.ids['telefon'].text = udaje[4]
 
 class RegistrationWindow(Screen):
 
@@ -326,8 +339,9 @@ class MeditrashApp(MDApp):
         return screen
 
     data = {
-        "Upravit profil": "account-edit-outline",
         "Změnit heslo": "lock-reset",
+        "Upravit profil": "account-edit-outline",
+        "Odhlásit se": "logout-variant",
     }
     def callback_update_profile(self, instance):
         if instance.icon == "lock-reset": ##změna hesla
@@ -352,6 +366,9 @@ class MeditrashApp(MDApp):
             self.dialog.open()
         elif instance.icon == "account-edit-outline":
             pass
+        else:
+            self.root.current = "login"
+            #self.current = "login"
 
     def close_dialog(self,obj):
          self.dialog.dismiss()

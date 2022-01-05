@@ -31,21 +31,113 @@
             #    app.root.current = 'history'
         Image:
             source: 'obrazky/logo.png'
-
             background_color: (.0, .0, .0, .45)
+
+    MDCard:
+        size_hint: .4, .5
+        pos_hint: {"center_x": .48, "center_y": .45}
+        radius: [20, 20, 20, 20]
+        BoxLayout:
+            orientation: "horizontal"
+            BoxLayout:
+                size_hint_x: .03
+            BoxLayout:
+                orientation: "vertical"
+                size_hint_x: .07
+                BoxLayout:
+
+
+                BoxLayout:
+                    MDIcon:
+                        pos_hint: {"center_x": .75, "center_y": .5}
+                        icon:"map-marker"
+                BoxLayout:
+                    MDIcon:
+                        pos_hint: {"center_x": .75, "center_y": .5}
+                        icon: "card-account-details-outline"
+                BoxLayout:
+                    MDIcon:
+                        pos_hint: {"center_x": .75, "center_y": .4}
+                        icon: "phone"
+                BoxLayout:
+                    MDIcon:
+                        pos_hint: {"center_x": .75, "center_y": .5}
+                        icon: "email"
+            BoxLayout:
+                size_hint_x: 0.01
+            BoxLayout:
+                size_hint_x: .9
+                orientation: "vertical"
+                BoxLayout:
+                    size_hint_y: 0.15
+                BoxLayout:
+                    MDLabel:
+                        pos_hint: {"center_x": .75, "center_y": .5}
+                        font_size: self.width/16
+                        id: nazev_organizace
+                        bold: True
+                        halign: "center"
+                        valign: "middle"
+                MDNavigationDrawerDivider:
+                    pos_hint_x: .75
+                    size_x: 0.6
+                BoxLayout:
+                    BoxLayout:
+                        size_hint_x: 0.05
+                    MDLabel:
+                        pos_hint: {"center_x": .95, "center_y": .5}
+                        font_size: self.width/20
+                        id: adresa
+                        halign: "left"
+                MDNavigationDrawerDivider:
+                BoxLayout:
+                    BoxLayout:
+                        size_hint_x: 0.05
+                    MDLabel:
+                        pos_hint: {"center_x": .75, "center_y": .5}
+                        font_size: self.width/20
+                        id: ico
+                        halign: "left"
+                MDNavigationDrawerDivider:
+                BoxLayout:
+                    BoxLayout:
+                        size_hint_x: 0.05
+                    MDLabel:
+                        pos_hint: {"center_x": .75, "center_y": .5}
+                        font_size: self.width/20
+                        id: telefon
+                        halign: "left"
+                MDNavigationDrawerDivider:
+                BoxLayout:
+                    BoxLayout:
+                        size_hint_x: 0.05
+                    MDLabel:
+                        pos_hint: {"center_x": .75, "center_y": .5}
+                        font_size: self.width/20
+                        id: email
+                        halign: "left"
+            BoxLayout:
+                size_hint_x: 0.1
+
+    Image:
+        source: 'obrazky/rsz_doc.png'
+        size_hint_x: 0.2
+        allow_stretch: True
+        pos_hint: {"center_x": .2, "center_y": .7}
 
     Image:
         source: 'obrazky/line3.png'
         size_hint_x: 1
         pos_hint: {"center_x": .5, "center_y": .09}
 
+
     MDFloatingActionButtonSpeedDial:
         data: app.data
-        hint_animation: True
+        #hint_animation: True
         right_pad: True
         root_button_anim: True
         bg_hint_color: app.theme_cls.primary_light
-        icon: "pencil"
+        icon: "cog"
         callback: app.callback_update_profile
 
 
