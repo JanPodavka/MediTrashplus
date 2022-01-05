@@ -1,7 +1,6 @@
 <HistoryWindow>:
     name:"history"
 
-    # Navbbar
     MDBoxLayout:
         pos_hint: {"center_x": .5, "center_y": .965}
         size_hint: 1, .08
@@ -27,11 +26,9 @@
             text: "Historie"
             background_color: (.0, .0, .0, .45)
             font_size: 0.32 * self.height
-            on_press:
-                app.root.current = 'history'
+            #on_press:
+            #    app.root.current = 'history'
 
         Image:
             source: 'obrazky/logo.png'
             background_color: (.0, .0, .0, .45)
-    BoxLayout:
-        id: table
