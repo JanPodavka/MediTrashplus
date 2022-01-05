@@ -1,11 +1,16 @@
-from kivy import Config
-
-Config.set('graphics', 'width', '800')
-Config.set('graphics', 'height', '600')
-Config.set('graphics', 'minimum_width', '800')
-Config.set('graphics', 'minimum_height', '600')
+from screeninfo import get_monitors
+# for m in get_monitors():
+#     if m.is_primary:
+#         monitor = m
+#         break
+#
+# from kivy import Config
+# Config.set('graphics', 'minimum_width', monitor.width)
+# Config.set('graphics', 'minimum_height', monitor.height)
 from kivy.lang import Builder
 from kivymd.uix.list import TwoLineListItem
+from kivy.core.window import Window
+from kivymd.uix.datatables import MDDataTable
 from kivy.uix.screenmanager import ScreenManager
 from kivymd.uix.screen import Screen
 import pyodbc
@@ -28,34 +33,44 @@ class HistoryWindow(Screen):
     def on_pre_enter(self, *args):
 
         app = MDApp.get_running_app()
-        SQL = "SELECT nazev,mnozstvi,kategorie,datum_uskladneni,ISNULL(datum_odvozu,'neodvezeno') FROM Odpad," \
-              "Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = (?) "
+        SQL = "SELECT nazev,katalogove_cislo,mnozstvi,kategorie,datum_uskladneni,ISNULL(datum_odvozu,'neodvezeno'),ISNULL(opravnena_osoba_ico,'nepřiřazeno') FROM " \
+              "Odpad, Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = (?) "
         val = app.usernameL
         data = app.cursor.execute(SQL, val)
         hist_data = []
         for row in data:
+            if row[3] == 1:
+                row[3] = "nebezpečné"
+            else:
+                row[3] = "bezpečné"
+
             hist_data.append(row)
+
         table = MDDataTable(
             pos_hint={'center_x': 0.5, 'center_y': 0.5},
-            size_hint=(0.9, 0.6),
-            check=True,
+            size_hint=(.5, .6),
             use_pagination=True,
             rows_num=7,
+            check=True,
             pagination_menu_height='240dp',
             pagination_menu_pos="auto",
-            background_color=[1, 0, 0, .5],
-
+           # background_color=[1, 1, 1, 1],
             column_data=[
-                ("First Name", dp(30)),
-                ("Last Name", dp(30)),
-                ("Email Address", dp(30)),
-                ("Phone Number", dp(30))
+                ("Název", 45),
+                ("Katalogoé číslo", 45),
+                ("Váha (g)", 45),
+                ("Kategorie", 45),
+                ("Datum uskladnění", 45),
+                ("Datum odvozu", 45),
+                ("IČO Odvozce", 45),
             ],
-            row_data=hist_data
-
+            row_data=hist_data,
         )
+        self.ids['table'].add_widget(table)
 
-        self.add_widget(table)
+
+    def on_leave(self, *args):
+        self.ids.table.clear_widgets()
 
 class OdvozWindow(Screen):
     pass
