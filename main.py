@@ -26,17 +26,14 @@ locale.setlocale(locale.LC_TIME, "cs_CZ")
 class HistoryWindow(Screen):
     def on_pre_enter(self, *args):
         app = MDApp.get_running_app()
-        print(app.usernameL)
-        print(app.passwordL)
-        SQL = "SELECT nazev,mnozstvi,kategorie,datum_uskladneni,ISNULL(datum_odvozu,'neodvezeno') FROM Odpad," \
-              "Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = (?) "
-        val = app.passwordL
+        SQL = "SELECT nazev,mnozstvi,kategorie,datum_uskladneni,ISNULL(datum_odvozu,'neodvezeno') FROM " \
+              "Odpad, Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = (?) "
+        val = app.usernameL
         data = app.cursor.execute(SQL, val)
         hist_data = []
         for row in data:
             hist_data.append(row)
 
-        print(hist_data)
         table = MDDataTable(
             pos_hint={'center_x': 0.5, 'center_y': 0.5},
             size_hint=(0.9, 0.6),
@@ -56,6 +53,8 @@ class HistoryWindow(Screen):
         )
         self.ids['table'].add_widget(table)
 
+    def on_leave(self, *args):
+        self.ids.table.clear_widgets()
 
 class OdvozWindow(Screen):
     pass
