@@ -31,9 +31,10 @@ class HistoryWindow(Screen):
         SQL = "SELECT nazev,mnozstvi,kategorie,datum_uskladneni,ISNULL(datum_odvozu,'neodvezeno') FROM Odpad," \
               "Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = (?) "
         val = app.passwordL
-        app.cursor.execute(SQL, val)
+        data = app.cursor.execute(SQL, val)
         hist_data = []
-        for row in app.cursor:
+        for row in data:
+            print(row)
             hist_data.append(row)
 
         print(hist_data)
