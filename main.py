@@ -1,4 +1,5 @@
 from kivy import Config
+from kivymd.uix.datatables import MDDataTable
 
 Config.set('graphics', 'width', '800')
 Config.set('graphics', 'height', '600')
@@ -25,8 +26,10 @@ locale.setlocale(locale.LC_TIME, "cs_CZ")
 class HistoryWindow(Screen):
     def on_pre_enter(self, *args):
         app = MDApp.get_running_app()
-        SQL = "SELECT nazev,mnozstvi,kategorie,datum_uskladneni,ISNULL(datum_odvozu,'neodvezeno') FROM Odpad,Katalog_odpadu " \
-              "WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = (?)"
+        print(app.usernameL)
+        print(app.passwordL)
+        SQL = "SELECT nazev,mnozstvi,kategorie,datum_uskladneni,ISNULL(datum_odvozu,'neodvezeno') FROM Odpad," \
+              "Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = (?) "
         val = app.passwordL
         app.cursor.execute(SQL, val)
         hist_data = []
