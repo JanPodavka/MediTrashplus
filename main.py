@@ -34,7 +34,6 @@ class HistoryWindow(Screen):
         data = app.cursor.execute(SQL, val)
         hist_data = []
         for row in data:
-            print(row)
             hist_data.append(row)
 
         print(hist_data)
