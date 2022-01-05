@@ -27,8 +27,8 @@
             text: "Historie"
             background_color: (.0, .0, .0, .45)
             font_size: 0.32 * self.height
-            #on_press:
-            #    app.root.current = 'history'
+            on_press:
+                app.root.current = 'history'
         Image:
             source: 'obrazky/logo.png'
             background_color: (.0, .0, .0, .45)
@@ -78,9 +78,6 @@
                         bold: True
                         halign: "center"
                         valign: "middle"
-                MDNavigationDrawerDivider:
-                    pos_hint_x: .75
-                    size_x: 0.6
                 BoxLayout:
                     BoxLayout:
                         size_hint_x: 0.05
@@ -89,7 +86,6 @@
                         font_size: self.width/20
                         id: adresa
                         halign: "left"
-                MDNavigationDrawerDivider:
                 BoxLayout:
                     BoxLayout:
                         size_hint_x: 0.05
@@ -98,7 +94,6 @@
                         font_size: self.width/20
                         id: ico
                         halign: "left"
-                MDNavigationDrawerDivider:
                 BoxLayout:
                     BoxLayout:
                         size_hint_x: 0.05
@@ -107,7 +102,6 @@
                         font_size: self.width/20
                         id: telefon
                         halign: "left"
-                MDNavigationDrawerDivider:
                 BoxLayout:
                     BoxLayout:
                         size_hint_x: 0.05
