@@ -1,21 +1,15 @@
-from kivymd.uix.selectioncontrol import MDCheckbox
-from screeninfo import get_monitors
-# for m in get_monitors():
-#     if m.is_primary:
-#         monitor = m
-#         break
-#
-# from kivy import Config
-# Config.set('graphics', 'minimum_width', monitor.width)
-# Config.set('graphics', 'minimum_height', monitor.height)
+from kivy import Config
+
+Config.set('graphics', 'width', '800')
+Config.set('graphics', 'height', '600')
+Config.set('graphics', 'minimum_width', '800')
+Config.set('graphics', 'minimum_height', '600')
 from kivy.lang import Builder
-from kivymd.uix.list import TwoLineListItem, IRightBodyTouch, TwoLineAvatarIconListItem
-from kivy.core.window import Window
-from kivymd.uix.datatables import MDDataTable
+from kivymd.uix.list import TwoLineListItem
 from kivy.uix.screenmanager import ScreenManager
 from kivymd.uix.screen import Screen
 import pyodbc
-from kivy.properties import StringProperty, ObjectProperty
+from kivy.properties import StringProperty
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.datatables import MDDataTable
 from datetime import date
@@ -26,218 +20,45 @@ from kivymd.uix.button import MDFlatButton
 from kivy.uix.boxlayout import BoxLayout
 import locale
 from kivy.metrics import dp
-from matplotlib import pyplot as plt
-from kivy.garden.matplotlib import FigureCanvasKivyAgg
 
 locale.setlocale(locale.LC_TIME, "cs_CZ")
 
-class StatisticWindow(Screen):
-    def on_leave(self, *args):
-        self.ids['graf1'].clear_widgets()
-        self.ids['graf2'].clear_widgets()
-
-    def on_pre_enter(self, *args):
-        self.first_graph()
-
-    def second_graph(self, *args):
-        self.ids['graf1'].clear_widgets()
-        self.ids['graf2'].clear_widgets()
-        self.ids['neodvezeno'].background_color = [0, 0, 0, 0.5]
-        self.ids['celkem'].background_color = [0, 0, 0, 0.3]
-        app = MDApp.get_running_app()
-        SQL = "SELECT kod_odpadu,SUM(mnozstvi) FROM Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND odevezeno = (?) AND  zdravotnicke_zarizeni_ico = ? GROUP BY kod_odpadu"
-        val = ('ne', app.usernameL)
-        data = app.cursor.execute(SQL, val)
-        mnozstvi = []
-        nazvy = []
-        for row in data:
-            nazvy.append(row[0])
-            mnozstvi.append(row[1])
-        plt.figure(1)
-        plt.bar(nazvy, mnozstvi, color=(0, 0, 1, 0.6))
-        plt.ylabel("Váha (g)")
-        plt.xlabel("Kód odpadu")
-        self.ids['graf1'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
-        plt.figure(2)
-        SQL = "SELECT kategorie,SUM(mnozstvi) FROM 	Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND odevezeno = ? AND zdravotnicke_zarizeni_ico = ?	GROUP BY kategorie"
-        data2 = app.cursor.execute(SQL, val)
-        bezpecnost = []
-        bezpecnost_name = []
-        for row in data2:
-            print(row)
-            if row[0] == 1:
-                bezpecnost.append("Bezpečný")
-                bezpecnost_name.append(row[1])
-            else:
-                bezpecnost.append("Nebezpečný")
-                bezpecnost_name.append(row[1])
-
-        bar_bez = plt.bar(bezpecnost, bezpecnost_name)
-        bar_bez[0].set_color('r')
-        bar_bez[1].set_color('g')
-
-        plt.ylabel("Váha (g)")
-        plt.xlabel("Kategorie")
-        self.ids['graf2'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
-
-    def first_graph(self,*args):
-        self.ids['graf1'].clear_widgets()
-        self.ids['graf2'].clear_widgets()
-        self.ids['neodvezeno'].background_color = [0, 0, 0, 0.3]
-        self.ids['celkem'].background_color = [0, 0, 0, 0.5]
-        app = MDApp.get_running_app()
-        SQL = "SELECT kod_odpadu,SUM(mnozstvi) FROM Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND  zdravotnicke_zarizeni_ico = ? GROUP BY kod_odpadu"
-        val = app.usernameL
-        data = app.cursor.execute(SQL, val)
-        mnozstvi = []
-        nazvy = []
-        for row in data:
-            nazvy.append(row[0])
-            mnozstvi.append(row[1])
-        plt.figure(1)
-        plt.bar(nazvy, mnozstvi, color=(0, 0, 1, 0.6))
-        plt.ylabel("Váha (g)")
-        plt.xlabel("Kód odpadu")
-        self.ids['graf1'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
-        plt.figure(2)
-        SQL = "SELECT kategorie,SUM(mnozstvi) FROM 	Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND  zdravotnicke_zarizeni_ico = ?	GROUP BY kategorie"
-        data2 = app.cursor.execute(SQL, val)
-        bezpecnost = []
-        bezpecnost_name = []
-        for row in data2:
-            print(row)
-            if row[0] == 1:
-                bezpecnost.append("Bezpečný")
-                bezpecnost_name.append(row[1])
-            else:
-                bezpecnost.append("Nebezpečný")
-                bezpecnost_name.append(row[1])
-
-        bar_bez = plt.bar(bezpecnost, bezpecnost_name)
-        bar_bez[0].set_color('r')
-        bar_bez[1].set_color('g')
-
-        plt.ylabel("Váha (g)")
-        plt.xlabel("Kategorie")
-        self.ids['graf2'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
-
-
 class HistoryWindow(Screen):
 
-    def on_leave(self, *args):
-        self.table.clear_widgets()
-
     def on_pre_enter(self, *args):
 
         app = MDApp.get_running_app()
-        SQL = "SELECT o.id, nazev, katalogove_cislo, mnozstvi, kategorie, datum_uskladneni, ISNULL(datum_odvozu," \
-              "'neodvezeno'),ISNULL(opravnena_osoba_ico,'nepřiřazeno') FROM Odpad o, Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = (?) "
+        SQL = "SELECT nazev,mnozstvi,kategorie,datum_uskladneni,ISNULL(datum_odvozu,'neodvezeno') FROM Odpad," \
+              "Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = (?) "
         val = app.usernameL
         data = app.cursor.execute(SQL, val)
         hist_data = []
         for row in data:
-            if row[4] == 1:
-                row[4] = "nebezpečné"
-            else:
-                row[4] = "bezpečné"
-
             hist_data.append(row)
-
         table = MDDataTable(
             pos_hint={'center_x': 0.5, 'center_y': 0.5},
-            size_hint=(.5, .6),
+            size_hint=(0.9, 0.6),
+            check=True,
             use_pagination=True,
             rows_num=7,
-            check=True,
             pagination_menu_height='240dp',
             pagination_menu_pos="auto",
-           # background_color=[1, 1, 1, 1],
+            background_color=[1, 0, 0, .5],
+
             column_data=[
-                (" ID ", dp(20)),
-                ("Název", dp(45)),
-                ("Katalogoé číslo", dp(35)),
-                ("Váha (g)", dp(25)),
-                ("Kategorie", dp(45)),
-                ("Datum uskladnění", dp(45)),
-                ("Datum odvozu", dp(45)),
-                ("IČO Odvozce", dp(45)),
+                ("First Name", dp(30)),
+                ("Last Name", dp(30)),
+                ("Email Address", dp(30)),
+                ("Phone Number", dp(30))
             ],
-            row_data=hist_data,
-            sorted_on=" ID ",
-            sorted_order="ASC"
+            row_data=hist_data
+
         )
-        self.ids['table'].add_widget(table)
-        app.selected_rows = [" ", " ", " ", " ", " ", " ", " "]
-        #table.bind(on_check_press=self.on_check_press)
 
-    def on_check_press(self, instance_table, current_row,instance_row):
-        print(instance_table, current_row,instance_row)
-        # app = MDApp.get_running_app()
-        # app.selected_rows = instance_table.get_row_checks()
-        # print("--------------všechny zvolené---------")
-        # print(instance_table.get_row_checks())
-        pass
+        self.add_widget(table)
 
-    def on_leave(self, *args):
-        self.ids.table.clear_widgets()
-
-    def removeSelectedRows(self, *args):
-        app = MDApp.get_running_app()
-        print(app.selected_rows)
-
-        #print(app.selected_rows)
-        for row in app.selected_rows:
-
-            SQL = "DELETE from Odpad where id = ? AND zdravotnicke_zarizeni_ico = ?"
-            val = (row[0], app.usernameL)
-            app.cursor.execute(SQL, val)
-            app.cursor.commit()
-
-        app.selected_rows = [" ", " ", " ", " ", " ", " ", " "]
-
-class ListItemWithCheckbox(TwoLineAvatarIconListItem):
-    pass
-
-
-class RightCheckbox(IRightBodyTouch, MDCheckbox):
-    def on_active(self, *args):
-        print(args)
-
-        app = MDApp.get_running_app()
-        if args[1] == True:
-            print("aktivní")
-
-
-        print(app.odvozce)
 class OdvozWindow(Screen):
-    def on_leave(self, *args):
-        self.ids.container.clear_widgets()
-
-    def on_pre_enter(self, *args):
-        app = MDApp.get_running_app()
-
-        sql = 'Select nazev,SUM(mnozstvi) from Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = ? GROUP BY nazev '
-        val = app.usernameL
-        app.cursor.execute(sql, val)
-        for row in app.cursor:
-            widget = ListItemWithCheckbox(text=f"{row[0]}", secondary_text=f"{row[1]} g")
-            self.ids['container'].add_widget(widget)
-            #self.ids['container'].add_widget(TwoLineListItem(text=f"{row[0]}", secondary_text=f"{row[1]}"))
-
-        sql = 'SELECT * from Opravnena_osoba'
-        app.cursor.execute(sql)
-        osoby = []
-        nazev_osob = []
-        for row in app.cursor:
-            osoby.append(row)
-            nazev_osob.append(row[1])
-
-
-        print(osoby)
-        self.ids.drop_item.values = nazev_osob
-
-
-
+    pass
 
 class LoginWindow(Screen):
 
@@ -425,7 +246,6 @@ class RegistrationWindow(Screen):
 
 class AddTrashWindow(Screen):
 
-
     def choosenTrash(self,n):
         app = MDApp.get_running_app()
         self.ids['vybrany_odpad'].text = n[0]
@@ -479,6 +299,9 @@ class AddTrashWindow(Screen):
                 nacteny = app.cursor.execute(SQL, val)
                 id_odpadu = nacteny.fetchone()[0] + 1
 
+
+
+
             SQL = ('INSERT INTO Odpad (id, mnozstvi, datum_uskladneni, katalogove_cislo,zdravotnicke_zarizeni_ico,odevezeno) VALUES (?,?,?,?,?,?)')
             val = (id_odpadu, int(mnozstvi),date.today().strftime("%d. %m. %Y"), app.vybrany_odpad,app.usernameL,"ne")
             app.cursor.execute(SQL,val)
@@ -490,7 +313,7 @@ class AddTrashWindow(Screen):
                 bg_color=(0, 0, 0, .2)
             ).open()
 
-    def on_leave(self, *args):
+    def remove_item(self):
         self.ids.container.clear_widgets()
 
 class WindowManager(ScreenManager):
@@ -508,9 +331,6 @@ class MeditrashApp(MDApp):
         vybrany_odpad = StringProperty(None)
         usernameL = StringProperty(None)
         passwordL = StringProperty(None)
-        selected_rows = "empty"
-        odvozce = []
-        instance_data = ObjectProperty(None)
         self.theme_cls.theme_style = "Light"
         self.theme_cls.primary_palette = "Gray"
         screen = Builder.load_file("styly.kv")
