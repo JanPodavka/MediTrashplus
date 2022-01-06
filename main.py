@@ -471,7 +471,6 @@ class MeditrashApp(MDApp):
             app.cursor.commit()
             self.dialog.dismiss(force=True)
 
-
             print(self.manager.get_screen('profile').ids['nazev_organizace'].text )
             #self.manager.screens['profile'].ids['nazev_organizace'].text = name
             #self.root.current.ids['adresa'].text = address
