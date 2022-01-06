@@ -14,7 +14,7 @@ from kivymd.uix.datatables import MDDataTable
 from kivy.uix.screenmanager import ScreenManager
 from kivymd.uix.screen import Screen
 import pyodbc
-from kivy.properties import StringProperty
+from kivy.properties import StringProperty, ObjectProperty
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.datatables import MDDataTable
 from datetime import date
@@ -30,20 +30,23 @@ locale.setlocale(locale.LC_TIME, "cs_CZ")
 
 class HistoryWindow(Screen):
 
+    def on_leave(self, *args):
+        app = MDApp.get_running_app()
+        self.table.clear_widgets()
+
     def on_pre_enter(self, *args):
 
         app = MDApp.get_running_app()
-        SQL = "SELECT nazev,katalogove_cislo,mnozstvi,kategorie,datum_uskladneni,ISNULL(datum_odvozu,'neodvezeno'),ISNULL(opravnena_osoba_ico,'nepřiřazeno') FROM " \
-              "Odpad, Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = (?) "
+        SQL = "SELECT o.id, nazev, katalogove_cislo, mnozstvi, kategorie, datum_uskladneni, ISNULL(datum_odvozu," \
+              "'neodvezeno'),ISNULL(opravnena_osoba_ico,'nepřiřazeno') FROM Odpad o, Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = (?) "
         val = app.usernameL
         data = app.cursor.execute(SQL, val)
         hist_data = []
         for row in data:
-            if row[3] == 1:
-                row[3] = "nebezpečné"
+            if row[4] == 1:
+                row[4] = "nebezpečné"
             else:
-                row[3] = "bezpečné"
-
+                row[4] = "bezpečné"
             hist_data.append(row)
 
         table = MDDataTable(
@@ -56,21 +59,21 @@ class HistoryWindow(Screen):
             pagination_menu_pos="auto",
            # background_color=[1, 1, 1, 1],
             column_data=[
-                ("Název", 45),
-                ("Katalogoé číslo", 45),
-                ("Váha (g)", 45),
-                ("Kategorie", 45),
-                ("Datum uskladnění", 45),
-                ("Datum odvozu", 45),
-                ("IČO Odvozce", 45),
+                (" ID ", dp(20)),
+                ("Název", dp(45)),
+                ("Katalogoé číslo", dp(35)),
+                ("Váha (g)", dp(25)),
+                ("Kategorie", dp(45)),
+                ("Datum uskladnění", dp(45)),
+                ("Datum odvozu", dp(45)),
+                ("IČO Odvozce", dp(45)),
             ],
             row_data=hist_data,
         )
         self.ids['table'].add_widget(table)
 
 
-    def on_leave(self, *args):
-        self.ids.table.clear_widgets()
+
 
 class OdvozWindow(Screen):
     pass
@@ -346,6 +349,8 @@ class MeditrashApp(MDApp):
         vybrany_odpad = StringProperty(None)
         usernameL = StringProperty(None)
         passwordL = StringProperty(None)
+        selected_rows = "empty"
+        instance_data = ObjectProperty(None)
         self.theme_cls.theme_style = "Light"
         self.theme_cls.primary_palette = "Gray"
         screen = Builder.load_file("styly.kv")
