@@ -1,3 +1,4 @@
+from kivymd.uix.selectioncontrol import MDCheckbox
 from screeninfo import get_monitors
 # for m in get_monitors():
 #     if m.is_primary:
@@ -8,7 +9,7 @@ from screeninfo import get_monitors
 # Config.set('graphics', 'minimum_width', monitor.width)
 # Config.set('graphics', 'minimum_height', monitor.height)
 from kivy.lang import Builder
-from kivymd.uix.list import TwoLineListItem
+from kivymd.uix.list import TwoLineListItem, IRightBodyTouch, TwoLineAvatarIconListItem
 from kivy.core.window import Window
 from kivymd.uix.datatables import MDDataTable
 from kivy.uix.screenmanager import ScreenManager
@@ -122,8 +123,8 @@ class StatisticWindow(Screen):
         plt.ylabel("Váha (g)")
         plt.xlabel("Kategorie")
         self.ids['graf2'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
-        
-        
+
+
 class HistoryWindow(Screen):
 
     def on_leave(self, *args):
@@ -197,10 +198,49 @@ class HistoryWindow(Screen):
 
         app.selected_rows = [" ", " ", " ", " ", " ", " ", " "]
 
+class ListItemWithCheckbox(TwoLineAvatarIconListItem):
+    '''Custom list item.'''
+
+
+
+class RightCheckbox(IRightBodyTouch, MDCheckbox):
+    '''Custom right container.'''
+
+    def on_active(self, *args):
+        print(args)
+        if args[1] == True:
+            print("aktivní")
 
 
 class OdvozWindow(Screen):
-    pass
+    def on_leave(self, *args):
+        self.ids.container.clear_widgets()
+
+    def on_pre_enter(self, *args):
+        app = MDApp.get_running_app()
+
+        sql = 'Select nazev,SUM(mnozstvi) from Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = ? GROUP BY nazev '
+        val = app.usernameL
+        app.cursor.execute(sql, val)
+        for row in app.cursor:
+            widget = ListItemWithCheckbox(text=f"{row[0]}", secondary_text=f"{row[1]} g")
+            self.ids['container'].add_widget(widget)
+            #self.ids['container'].add_widget(TwoLineListItem(text=f"{row[0]}", secondary_text=f"{row[1]}"))
+
+        sql = 'SELECT * from Opravnena_osoba'
+        app.cursor.execute(sql)
+        osoby = []
+        nazev_osob = []
+        for row in app.cursor:
+            osoby.append(row)
+            nazev_osob.append(row[1])
+
+
+        print(osoby)
+        self.ids.drop_item.values = nazev_osob
+
+
+
 
 class LoginWindow(Screen):
 
@@ -441,9 +481,6 @@ class AddTrashWindow(Screen):
                 val = (app.usernameL)
                 nacteny = app.cursor.execute(SQL, val)
                 id_odpadu = nacteny.fetchone()[0] + 1
-
-
-
 
             SQL = ('INSERT INTO Odpad (id, mnozstvi, datum_uskladneni, katalogove_cislo,zdravotnicke_zarizeni_ico,odevezeno) VALUES (?,?,?,?,?,?)')
             val = (id_odpadu, int(mnozstvi),date.today().strftime("%d. %m. %Y"), app.vybrany_odpad,app.usernameL,"ne")
