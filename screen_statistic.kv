@@ -1,5 +1,10 @@
-<MainWindow>:
-    name:"main"
+<StatisticWindow>:
+    name:'statistic'
+
+    Image:
+        source: 'obrazky/line3.png'
+        size_hint_x: 1
+        pos_hint: {"center_x": .5, "center_y": .07}
 
     MDBoxLayout:
         pos_hint: {"center_x": .5, "center_y": .965}
@@ -24,7 +29,7 @@
                 app.root.current = 'odvoz'
         Button:
             text: "Statistiky"
-            background_color: (.0, .0, .0, .45)
+            background_color: (.0, .0, .0, .6)
             font_size: 0.32 * self.height
             on_press:
                 app.root.current = 'statistic'
@@ -34,33 +39,49 @@
             font_size: 0.32 * self.height
             on_press:
                 app.root.current = 'history'
+
         Image:
             source: 'obrazky/logo.png'
             background_color: (.0, .0, .0, .45)
-
     BoxLayout:
-        orientation: 'vertical'
         pos_hint: {"center_x": .5, "center_y": .5}
-        size_hint: .5, .4
-        MDLabel:
-            pos_hint: {"center_x": .5, "center_y": .5}
-            size_hint: .7, .2
-            text: "VÍTEJTE ZPĚT"
-            halign: "center"
-            font_size: .7 * self.height
-        MDLabel:
-            id: main_day_of_week
-            size_hint: 1, .2
-            pos_hint: {"center_x": .5, "center_y": .5}
-            halign: "center"
+        orientation: "vertical"
         BoxLayout:
-            size_hint: .1,.6
-    Image:
-        source: 'obrazky/logo_plus.png'
-        size_hint_x: .25
-        elevation: 10
-        pos_hint: {"center_x": .2, "center_y": .65}
-    FitImage:
-        source: 'obrazky/wave.png'
-        size_hint_x: 1.4
-        pos_hint: {"center_x": .65, "center_y": .2}
+            size_hint: .2,.2
+        BoxLayout:
+            size_hint: .3,.075
+            pos_hint: {"center_x": .5, "center_y": .5}
+            spacing:10
+            canvas.before:
+                Color:
+                    rgba: 1, 0, 0, 1
+                Line:
+                    width: 1
+                    rectangle: self.x, self.y, self.width, self.height
+            Button:
+                id: celkem
+                md_bg_color: [0, 0, 0, 0.3]
+                text:"Celkový odpad"
+                on_press:
+                    root.first_graph()
+
+            Button:
+                id: neodvezeno
+                text:"neodvezený odpad"
+                on_press:
+                    root.second_graph()
+        BoxLayout
+            size_hint: 1, .7
+            pos_hint: {"center_x": .5, "center_y": .5}
+            spacing:10
+            padding:10
+            BoxLayout:
+                id: graf1
+
+            BoxLayout:
+                id: graf2
+        BoxLayout:
+            size_hint: 1, .1
+
+
+

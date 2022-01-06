@@ -17,12 +17,22 @@
             font_size: 0.32 * self.height
             on_press:
                 app.root.current = 'addtrash'
+
         Button:
             text: "Odvoz odpadu"
             background_color: (.0, .0, .0, .45)
             font_size: 0.32 * self.height
             on_press:
                 app.root.current = 'odvoz'
+
+
+        Button:
+            text: "Statistiky"
+            background_color: (.0, .0, .0, .45)
+            font_size: 0.32 * self.height
+            on_press:
+                app.root.current = 'statistic'
+
         Button:
             text: "Historie"
             background_color: (.0, .0, .0, .45)

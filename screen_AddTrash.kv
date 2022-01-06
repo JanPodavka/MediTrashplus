@@ -17,7 +17,7 @@
             font_size: 0.32 * self.height
             on_press:
                 app.root.current = 'profile'
-                root.remove_item()
+
         Button:
             text: "Vložit odpad"
             background_color: (.0, .0, .0, .6)
@@ -30,14 +30,20 @@
             font_size: 0.32 * self.height
             on_press:
                 app.root.current = 'odvoz'
-                root.remove_item()
+
+        Button:
+            text: "Statistiky"
+            background_color: (.0, .0, .0, .45)
+            font_size: 0.32 * self.height
+            on_press:
+                app.root.current = 'statistic'
         Button:
             text: "Historie"
             background_color: (.0, .0, .0, .45)
             font_size: 0.32 * self.height
-            #on_press:
-            #    app.root.current = 'history'
-            #    root.remove_item()
+            on_press:
+                app.root.current = 'history'
+
         Image:
             source: 'obrazky/logo.png'
             background_color: (.0, .0, .0, .45)

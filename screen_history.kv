@@ -8,7 +8,7 @@
         size_hint: 1, .08
         Button:
             text: "Profil"
-            background_color: (.0, .0, .0, .6)
+            background_color: (.0, .0, .0, .45)
             font_size: 0.32 * self.height
             on_press:
                 app.root.current = 'profile'
@@ -25,8 +25,14 @@
             on_press:
                 app.root.current = 'odvoz'
         Button:
-            text: "Historie"
+            text: "Statistiky"
             background_color: (.0, .0, .0, .45)
+            font_size: 0.32 * self.height
+            on_press:
+                app.root.current = 'statistic'
+        Button:
+            text: "Historie"
+            background_color: (.0, .0, .0, .6)
             font_size: 0.32 * self.height
             on_press:
                 app.root.current = 'history'
@@ -39,9 +45,14 @@
         adaptive_size: True
         id: table
 
-    FitImage:
+#    Button:
+#        pos_hint: {"center_x": .8, "center_y": .25}
+#        size_hint: .08, .08
+#        on_press:
+#            root.removeSelectedRows()
+
+    Image:
         source: 'obrazky/line3.png'
         size_hint_x: 1
-        size_hint_y:0.2
-        pos_hint: {"center_x": .5, "center_y": .09}
+        pos_hint: {"center_x": .5, "center_y": .07}
 
