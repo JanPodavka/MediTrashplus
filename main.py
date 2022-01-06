@@ -32,6 +32,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 from kivy.garden.matplotlib import FigureCanvasKivyAgg
 
+
 locale.setlocale(locale.LC_TIME, "cs_CZ")
 
 class StatisticWindow(Screen):
