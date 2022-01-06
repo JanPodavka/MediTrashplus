@@ -43,16 +43,45 @@
         Image:
             source: 'obrazky/logo.png'
             background_color: (.0, .0, .0, .45)
-    BoxLayout
-        size_hint: 1, .6
-        pos_hint: {"center_x": .5, "center_y": .55}
-        spacing:10
-        padding:10
+    BoxLayout:
+        pos_hint: {"center_x": .5, "center_y": .5}
+        orientation: "vertical"
         BoxLayout:
-            id: graf1
+            size_hint: .2,.2
+        BoxLayout:
+            size_hint: .3,.075
+            pos_hint: {"center_x": .5, "center_y": .5}
+            spacing:10
+            canvas.before:
+                Color:
+                    rgba: 1, 0, 0, 1
+                Line:
+                    width: 1
+                    rectangle: self.x, self.y, self.width, self.height
+            Button:
+                id: celkem
+                md_bg_color: [0, 0, 0, 0.3]
+                text:"Celkový odpad"
+                on_press:
+                    root.first_graph()
 
+            Button:
+                id: neodvezeno
+                text:"neodvezený odpad"
+                on_press:
+                    root.second_graph()
+        BoxLayout
+            size_hint: 1, .7
+            pos_hint: {"center_x": .5, "center_y": .5}
+            spacing:10
+            padding:10
+            BoxLayout:
+                id: graf1
+
+            BoxLayout:
+                id: graf2
         BoxLayout:
-            id: graf2
+            size_hint: 1, .1
 
 
 

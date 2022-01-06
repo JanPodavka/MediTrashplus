@@ -39,6 +39,54 @@ class StatisticWindow(Screen):
         self.ids['graf2'].clear_widgets()
 
     def on_pre_enter(self, *args):
+        self.first_graph()
+
+    def second_graph(self, *args):
+        self.ids['graf1'].clear_widgets()
+        self.ids['graf2'].clear_widgets()
+        self.ids['neodvezeno'].background_color = [0, 0, 0, 0.5]
+        self.ids['celkem'].background_color = [0, 0, 0, 0.3]
+        app = MDApp.get_running_app()
+        SQL = "SELECT kod_odpadu,SUM(mnozstvi) FROM Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND odevezeno = (?) AND  zdravotnicke_zarizeni_ico = ? GROUP BY kod_odpadu"
+        val = ('ne', app.usernameL)
+        data = app.cursor.execute(SQL, val)
+        mnozstvi = []
+        nazvy = []
+        for row in data:
+            nazvy.append(row[0])
+            mnozstvi.append(row[1])
+        plt.figure(1)
+        plt.bar(nazvy, mnozstvi, color=(0, 0, 1, 0.6))
+        plt.ylabel("Váha (g)")
+        plt.xlabel("Kód odpadu")
+        self.ids['graf1'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
+        plt.figure(2)
+        SQL = "SELECT kategorie,SUM(mnozstvi) FROM 	Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND odevezeno = ? AND zdravotnicke_zarizeni_ico = ?	GROUP BY kategorie"
+        data2 = app.cursor.execute(SQL, val)
+        bezpecnost = []
+        bezpecnost_name = []
+        for row in data2:
+            print(row)
+            if row[0] == 1:
+                bezpecnost.append("Bezpečný")
+                bezpecnost_name.append(row[1])
+            else:
+                bezpecnost.append("Nebezpečný")
+                bezpecnost_name.append(row[1])
+
+        bar_bez = plt.bar(bezpecnost, bezpecnost_name)
+        bar_bez[0].set_color('r')
+        bar_bez[1].set_color('g')
+
+        plt.ylabel("Váha (g)")
+        plt.xlabel("Kategorie")
+        self.ids['graf2'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
+
+    def first_graph(self,*args):
+        self.ids['graf1'].clear_widgets()
+        self.ids['graf2'].clear_widgets()
+        self.ids['neodvezeno'].background_color = [0, 0, 0, 0.3]
+        self.ids['celkem'].background_color = [0, 0, 0, 0.5]
         app = MDApp.get_running_app()
         SQL = "SELECT kod_odpadu,SUM(mnozstvi) FROM Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND  zdravotnicke_zarizeni_ico = ? GROUP BY kod_odpadu"
         val = app.usernameL
@@ -49,7 +97,7 @@ class StatisticWindow(Screen):
             nazvy.append(row[0])
             mnozstvi.append(row[1])
         plt.figure(1)
-        plt.bar(nazvy, mnozstvi,color=(0, 0, 1, 0.6))
+        plt.bar(nazvy, mnozstvi, color=(0, 0, 1, 0.6))
         plt.ylabel("Váha (g)")
         plt.xlabel("Kód odpadu")
         self.ids['graf1'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
@@ -74,8 +122,8 @@ class StatisticWindow(Screen):
         plt.ylabel("Váha (g)")
         plt.xlabel("Kategorie")
         self.ids['graf2'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
-
-
+        
+        
 class HistoryWindow(Screen):
 
     def on_leave(self, *args):
