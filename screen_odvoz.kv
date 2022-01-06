@@ -34,7 +34,7 @@
             background_color: (.0, .0, .0, .45)
             font_size: 0.32 * self.height
             on_press:
-                app.root.current = 'statistic'
+                #app.root.current = 'statistic'
         Button:
             text: "Historie"
             background_color: (.0, .0, .0, .45)
@@ -47,28 +47,28 @@
 
     BoxLayout:
         spacing:15
-        size_hint: .32, .05
-        pos_hint: {"center_x": .75,"center_y": .75}
+        size_hint: .33, .035
+        pos_hint: {"center_x": .68, "center_y": .8}
         MDLabel:
-            size_hint_x: .15
-            halign: 'center'
-            text: "Odvoz:"
-            font_size: 0.53 * self.height
+            size_hint_x: .5
+            halign: 'right'
+            text: "Zprostřetkovatel odvozu:"
+            font_size: 0.6 * self.height
 
         Spinner:
-            size_hint_y: 1.1
-            size_hint_x: .40
+            size_hint_y: 1.03
+            size_hint_x: .5
             id: drop_item
             text: "Vyberte osobu"
-            values: ["g","dg","kg"]
             font_size: 0.5 * self.height
             sync_height: True
             background_color: color_button if self.state == 'normal' else color_button_pressed
             option_cls: Factory.get("MySpinnerOption")
 
+
     ScrollView:
-        size_hint: .45, .63
-        pos_hint: {"center_x": .3, "center_y": .53}
+        size_hint: .4, .6
+        pos_hint: {"center_x": .25, "center_y": .53}
         bar_inactive_color: 0, 0, 0, .6
         effect_cls: "ScrollEffect"
         bar_width: 20
@@ -76,15 +76,39 @@
         MDList:
             id: container
 
+
     MDRoundFlatButton:
         text: "Vložit"
         size_hint: .2,.07
         font_size: 0.4 * self.height
         pos_hint: {"center_x": .76, "center_y": .2}
+        on_press:
+            root.send_trash()
 
+    MDLabel:
+        id: Send_error_mess
+        theme_text_color: "Custom"
+        text_color: 1,0,0,1
+        font_size: 0.1 * self.height
+        halign: "left"
+        size_hint: .2, .2
+        pos_hint: {"center_x": .96, "center_y": .8}
 
 
     Image:
         source: 'obrazky/line3.png'
         size_hint_x: 1
         pos_hint: {"center_x": .5, "center_y": .09}
+
+
+
+
+
+<Send_checker>:
+    id: checker
+    orientation: "vertical"
+    spacing: "1dp"
+    size_hint_y: None
+    height: "50dp"
+
+

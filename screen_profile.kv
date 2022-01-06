@@ -10,29 +10,24 @@
             font_size: 0.32 * self.height
             on_press:
                 app.root.current = 'profile'
-
         Button:
             text: "Vložit odpad"
             background_color: (.0, .0, .0, .45)
             font_size: 0.32 * self.height
             on_press:
                 app.root.current = 'addtrash'
-
         Button:
             text: "Odvoz odpadu"
             background_color: (.0, .0, .0, .45)
             font_size: 0.32 * self.height
             on_press:
                 app.root.current = 'odvoz'
-
-
         Button:
             text: "Statistiky"
             background_color: (.0, .0, .0, .45)
             font_size: 0.32 * self.height
             on_press:
                 app.root.current = 'statistic'
-
         Button:
             text: "Historie"
             background_color: (.0, .0, .0, .45)
@@ -43,14 +38,16 @@
             source: 'obrazky/logo.png'
             background_color: (.0, .0, .0, .45)
 
+
+
     MDCard:
-        size_hint: .4, .5
-        pos_hint: {"center_x": .48, "center_y": .45}
+        size_hint: .35, .45
+        pos_hint: {"center_x": .7, "center_y": .52}
         radius: [20, 20, 20, 20]
         BoxLayout:
             orientation: "horizontal"
             BoxLayout:
-                size_hint_x: .03
+                size_hint_x: .05
             BoxLayout:
                 orientation: "vertical"
                 size_hint_x: .07
@@ -59,11 +56,11 @@
 
                 BoxLayout:
                     MDIcon:
-                        pos_hint: {"center_x": .75, "center_y": .5}
+                        pos_hint: {"center_x": .75, "center_y": .4}
                         icon:"map-marker"
                 BoxLayout:
                     MDIcon:
-                        pos_hint: {"center_x": .75, "center_y": .5}
+                        pos_hint: {"center_x": .75, "center_y": .4}
                         icon: "card-account-details-outline"
                 BoxLayout:
                     MDIcon:
@@ -71,10 +68,8 @@
                         icon: "phone"
                 BoxLayout:
                     MDIcon:
-                        pos_hint: {"center_x": .75, "center_y": .5}
+                        pos_hint: {"center_x": .75, "center_y": .4}
                         icon: "email"
-            BoxLayout:
-                size_hint_x: 0.01
             BoxLayout:
                 size_hint_x: .9
                 orientation: "vertical"
@@ -85,6 +80,7 @@
                         pos_hint: {"center_x": .75, "center_y": .5}
                         font_size: self.width/16
                         id: nazev_organizace
+                        underline: True
                         bold: True
                         halign: "center"
                         valign: "middle"
@@ -125,9 +121,14 @@
 
     Image:
         source: 'obrazky/rsz_doc.png'
-        size_hint_x: 0.2
+        size_hint_x: 0.15
         allow_stretch: True
-        pos_hint: {"center_x": .2, "center_y": .7}
+        pos_hint: {"center_x": .88, "center_y": .78}
+
+    MDCard:
+        size_hint: .35, .45
+        pos_hint: {"center_x": .28, "center_y": .52}
+        radius: [20, 20, 20, 20]
 
     Image:
         source: 'obrazky/line3.png'
@@ -144,7 +145,23 @@
         icon: "cog"
         callback: app.callback_update_profile
 
-
+    BoxLayout:
+        pos_hint: {"center_y": 5}
+        size_hint: .5, .5
+        orientation: "vertical"
+        spacing: 30
+        CircularProgressBar:
+            id: progress_bar_bezpecne
+            size_hint: (None, None)
+            height: 250
+            width: 250
+            max: 1000 * 1000
+        CircularProgressBar:
+            id: progress_bar_nebezpecne
+            size_hint: (None, None)
+            height: 250
+            width: 250
+            max: 100 * 1000
 
 <Popup_psswd>:
     id: checker

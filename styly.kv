@@ -8,6 +8,9 @@
 #:include screen_history.kv
 #:include screen_odvoz.kv
 #:include screen_statistic.kv
+#:import Label kivy.core.text.Label
+#:set _label Label(text="\\nI am a label\\ninjected in kivy\\nmarkup string :)\\nEnjoy! --={}=--")
+#:set _another_label Label(text="Loading...\\n{}%", font_size=10, color=(1,1,0.5,1), halign="center")
 
 WindowManager:
     LoginWindow:
