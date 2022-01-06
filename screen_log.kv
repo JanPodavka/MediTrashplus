@@ -13,7 +13,7 @@
     MDCard:
         on_enter: root.login_write()
         pos_hint: {"center_x": .5, "center_y": .5}
-        size_hint: .8, .8
+        size_hint: .75, .75
         elevation: 10
         padding: 10
         MDBoxLayout:
@@ -35,11 +35,12 @@
                 pos_hint: {"center_x": .5, "center_y": 1}
                 spacing:20
 
-                MDRoundFlatButton:
+                MDFillRoundFlatButton:
                     pos_hint: {'center_x': 0.5,'center_y': 0.5}
                     size_hint: 0.5, 0.5
                     text_color: 0, 0, 0, 1
                     text_size: None, None
+                    md_bg_color: (.0, .0, .0, .1)
                     text: 'Přihlášení'
 
 
@@ -108,7 +109,7 @@
 
     MDIconButton:
         icon: 'eye-off'
-        pos_hint: {"center_x": .68, "center_y": .35}
+        pos_hint: {"center_x": .68, "center_y": .33}
         id: lock_button
         on_press:
             root.login_show_password()

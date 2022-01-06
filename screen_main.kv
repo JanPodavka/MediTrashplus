@@ -46,10 +46,12 @@
             pos_hint: {"center_x": .5, "center_y": .5}
             size_hint: .7, .2
             text: "VÍTEJTE ZPĚT"
+            bold: True
             halign: "center"
             font_size: .7 * self.height
         MDLabel:
             id: main_day_of_week
+            font_size: .3 * self.height
             size_hint: 1, .2
             pos_hint: {"center_x": .5, "center_y": .5}
             halign: "center"
@@ -57,9 +59,9 @@
             size_hint: .1,.6
     Image:
         source: 'obrazky/logo_plus.png'
-        size_hint_x: .25
+        size_hint_x: .17
         elevation: 10
-        pos_hint: {"center_x": .2, "center_y": .65}
+        pos_hint: {"center_x": .25, "center_y": .65}
     FitImage:
         source: 'obrazky/wave.png'
         size_hint_x: 1.4

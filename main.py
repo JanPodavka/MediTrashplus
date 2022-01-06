@@ -8,16 +8,19 @@
 # Config.set('graphics', 'minimum_width', monitor.width)
 # Config.set('graphics', 'minimum_height', monitor.height)
 from kivy.lang import Builder
-from kivymd.uix.list import TwoLineListItem
+from kivy.uix.progressbar import ProgressBar
+from kivymd.uix.list import TwoLineListItem, IRightBodyTouch, TwoLineAvatarIconListItem, MDList
 from kivy.core.window import Window
 from kivymd.uix.datatables import MDDataTable
 from kivy.uix.screenmanager import ScreenManager
 from kivymd.uix.screen import Screen
+from kivy.uix.checkbox import CheckBox
 import pyodbc
-from kivy.properties import StringProperty
+from kivy.properties import StringProperty, ObjectProperty
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.datatables import MDDataTable
 from datetime import date
+from kivymd.uix.selectioncontrol import MDCheckbox
 from kivymd.uix.snackbar import Snackbar
 from datetime import datetime
 from kivymd.app import MDApp
@@ -25,24 +28,180 @@ from kivymd.uix.button import MDFlatButton
 from kivy.uix.boxlayout import BoxLayout
 import locale
 from kivy.metrics import dp
+from kivy.app import App
+from kivy.uix.progressbar import ProgressBar
+from kivy.core.text import Label as CoreLabel
+from kivy.lang.builder import Builder
+from kivy.graphics import Color, Ellipse, Rectangle
+from kivy.clock import Clock
+from kivy.uix.widget import Widget
+
+
+from kivy.core.text import Label
+from kivy.lang.builder import Builder
+from kivy.graphics import Line, Rectangle, Color
+from collections.abc import Iterable
+from math import ceil
+
+# This constant enforces the cap argument to be one of the caps accepted by the kivy.graphics.Line class
+_ACCEPTED_BAR_CAPS = {"round", "none", "square"}
+
+# Declare the defaults for the modifiable values
+_DEFAULT_THICKNESS = 10
+_DEFAULT_CAP_STYLE = 'round'
+_DEFAULT_PRECISION = 10
+_DEFAULT_PROGRESS_COLOUR = (0, 0, 0, .3)
+_DEFAULT_BACKGROUND_COLOUR = (0.26, 0.26, 0.26, 1)
+_DEFAULT_MAX_PROGRESS = 100
+_DEFAULT_MIN_PROGRESS = 0
+_DEFAULT_WIDGET_SIZE = 200
+_DEFAULT_TEXT_LABEL = Label(text="{}%", font_size=40)
+
+# Declare the defaults for the normalisation function, these are used in the textual representation (multiplied by 100)
+_NORMALISED_MAX = 1
+_NORMALISED_MIN = 0
+# importing pyplot for graph plotting
+from matplotlib import pyplot as plt
+# importing numpy
+import numpy as np
+#from kivy.garden.matplotlib import FigureCanvasKivyAgg
 
 locale.setlocale(locale.LC_TIME, "cs_CZ")
 
+class ListItemWithCheckbox(TwoLineAvatarIconListItem):
+    '''Custom list item.'''
+
+class RightCheckbox(IRightBodyTouch, MDCheckbox):
+    '''Custom right container.'''
+
+    def on_active(self, *args):
+        print(args)
+        if args[1] == True:
+            print("aktivní")
+
+class Send_checker(BoxLayout):
+    pass
+
+class CircularProgressBar(ProgressBar):
+
+    def __init__(self, **kwargs):
+        super(CircularProgressBar, self).__init__(**kwargs)
+        self.thickness = 40
+        self.label = CoreLabel(text="0%", font_size=self.thickness)
+        self.texture_size = None
+        self.refresh_text()
+        self.draw()
+
+    def draw(self):
+        with self.canvas:
+            self.canvas.clear()
+            Color(0.26, 0.26, 0.26, .5)
+            Ellipse(pos=self.pos, size=self.size)
+            Color(.2, 0, 0, .5)
+            Ellipse(pos=self.pos, size=self.size,
+                    angle_end=(0.001 if self.value_normalized == 0 else self.value_normalized * 360))
+            Color(0, 0, 0, .2)
+            Ellipse(pos=(self.pos[0] + self.thickness / 2, self.pos[1] + self.thickness / 2),
+                    size=(self.size[0] - self.thickness, self.size[1] - self.thickness))
+            Color(1, 1, 1, 1)
+            Rectangle(texture=self.label.texture, size=self.texture_size,
+                      pos=(self.size[0] / 2 - self.texture_size[0] / 2 + self.pos[0],
+                           self.size[1] / 2 - self.texture_size[1] / 2 + self.pos[1]))
+
+    def refresh_text(self):
+        self.label.refresh()
+        self.texture_size = list(self.label.texture.size)
+    def set_value(self, value):
+        self.value = value
+        self.label.text = str(int(self.value_normalized * 100)) + "%"
+        self.refresh_text()
+        self.draw()
+
+class OdvozWindow(Screen):
+    def on_leave(self, *args):
+        self.ids.container.clear_widgets()
+
+    def on_pre_enter(self, *args):
+        app = MDApp.get_running_app()
+
+        sql = 'Select nazev,SUM(mnozstvi) from Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = ? GROUP BY nazev '
+        val = app.usernameL
+        app.cursor.execute(sql, val)
+        list_view = MDList()
+        for row in app.cursor:
+            item = ListItemWithCheckbox(text=f"{row[0]}", secondary_text=f"{row[1]} g")
+            list_view.add_widget(item)
+
+        self.ids['container'].add_widget(list_view)
+
+
+        sql = 'SELECT * from Opravnena_osoba'
+        app.cursor.execute(sql)
+        osoby = []
+        nazev_osob = []
+        for row in app.cursor:
+            osoby.append(row)
+            nazev_osob.append(row[1])
+        self.ids.drop_item.values = nazev_osob
+
+
+
+
+    def send_trash(self):
+        app = MDApp.get_running_app()
+        if self.ids['drop_item'].text == "Vyberte osobu":
+            self.ids.Send_error_mess.text = "* Povinné pole"
+        else:
+            self.ids.Send_error_mess.text = ""
+            self.dialog = MDDialog(
+                title="Opravdu si přejete odeslat",
+                radius=[20, 20, 20, 20],
+                size_hint=[.5, .6],
+                type="custom",
+                auto_dismiss=False,
+                content_cls=Send_checker(),
+                buttons=[
+                    MDFlatButton(
+                        text="Zpět",
+                        on_release=self.close_dialog
+                    ),
+                    MDFlatButton(
+                        text="Odeslat",
+                        #on_release=self.
+                    ),
+                ],
+            )
+            self.dialog.open()
+
+    def on_checkbox_active(self, checkbox, value):
+        if value:
+            print('The checkbox', checkbox, 'is active', 'and', checkbox.state, 'state')
+            print(value)
+        else:
+            print('The checkbox', checkbox, 'is inactive', 'and', checkbox.state, 'state')
+            print(value)
+
+    def close_dialog(self,obj):
+         self.dialog.dismiss()
+
 class HistoryWindow(Screen):
+
+    def on_leave(self, *args):
+        self.table.clear_widgets()
 
     def on_pre_enter(self, *args):
 
         app = MDApp.get_running_app()
-        SQL = "SELECT nazev,katalogove_cislo,mnozstvi,kategorie,datum_uskladneni,ISNULL(datum_odvozu,'neodvezeno'),ISNULL(opravnena_osoba_ico,'nepřiřazeno') FROM " \
-              "Odpad, Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = (?) "
+        SQL = "SELECT o.id, nazev, katalogove_cislo, mnozstvi, kategorie, datum_uskladneni, ISNULL(datum_odvozu," \
+              "'neodvezeno'),ISNULL(opravnena_osoba_ico,'nepřiřazeno') FROM Odpad o, Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = (?) "
         val = app.usernameL
         data = app.cursor.execute(SQL, val)
         hist_data = []
         for row in data:
-            if row[3] == 1:
-                row[3] = "nebezpečné"
+            if row[4] == 1:
+                row[4] = "nebezpečné"
             else:
-                row[3] = "bezpečné"
+                row[4] = "bezpečné"
 
             hist_data.append(row)
 
@@ -56,6 +215,7 @@ class HistoryWindow(Screen):
             pagination_menu_pos="auto",
            # background_color=[1, 1, 1, 1],
             column_data=[
+                (" ID ", dp(20)),
                 ("Název", dp(45)),
                 ("Katalogoé číslo", dp(35)),
                 ("Váha (g)", dp(25)),
@@ -65,15 +225,37 @@ class HistoryWindow(Screen):
                 ("IČO Odvozce", dp(45)),
             ],
             row_data=hist_data,
+            sorted_on=" ID ",
+            sorted_order="ASC"
         )
         self.ids['table'].add_widget(table)
+        app.selected_rows = [" ", " ", " ", " ", " ", " ", " "]
+        table.bind(on_check_press=self.on_check_press)
 
+    def on_check_press(self, instance_table, current_row):
+        #print(instance_table, current_row,instance_row)
+        # app = MDApp.get_running_app()
+        # app.selected_rows = instance_table.get_row_checks()
+        # print("--------------všechny zvolené---------")
+        print(instance_table.get_row_checks())
+        pass
 
     def on_leave(self, *args):
         self.ids.table.clear_widgets()
 
-class OdvozWindow(Screen):
-    pass
+    def removeSelectedRows(self, *args):
+        app = MDApp.get_running_app()
+        print(app.selected_rows)
+
+        #print(app.selected_rows)
+        for row in app.selected_rows:
+
+            SQL = "DELETE from Odpad where id = ? AND zdravotnicke_zarizeni_ico = ?"
+            val = (row[0], app.usernameL)
+            app.cursor.execute(SQL, val)
+            app.cursor.commit()
+
+        app.selected_rows = [" ", " ", " ", " ", " ", " ", " "]
 
 class LoginWindow(Screen):
 
@@ -130,6 +312,9 @@ class LoginWindow(Screen):
         self.ids['password'].text = ""
         self.ids['log_remember_user'].active = False
 
+class StatisticWindow(Screen):
+    pass
+
 class MainWindow(Screen):
 
     def on_enter(self, *args):
@@ -155,6 +340,21 @@ class ProfileWindow(Screen):
         self.ids['adresa'].text = udaje[2]
         self.ids['ico'].text = udaje[3]
         self.ids['telefon'].text = udaje[4]
+
+
+        sql = 'Select kategorie,SUM(mnozstvi) from Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = ? GROUP BY kategorie'
+        val = app.usernameL
+        data = app.cursor.execute(sql, val)
+        hint_data = []
+        for row in data:
+            hint_data.append(row)
+
+        if hint_data[0][0] == 0:
+            self.ids['progress_bar_bezpecne'].set_value(hint_data[0][1])
+            self.ids['progress_bar_nebezpecne'].set_value(hint_data[1][1])
+        else:
+            self.ids['progress_bar_nebezpecne'].set_value(hint_data[0][1])
+            self.ids['progress_bar_bezpecne'].set_value(hint_data[1][1])
 
 class RegistrationWindow(Screen):
 
@@ -283,15 +483,20 @@ class AddTrashWindow(Screen):
 
     def trash_successfulAdd(self):
         app = MDApp.get_running_app()
+        valid = True
         if self.ids['vybrany_odpad'].text == "":
             self.ids['Add_error_mess_Trash'].text = "* Povinné pole"
-        elif self.ids['Add_trash_pole_mnozstvi'].text == "0":
+            valid = False
+        if self.ids['Add_trash_pole_mnozstvi'].text == "0":
             self.ids['Add_error_mess_Vaha'].text = "* Povinné pole"
+            valid = False
         elif self.ids['Add_trash_pole_mnozstvi'].text == "":
             self.ids['Add_error_mess_Vaha'].text = "* Povinné pole"
+            valid = False
         elif not self.ids['Add_trash_pole_mnozstvi'].text.isnumeric():
             self.ids['Add_error_mess_Vaha'].text = "* Nečíselná hodnota"
-        else:
+            valid = False
+        if valid:
             self.ids['Add_error_mess_Vaha'].text = ""
             if self.ids['drop_item'].text == "kg":
                 mnozstvi = float(self.ids['Add_trash_pole_mnozstvi'].text) * 1000
@@ -312,9 +517,6 @@ class AddTrashWindow(Screen):
                 nacteny = app.cursor.execute(SQL, val)
                 id_odpadu = nacteny.fetchone()[0] + 1
 
-
-
-
             SQL = ('INSERT INTO Odpad (id, mnozstvi, datum_uskladneni, katalogove_cislo,zdravotnicke_zarizeni_ico,odevezeno) VALUES (?,?,?,?,?,?)')
             val = (id_odpadu, int(mnozstvi),date.today().strftime("%d. %m. %Y"), app.vybrany_odpad,app.usernameL,"ne")
             app.cursor.execute(SQL,val)
@@ -326,7 +528,7 @@ class AddTrashWindow(Screen):
                 bg_color=(0, 0, 0, .2)
             ).open()
 
-    def remove_item(self):
+    def on_leave(self, *args):
         self.ids.container.clear_widgets()
 
 class WindowManager(ScreenManager):
@@ -344,6 +546,8 @@ class MeditrashApp(MDApp):
         vybrany_odpad = StringProperty(None)
         usernameL = StringProperty(None)
         passwordL = StringProperty(None)
+        selected_rows = "empty"
+        instance_data = ObjectProperty(None)
         self.theme_cls.theme_style = "Light"
         self.theme_cls.primary_palette = "Gray"
         screen = Builder.load_file("styly.kv")
@@ -398,7 +602,7 @@ class MeditrashApp(MDApp):
             self.dialog.open()
         else:
             self.root.current = "login"
-
+            #self.current = "login"
 
     def close_dialog(self,obj):
          self.dialog.dismiss()
@@ -451,6 +655,10 @@ class MeditrashApp(MDApp):
             self.dialog.content_cls.ids.profile_phone.error = True
             self.dialog.content_cls.ids.profile_phone.helper_text = "Povinné pole"
             valid = False
+        elif len(self.dialog.content_cls.ids.profile_phone.text) !=9:
+            self.dialog.content_cls.ids.profile_phone.error = True
+            self.dialog.content_cls.ids.profile_phone.helper_text = "Nesprávné telefoní číslo"
+            valid = False
         else:
             self.dialog.content_cls.ids.profile_phone.error = False
 
@@ -470,11 +678,11 @@ class MeditrashApp(MDApp):
             app.cursor.execute(sql, val)
             app.cursor.commit()
             self.dialog.dismiss(force=True)
+            print("True")
+            self.root.get_screen('profile').ids['telefon'].text = phone
+            self.root.get_screen('profile').ids['nazev_organizace'].text = name
+            self.root.get_screen('profile').ids['adresa'].text = address
 
-            print(self.manager.get_screen('profile').ids['nazev_organizace'].text )
-            #self.manager.screens['profile'].ids['nazev_organizace'].text = name
-            #self.root.current.ids['adresa'].text = address
-            #self.WindowManager.screens['profile'].ids['telefon'].text = phone
             Snackbar(
                 text="Informace úspěšně změněny",
                 snackbar_x="10dp",
