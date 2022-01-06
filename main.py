@@ -26,10 +26,7 @@ from kivymd.uix.button import MDFlatButton
 from kivy.uix.boxlayout import BoxLayout
 import locale
 from kivy.metrics import dp
-# importing pyplot for graph plotting
 from matplotlib import pyplot as plt
-# importing numpy
-import numpy as np
 from kivy.garden.matplotlib import FigureCanvasKivyAgg
 
 locale.setlocale(locale.LC_TIME, "cs_CZ")
