@@ -1,7 +1,11 @@
-<OdvozWindow>:
-    name:"odvoz"
+<StatisticWindow>:
+    name:'statistic'
 
-    # Navbbar
+    Image:
+        source: 'obrazky/line3.png'
+        size_hint_x: 1
+        pos_hint: {"center_x": .5, "center_y": .07}
+
     MDBoxLayout:
         pos_hint: {"center_x": .5, "center_y": .965}
         size_hint: 1, .08
@@ -19,14 +23,13 @@
                 app.root.current = 'addtrash'
         Button:
             text: "Odvoz odpadu"
-            background_color: (.0, .0, .0, .6)
+            background_color: (.0, .0, .0, .45)
             font_size: 0.32 * self.height
             on_press:
                 app.root.current = 'odvoz'
-
         Button:
             text: "Statistiky"
-            background_color: (.0, .0, .0, .45)
+            background_color: (.0, .0, .0, .6)
             font_size: 0.32 * self.height
             on_press:
                 app.root.current = 'statistic'
@@ -36,6 +39,20 @@
             font_size: 0.32 * self.height
             on_press:
                 app.root.current = 'history'
+
         Image:
             source: 'obrazky/logo.png'
             background_color: (.0, .0, .0, .45)
+    BoxLayout
+        size_hint: 1, .6
+        pos_hint: {"center_x": .5, "center_y": .55}
+        spacing:10
+        padding:10
+        BoxLayout:
+            id: graf1
+
+        BoxLayout:
+            id: graf2
+
+
+

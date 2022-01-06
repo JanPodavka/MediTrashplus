@@ -25,13 +25,60 @@ from kivymd.uix.button import MDFlatButton
 from kivy.uix.boxlayout import BoxLayout
 import locale
 from kivy.metrics import dp
+# importing pyplot for graph plotting
+from matplotlib import pyplot as plt
+# importing numpy
+import numpy as np
+from kivy.garden.matplotlib import FigureCanvasKivyAgg
 
 locale.setlocale(locale.LC_TIME, "cs_CZ")
+
+class StatisticWindow(Screen):
+    def on_leave(self, *args):
+        self.ids['graf1'].clear_widgets()
+        self.ids['graf2'].clear_widgets()
+
+    def on_pre_enter(self, *args):
+        app = MDApp.get_running_app()
+        SQL = "SELECT kod_odpadu,SUM(mnozstvi) FROM Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND  zdravotnicke_zarizeni_ico = ? GROUP BY kod_odpadu"
+        val = app.usernameL
+        data = app.cursor.execute(SQL, val)
+        mnozstvi = []
+        nazvy = []
+        for row in data:
+            nazvy.append(row[0])
+            mnozstvi.append(row[1])
+        plt.figure(1)
+        plt.bar(nazvy, mnozstvi,color=(0, 0, 1, 0.6))
+        plt.ylabel("Váha (g)")
+        plt.xlabel("Kód odpadu")
+        self.ids['graf1'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
+        plt.figure(2)
+        SQL = "SELECT kategorie,SUM(mnozstvi) FROM 	Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND  zdravotnicke_zarizeni_ico = ?	GROUP BY kategorie"
+        data2 = app.cursor.execute(SQL, val)
+        bezpecnost = []
+        bezpecnost_name = []
+        for row in data2:
+            print(row)
+            if row[0] == 1:
+                bezpecnost.append("Bezpečný")
+                bezpecnost_name.append(row[1])
+            else:
+                bezpecnost.append("Nebezpečný")
+                bezpecnost_name.append(row[1])
+
+        bar_bez = plt.bar(bezpecnost, bezpecnost_name)
+        bar_bez[0].set_color('r')
+        bar_bez[1].set_color('g')
+
+        plt.ylabel("Váha (g)")
+        plt.xlabel("Kategorie")
+        self.ids['graf2'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
+
 
 class HistoryWindow(Screen):
 
     def on_leave(self, *args):
-        app = MDApp.get_running_app()
         self.table.clear_widgets()
 
     def on_pre_enter(self, *args):
@@ -47,6 +94,7 @@ class HistoryWindow(Screen):
                 row[4] = "nebezpečné"
             else:
                 row[4] = "bezpečné"
+
             hist_data.append(row)
 
         table = MDDataTable(
@@ -69,9 +117,37 @@ class HistoryWindow(Screen):
                 ("IČO Odvozce", dp(45)),
             ],
             row_data=hist_data,
+            sorted_on=" ID ",
+            sorted_order="ASC"
         )
         self.ids['table'].add_widget(table)
+        app.selected_rows = [" ", " ", " ", " ", " ", " ", " "]
+        #table.bind(on_check_press=self.on_check_press)
 
+    def on_check_press(self, instance_table, current_row,instance_row):
+        print(instance_table, current_row,instance_row)
+        # app = MDApp.get_running_app()
+        # app.selected_rows = instance_table.get_row_checks()
+        # print("--------------všechny zvolené---------")
+        # print(instance_table.get_row_checks())
+        pass
+
+    def on_leave(self, *args):
+        self.ids.table.clear_widgets()
+
+    def removeSelectedRows(self, *args):
+        app = MDApp.get_running_app()
+        print(app.selected_rows)
+
+        #print(app.selected_rows)
+        for row in app.selected_rows:
+
+            SQL = "DELETE from Odpad where id = ? AND zdravotnicke_zarizeni_ico = ?"
+            val = (row[0], app.usernameL)
+            app.cursor.execute(SQL, val)
+            app.cursor.commit()
+
+        app.selected_rows = [" ", " ", " ", " ", " ", " ", " "]
 
 
 
@@ -264,6 +340,7 @@ class RegistrationWindow(Screen):
 
 class AddTrashWindow(Screen):
 
+
     def choosenTrash(self,n):
         app = MDApp.get_running_app()
         self.ids['vybrany_odpad'].text = n[0]
@@ -331,7 +408,7 @@ class AddTrashWindow(Screen):
                 bg_color=(0, 0, 0, .2)
             ).open()
 
-    def remove_item(self):
+    def on_leave(self, *args):
         self.ids.container.clear_widgets()
 
 class WindowManager(ScreenManager):
