@@ -1,20 +1,6 @@
-#from screeninfo import get_monitors
-# for m in get_monitors():
-#     if m.is_primary:
-#         monitor = m
-#         break
-#
-# from kivy import Config
-# Config.set('graphics', 'minimum_width', monitor.width)
-# Config.set('graphics', 'minimum_height', monitor.height)
-from kivy.lang import Builder
-from kivy.uix.progressbar import ProgressBar
 from kivymd.uix.list import TwoLineListItem, IRightBodyTouch, TwoLineAvatarIconListItem, MDList
-from kivy.core.window import Window
-from kivymd.uix.datatables import MDDataTable
 from kivy.uix.screenmanager import ScreenManager
 from kivymd.uix.screen import Screen
-from kivy.uix.checkbox import CheckBox
 import pyodbc
 from kivy.properties import StringProperty, ObjectProperty
 from kivymd.uix.dialog import MDDialog
@@ -28,25 +14,14 @@ from kivymd.uix.button import MDFlatButton
 from kivy.uix.boxlayout import BoxLayout
 import locale
 from kivy.metrics import dp
-from kivy.app import App
 from kivy.uix.progressbar import ProgressBar
 from kivy.core.text import Label as CoreLabel
-from kivy.lang.builder import Builder
 from kivy.graphics import Color, Ellipse, Rectangle
-from kivy.clock import Clock
-from kivy.uix.widget import Widget
-
-
 from kivy.core.text import Label
 from kivy.lang.builder import Builder
 from kivy.graphics import Line, Rectangle, Color
-from collections.abc import Iterable
-from math import ceil
 
-# This constant enforces the cap argument to be one of the caps accepted by the kivy.graphics.Line class
 _ACCEPTED_BAR_CAPS = {"round", "none", "square"}
-
-# Declare the defaults for the modifiable values
 _DEFAULT_THICKNESS = 10
 _DEFAULT_CAP_STYLE = 'round'
 _DEFAULT_PRECISION = 10
@@ -56,15 +31,8 @@ _DEFAULT_MAX_PROGRESS = 100
 _DEFAULT_MIN_PROGRESS = 0
 _DEFAULT_WIDGET_SIZE = 200
 _DEFAULT_TEXT_LABEL = Label(text="{}%", font_size=40)
-
-# Declare the defaults for the normalisation function, these are used in the textual representation (multiplied by 100)
 _NORMALISED_MAX = 1
 _NORMALISED_MIN = 0
-# importing pyplot for graph plotting
-from matplotlib import pyplot as plt
-# importing numpy
-import numpy as np
-#from kivy.garden.matplotlib import FigureCanvasKivyAgg
 
 locale.setlocale(locale.LC_TIME, "cs_CZ")
 
@@ -703,3 +671,10 @@ class MeditrashApp(MDApp):
 
 if __name__ == '__main__':
     MeditrashApp().run()
+
+
+
+
+
+
+
