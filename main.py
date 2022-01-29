@@ -40,15 +40,16 @@ _NORMALISED_MIN = 0
 locale.setlocale(locale.LC_TIME, "cs_CZ")
 
 class ListItemWithCheckbox(TwoLineAvatarIconListItem):
-    '''Custom list item.'''
+    pass
 
 class RightCheckbox(IRightBodyTouch, MDCheckbox):
-    '''Custom right container.'''
-
-    def on_active(self, *args):
-        print(args)
-        if args[1] == True:
-            print("aktivní")
+    def on_checkbox_active(self, checkbox, value):
+        if value:
+            print('The checkbox', checkbox, 'is active', 'and', checkbox.state, 'state')
+            print(value)
+        else:
+            print('The checkbox', checkbox, 'is inactive', 'and', checkbox.state, 'state')
+            print(value)
 
 class Send_checker(BoxLayout):
     pass
@@ -89,23 +90,18 @@ class CircularProgressBar(ProgressBar):
         self.draw()
 
 class OdvozWindow(Screen):
+
     def on_leave(self, *args):
-        self.ids.container.clear_widgets()
+        self.ids.scroll.clear_widgets()
 
     def on_pre_enter(self, *args):
         app = MDApp.get_running_app()
-
-        sql = 'Select nazev,SUM(mnozstvi) from Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = ? GROUP BY nazev '
+        sql = 'SELECT nazev,kod_odpadu, SUM(mnozstvi) from Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = ? GROUP BY nazev,kod_odpadu '
         val = app.usernameL
         app.cursor.execute(sql, val)
-        list_view = MDList()
         for row in app.cursor:
-            item = ListItemWithCheckbox(text=f"{row[0]}", secondary_text=f"{row[1]} g")
-            list_view.add_widget(item)
-
-        self.ids['container'].add_widget(list_view)
-
-
+            item = ListItemWithCheckbox(text=f"{row[0]}", secondary_text = f"{row[1]}",  tertiary_text=f"Váha: {row[2]} g")
+            self.ids.scroll.add_widget(item)
         sql = 'SELECT * from Opravnena_osoba'
         app.cursor.execute(sql)
         osoby = []
@@ -115,14 +111,12 @@ class OdvozWindow(Screen):
             nazev_osob.append(row[1])
         self.ids.drop_item.values = nazev_osob
 
-
-
-
     def send_trash(self):
         app = MDApp.get_running_app()
         if self.ids['drop_item'].text == "Vyberte osobu":
             self.ids.Send_error_mess.text = "* Povinné pole"
         else:
+
             self.ids.Send_error_mess.text = ""
             self.dialog = MDDialog(
                 title="Opravdu si přejete odeslat",
@@ -138,19 +132,29 @@ class OdvozWindow(Screen):
                     ),
                     MDFlatButton(
                         text="Odeslat",
-                        #on_release=self.
+                        on_release=self.get_active_check
                     ),
                 ],
             )
             self.dialog.open()
 
-    def on_checkbox_active(self, checkbox, value):
-        if value:
-            print('The checkbox', checkbox, 'is active', 'and', checkbox.state, 'state')
-            print(value)
-        else:
-            print('The checkbox', checkbox, 'is inactive', 'and', checkbox.state, 'state')
-            print(value)
+    def get_active_check(self,*args):
+        app = MDApp.get_running_app()
+        sql = 'SELECT ico FROM Opravnena_osoba WHERE nazev = ?'
+        val = self.ids['drop_item'].text
+        app.cursor.execute(sql, val)
+        opravnena_osoba = []
+        for row in app.cursor:
+            opravnena_osoba.append(row)
+        print(opravnena_osoba[0][0])
+
+        for element in self.ids.scroll.children:
+            if element.ids.check.active:
+                sql = "UPDATE Odpad SET opravnena_osoba_ico = (?), odevezeno = (?), datum_odvozu = (?) WHERE katalogove_cislo = (?) AND zdravotnicke_zarizeni_ico = (?)"
+                print(element.secondary_text)
+                val = str(opravnena_osoba[0][0]),"ano",date.today().strftime("%d.%m.%Y"),element.secondary_text, app.usernameL
+                app.cursor.execute(sql, val)
+                app.cursor.commit()
 
     def close_dialog(self,obj):
          self.dialog.dismiss()
