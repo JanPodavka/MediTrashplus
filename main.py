@@ -16,13 +16,12 @@ import locale
 from kivy.metrics import dp
 from kivy.uix.progressbar import ProgressBar
 from kivy.core.text import Label as CoreLabel
-from kivy.graphics import Color, Ellipse, Rectangle
+from kivy.graphics import Ellipse, Rectangle, Color
 from kivy.core.text import Label
 from kivy.lang.builder import Builder
-from kivy.graphics import Line, Rectangle, Color
 from fpdf import FPDF
 from pathlib import Path
-#pip3 install fpdf
+from datetime import date
 
 _ACCEPTED_BAR_CAPS = {"round", "none", "square"}
 _DEFAULT_THICKNESS = 10
@@ -100,7 +99,7 @@ class OdvozWindow(Screen):
         val = "ne",app.usernameL
         app.cursor.execute(sql, val)
         for row in app.cursor:
-            item = ListItemWithCheckbox(text=f"{row[0]}", secondary_text = f"{row[1]}",  tertiary_text=f"Váha: {row[2]} g")
+            item = ListItemWithCheckbox(text=f"{row[0]}", secondary_text = f"{row[1]}",  tertiary_text=f"váha: {row[2]} g")
             self.ids.scroll.add_widget(item)
         sql = 'SELECT * from Opravnena_osoba'
         app.cursor.execute(sql)
@@ -113,17 +112,17 @@ class OdvozWindow(Screen):
 
     def send_trash(self):
         app = MDApp.get_running_app()
+
         if self.ids['drop_item'].text == "Vyberte osobu":
             self.ids.Send_error_mess.text = "* Povinné pole"
         else:
             self.ids.Send_error_mess.text = ""
             self.dialog = MDDialog(
-                title="Opravdu si přejete odeslat",
+                title="Opravdu si přejete odeslat?",
+                text=self.getCheckedText(),
                 radius=[20, 20, 20, 20],
                 size_hint=[.5, .6],
-                type="custom",
                 auto_dismiss=False,
-                content_cls=Send_checker(),
                 buttons=[
                     MDFlatButton(
                         text="Zpět",
@@ -136,6 +135,13 @@ class OdvozWindow(Screen):
                 ],
             )
             self.dialog.open()
+
+    def getCheckedText(self):
+        text = ""
+        for element in self.ids.scroll.children:
+            if element.ids.check.active:
+                text = text + element.text + " - " + element.tertiary_text + "\n"
+        return text
 
     def get_active_check(self,*args):
         app = MDApp.get_running_app()
@@ -152,8 +158,6 @@ class OdvozWindow(Screen):
                 app.cursor.execute(sql, val)
                 app.cursor.commit()
         self.dialog.dismiss()
-        for element in self.ids.scroll.children:
-            element.ids.check.active = False
 
         self.ids.scroll.clear_widgets()
         sql = 'SELECT nazev,kod_odpadu, SUM(mnozstvi) from Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND odevezeno = (?)  AND zdravotnicke_zarizeni_ico = ? GROUP BY nazev,kod_odpadu'
@@ -309,6 +313,30 @@ class MainWindow(Screen):
     def on_enter(self, *args):
         self.ids['main_day_of_week'].text = 'Dnes je ' + datetime.today().strftime('%A') + ' ' + date.today().strftime(
             "%d. %m. %Y")
+        app = MDApp.get_running_app()
+        SQL = "SELECT distinct(datum_uskladneni) FROM Odpad O, Katalog_odpadu K WHERE O.katalogove_cislo = K.kod_odpadu AND kategorie = 1 AND datum_odvozu IS NULL AND zdravotnicke_zarizeni_ico = (?)"
+        val = app.usernameL
+        data = app.cursor.execute(SQL, val)
+        list_of_char = [' ','(',')', '\'',',']
+        for row in data:
+            x = str(row)
+            for char in list_of_char:
+                x = x.replace(char,'')
+            x = x.split(".")
+            date_dbs = date(int(x[2]),int(x[1]),int(x[0]))
+            today = date.today()
+            days = abs(today - date_dbs).days
+            if days//7 >= 1:
+                self.dialog = MDDialog(
+                    title="Máte uskladněný nebezpečný materiál déle než týden",
+                    text="Doporučujeme ho co nejdříve odeslat",
+                    radius=[20, 20, 20, 20],
+                    size_hint=[.5, .6],
+                )
+                self.dialog.open()
+
+
+
 
 class Popup_psswd(BoxLayout):
     pass
@@ -611,6 +639,7 @@ class MeditrashApp(MDApp):
 
     def close_dialog(self,obj):
          self.dialog.dismiss()
+
     def update_psswd(self, *args):
         app = MDApp.get_running_app()
         valid = True
@@ -694,7 +723,6 @@ class MeditrashApp(MDApp):
                 snackbar_y="10dp",
                 bg_color=(0, 0, 0, .2)
             ).open()
-
 
     def get_data(self,n):
         app = MDApp.get_running_app()
