@@ -196,19 +196,19 @@ class HistoryWindow(Screen):
         app.selected_rows = [" ", " ", " ", " ", " ", " ", " "]
 
 class ListItemWithCheckbox(TwoLineAvatarIconListItem):
-    '''Custom list item.'''
-
+    pass
 
 
 class RightCheckbox(IRightBodyTouch, MDCheckbox):
-    '''Custom right container.'''
-
     def on_active(self, *args):
         print(args)
+
+        app = MDApp.get_running_app()
         if args[1] == True:
             print("aktivní")
 
 
+        print(app.odvozce)
 class OdvozWindow(Screen):
     def on_leave(self, *args):
         self.ids.container.clear_widgets()
@@ -509,6 +509,7 @@ class MeditrashApp(MDApp):
         usernameL = StringProperty(None)
         passwordL = StringProperty(None)
         selected_rows = "empty"
+        odvozce = []
         instance_data = ObjectProperty(None)
         self.theme_cls.theme_style = "Light"
         self.theme_cls.primary_palette = "Gray"
