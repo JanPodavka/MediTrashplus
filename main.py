@@ -96,8 +96,8 @@ class OdvozWindow(Screen):
 
     def on_pre_enter(self, *args):
         app = MDApp.get_running_app()
-        sql = 'SELECT nazev,kod_odpadu, SUM(mnozstvi) from Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = ? GROUP BY nazev,kod_odpadu '
-        val = app.usernameL
+        sql = 'SELECT nazev,kod_odpadu, SUM(mnozstvi) from Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND odevezeno = (?)  AND zdravotnicke_zarizeni_ico = ? GROUP BY nazev,kod_odpadu'
+        val = "ne",app.usernameL
         app.cursor.execute(sql, val)
         for row in app.cursor:
             item = ListItemWithCheckbox(text=f"{row[0]}", secondary_text = f"{row[1]}",  tertiary_text=f"Váha: {row[2]} g")
@@ -116,7 +116,6 @@ class OdvozWindow(Screen):
         if self.ids['drop_item'].text == "Vyberte osobu":
             self.ids.Send_error_mess.text = "* Povinné pole"
         else:
-
             self.ids.Send_error_mess.text = ""
             self.dialog = MDDialog(
                 title="Opravdu si přejete odeslat",
@@ -146,15 +145,30 @@ class OdvozWindow(Screen):
         opravnena_osoba = []
         for row in app.cursor:
             opravnena_osoba.append(row)
-        print(opravnena_osoba[0][0])
-
         for element in self.ids.scroll.children:
             if element.ids.check.active:
                 sql = "UPDATE Odpad SET opravnena_osoba_ico = (?), odevezeno = (?), datum_odvozu = (?) WHERE katalogove_cislo = (?) AND zdravotnicke_zarizeni_ico = (?)"
-                print(element.secondary_text)
                 val = str(opravnena_osoba[0][0]),"ano",date.today().strftime("%d.%m.%Y"),element.secondary_text, app.usernameL
                 app.cursor.execute(sql, val)
                 app.cursor.commit()
+        self.dialog.dismiss()
+        for element in self.ids.scroll.children:
+            element.ids.check.active = False
+
+        self.ids.scroll.clear_widgets()
+        sql = 'SELECT nazev,kod_odpadu, SUM(mnozstvi) from Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND odevezeno = (?)  AND zdravotnicke_zarizeni_ico = ? GROUP BY nazev,kod_odpadu'
+        val = "ne", app.usernameL
+        app.cursor.execute(sql, val)
+        for row in app.cursor:
+            item = ListItemWithCheckbox(text=f"{row[0]}", secondary_text=f"{row[1]}", tertiary_text=f"Váha: {row[2]} g")
+            self.ids.scroll.add_widget(item)
+
+        Snackbar(
+            text="Úspěšně odesláno",
+            snackbar_x="10dp",
+            snackbar_y="10dp",
+            bg_color=(0, 0, 0, .2)
+        ).open()
 
     def close_dialog(self,obj):
          self.dialog.dismiss()
