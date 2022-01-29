@@ -20,6 +20,9 @@ from kivy.graphics import Color, Ellipse, Rectangle
 from kivy.core.text import Label
 from kivy.lang.builder import Builder
 from kivy.graphics import Line, Rectangle, Color
+from fpdf import FPDF
+from pathlib import Path
+#pip3 install fpdf
 
 _ACCEPTED_BAR_CAPS = {"round", "none", "square"}
 _DEFAULT_THICKNESS = 10
@@ -309,7 +312,6 @@ class ProfileWindow(Screen):
         self.ids['ico'].text = udaje[3]
         self.ids['telefon'].text = udaje[4]
 
-
         sql = 'Select kategorie,SUM(mnozstvi) from Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = ? GROUP BY kategorie'
         val = app.usernameL
         data = app.cursor.execute(sql, val)
@@ -323,6 +325,23 @@ class ProfileWindow(Screen):
         else:
             self.ids['progress_bar_nebezpecne'].set_value(hint_data[0][1])
             self.ids['progress_bar_bezpecne'].set_value(hint_data[1][1])
+
+    def generateISPOP(self):
+        app = MDApp.get_running_app()
+        pdf = FPDF()
+        pdf.add_page()
+        pdf.set_font("Arial", size=22)
+        home = str(Path.home())
+        pdf.image("obrazky/logo_plus.png", x=20, y=20,w=60,h=60)
+        pdf.cell(200, 30, txt="Zpráva pro ISPOP",ln=1, align='C')
+        today = date.today().strftime("-%m-%Y")
+        pdf.output(home + "/Desktop/ISPOP" + today + ".pdf");
+        Snackbar(
+            text="ISPOP zpráva byla úspěšně uložena na plochu",
+            snackbar_x="10dp",
+            snackbar_y="10dp",
+            bg_color=(0, 0, 0, .2)
+        ).open()
 
 class RegistrationWindow(Screen):
 
