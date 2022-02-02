@@ -55,7 +55,7 @@
 
     BoxLayout:
         spacing:15
-        size_hint: .33, .035
+        size_hint: .33, .040
         pos_hint: {"center_x": .68, "center_y": .8}
         MDLabel:
             size_hint_x: .5
@@ -83,8 +83,9 @@
         scroll_type: ['bars']
         MDList:
             id: scroll
-    MDRoundFlatButton:
+    MDFillRoundFlatButton:
         text: "Odeslat"
+        background_color: (.0, .0, .0, .6)
         size_hint: .2,.07
         font_size: 0.4 * self.height
         pos_hint: {"center_x": .76, "center_y": .2}

@@ -325,13 +325,14 @@ class StatisticWindow(Screen):
         for row in data:
             nazvy.append(row[0])
             mnozstvi.append(row[1])
-        plt.figure(1)
+        plt.figure(3)
         plt.bar(nazvy, mnozstvi, color=(0, 0, 1, 0.6))
         plt.ylabel("Váha (g)")
         plt.xlabel("Kód odpadu")
         self.ids['graf1'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
-        plt.figure(2)
-        SQL = "SELECT kategorie,SUM(mnozstvi) FROM 	Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND odevezeno = ? AND zdravotnicke_zarizeni_ico = ?	GROUP BY kategorie"
+        plt.figure(4)
+        SQL = "SELECT kategorie,SUM(mnozstvi) FROM 	Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND odevezeno = ? AND zdravotnicke_zarizeni_ico = ? GROUP BY kategorie"
+        val = ('ne', app.usernameL)
         data2 = app.cursor.execute(SQL, val)
         bezpecnost = []
         bezpecnost_name = []
@@ -393,11 +394,33 @@ class StatisticWindow(Screen):
         plt.xlabel("Kategorie")
         self.ids['graf2'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
 
+
 class MainWindow(Screen):
 
     def on_enter(self, *args):
         self.ids['main_day_of_week'].text = 'Dnes je ' + datetime.today().strftime('%A') + ' ' + date.today().strftime(
             "%d. %m. %Y")
+        app = MDApp.get_running_app()
+        SQL = "SELECT distinct(datum_uskladneni) FROM Odpad O, Katalog_odpadu K WHERE O.katalogove_cislo = K.kod_odpadu AND kategorie = 1 AND datum_odvozu IS NULL AND zdravotnicke_zarizeni_ico = (?)"
+        val = app.usernameL
+        data = app.cursor.execute(SQL, val)
+        list_of_char = [' ','(',')', '\'',',']
+        for row in data:
+            x = str(row)
+            for char in list_of_char:
+                x = x.replace(char,'')
+            x = x.split(".")
+            date_dbs = date(int(x[2]),int(x[1]),int(x[0]))
+            today = date.today()
+            days = abs(today - date_dbs).days
+            if days//7 >= 1:
+                self.dialog = MDDialog(
+                    title="Máte uskladněný nebezpečný materiál déle než týden",
+                    text="Doporučujeme ho co nejdříve odeslat",
+                    radius=[20, 20, 20, 20],
+                    size_hint=[.5, .6],
+                )
+                self.dialog.open()
 
 class Popup_psswd(BoxLayout):
     pass
