@@ -5,7 +5,6 @@ import pyodbc
 from kivy.properties import StringProperty, ObjectProperty
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.datatables import MDDataTable
-from datetime import date
 from kivymd.uix.selectioncontrol import MDCheckbox
 from kivymd.uix.snackbar import Snackbar
 from datetime import datetime
@@ -334,9 +333,6 @@ class MainWindow(Screen):
                     size_hint=[.5, .6],
                 )
                 self.dialog.open()
-
-
-
 
 class Popup_psswd(BoxLayout):
     pass
