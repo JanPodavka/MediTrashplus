@@ -532,6 +532,9 @@ class RegistrationWindow(Screen):
         if self.ids['reg_ico'].text == "":
             self.ids['reg_error_ico'].text = "* Povinné pole"
             reg_validity = 0
+        elif len(self.ids['reg_ico'].text) != 8:
+            self.ids['reg_error_ico'].text = "* Nevalidní IČO"
+            reg_validity = 0
         # elif reg_ico_validity(self.ids['reg_ico'].text) != 1:
         #    self.ids['reg_error_ico'].text = "* Nevalidni ICO"
         #    reg_validity = False
