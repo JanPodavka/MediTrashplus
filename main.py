@@ -1,11 +1,16 @@
-from kivy import Config
-
-Config.set('graphics', 'width', '800')
-Config.set('graphics', 'height', '600')
-Config.set('graphics', 'minimum_width', '800')
-Config.set('graphics', 'minimum_height', '600')
+#from screeninfo import get_monitors
+# for m in get_monitors():
+#     if m.is_primary:
+#         monitor = m
+#         break
+#
+# from kivy import Config
+# Config.set('graphics', 'minimum_width', monitor.width)
+# Config.set('graphics', 'minimum_height', monitor.height)
 from kivy.lang import Builder
 from kivymd.uix.list import TwoLineListItem
+from kivy.core.window import Window
+from kivymd.uix.datatables import MDDataTable
 from kivy.uix.screenmanager import ScreenManager
 from kivymd.uix.screen import Screen
 import pyodbc
@@ -28,34 +33,44 @@ class HistoryWindow(Screen):
     def on_pre_enter(self, *args):
 
         app = MDApp.get_running_app()
-        SQL = "SELECT nazev,mnozstvi,kategorie,datum_uskladneni,ISNULL(datum_odvozu,'neodvezeno') FROM Odpad," \
-              "Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = (?) "
+        SQL = "SELECT nazev,katalogove_cislo,mnozstvi,kategorie,datum_uskladneni,ISNULL(datum_odvozu,'neodvezeno'),ISNULL(opravnena_osoba_ico,'nepřiřazeno') FROM " \
+              "Odpad, Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = (?) "
         val = app.usernameL
         data = app.cursor.execute(SQL, val)
         hist_data = []
         for row in data:
+            if row[3] == 1:
+                row[3] = "nebezpečné"
+            else:
+                row[3] = "bezpečné"
+
             hist_data.append(row)
+
         table = MDDataTable(
             pos_hint={'center_x': 0.5, 'center_y': 0.5},
-            size_hint=(0.9, 0.6),
-            check=True,
+            size_hint=(.5, .6),
             use_pagination=True,
             rows_num=7,
+            check=True,
             pagination_menu_height='240dp',
             pagination_menu_pos="auto",
-            background_color=[1, 0, 0, .5],
-
+           # background_color=[1, 1, 1, 1],
             column_data=[
-                ("First Name", dp(30)),
-                ("Last Name", dp(30)),
-                ("Email Address", dp(30)),
-                ("Phone Number", dp(30))
+                ("Název", dp(45)),
+                ("Katalogoé číslo", dp(35)),
+                ("Váha (g)", dp(25)),
+                ("Kategorie", dp(45)),
+                ("Datum uskladnění", dp(45)),
+                ("Datum odvozu", dp(45)),
+                ("IČO Odvozce", dp(45)),
             ],
-            row_data=hist_data
-
+            row_data=hist_data,
         )
+        self.ids['table'].add_widget(table)
 
-        self.add_widget(table)
+
+    def on_leave(self, *args):
+        self.ids.table.clear_widgets()
 
 class OdvozWindow(Screen):
     pass
@@ -124,12 +139,10 @@ class MainWindow(Screen):
 class Popup_psswd(BoxLayout):
     pass
 
-class Popup_info(BoxLayout):
+class Popup_user(BoxLayout):
     pass
 
 class ProfileWindow(Screen):
-
-
 
     def on_pre_enter(self, *args):
         app = MDApp.get_running_app()
@@ -362,14 +375,15 @@ class MeditrashApp(MDApp):
                 ],
             )
             self.dialog.open()
-        elif instance.icon == "account-edit-outline":
+
+        elif instance.icon == "account-edit-outline": ##editace účtu
             self.dialog = MDDialog(
                 title="Upravit profil",
                 radius=[20, 20, 20, 20],
                 size_hint=[.5, .8],
                 type="custom",
                 auto_dismiss=False,
-                content_cls=Popup_info(),
+                content_cls=Popup_user(),
                 buttons=[
                     MDFlatButton(
                         text="Zpět",
@@ -377,24 +391,22 @@ class MeditrashApp(MDApp):
                     ),
                     MDFlatButton(
                         text="Uložit",
-                        #on_release=self.update_psswd
+                        on_release=self.update_user
                     ),
                 ],
             )
             self.dialog.open()
         else:
             self.root.current = "login"
-            #self.current = "login"
+
 
     def close_dialog(self,obj):
          self.dialog.dismiss()
     def update_psswd(self, *args):
         app = MDApp.get_running_app()
         valid = True
-        SQL_heslo = ('SELECT heslo FROM Zdravotnicke_zarizeni WHERE ico = ?')
-        val = (app.usernameL)
-        nacteny = app.cursor.execute(SQL_heslo, val)
-        stare_heslo = nacteny.fetchone()[0]
+
+        stare_heslo = app.get_data(0)
         if self.dialog.content_cls.ids.profile_old_psswd.text != stare_heslo:
             self.dialog.content_cls.ids.profile_old_psswd.error = True
             self.dialog.content_cls.ids.profile_old_psswd.helper_text = "Chybné heslo"
@@ -424,6 +436,63 @@ class MeditrashApp(MDApp):
                 snackbar_y="10dp",
                 bg_color=(0, 0, 0, .2)
             ).open()
+
+    def update_user(self, *args):
+        app = MDApp.get_running_app()
+        valid = True
+        if self.dialog.content_cls.ids.profile_name.text == "":
+            self.dialog.content_cls.ids.profile_name.helper_text = "Povinné pole"
+            self.dialog.content_cls.ids.profile_name.error = True
+            valid = False
+        else:
+            self.dialog.content_cls.ids.profile_name.error = False
+
+        if self.dialog.content_cls.ids.profile_phone.text == "":
+            self.dialog.content_cls.ids.profile_phone.error = True
+            self.dialog.content_cls.ids.profile_phone.helper_text = "Povinné pole"
+            valid = False
+        else:
+            self.dialog.content_cls.ids.profile_phone.error = False
+
+        if self.dialog.content_cls.ids.profile_address.text == "":
+            self.dialog.content_cls.ids.profile_addres.error = True
+            self.dialog.content_cls.ids.profile_addres.helper_text = "Povinné pole"
+            valid = False
+        else:
+            self.dialog.content_cls.ids.profile_address.error = False
+
+        if valid:
+            sql = "UPDATE Zdravotnicke_zarizeni SET nazev = (?), mesto = (?), telefon = (?)  WHERE ico = (?)"
+            name = self.dialog.content_cls.ids.profile_name.text
+            address = self.dialog.content_cls.ids.profile_address.text
+            phone = self.dialog.content_cls.ids.profile_phone.text
+            val = (name, address, phone, app.usernameL)
+            app.cursor.execute(sql, val)
+            app.cursor.commit()
+            self.dialog.dismiss(force=True)
+
+
+            print(self.manager.get_screen('profile').ids['nazev_organizace'].text )
+            #self.manager.screens['profile'].ids['nazev_organizace'].text = name
+            #self.root.current.ids['adresa'].text = address
+            #self.WindowManager.screens['profile'].ids['telefon'].text = phone
+            Snackbar(
+                text="Informace úspěšně změněny",
+                snackbar_x="10dp",
+                snackbar_y="10dp",
+                bg_color=(0, 0, 0, .2)
+            ).open()
+
+
+    def get_data(self,n):
+        app = MDApp.get_running_app()
+        SQL = "SELECT * FROM Zdravotnicke_zarizeni WHERE ico = ? "
+        val = app.usernameL
+        data = app.cursor.execute(SQL, val)
+        for row in data:
+            udaje = row
+
+        return udaje[n]
 
 if __name__ == '__main__':
     MeditrashApp().run()

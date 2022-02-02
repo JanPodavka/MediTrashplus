@@ -158,7 +158,7 @@
         hint_text: "Nové heslo znovu"
         password: True
 
-<Popup_info>:
+<Popup_user>:
     id: checker_info
     orientation: "vertical"
     spacing: "1dp"
@@ -168,19 +168,19 @@
     MDTextField:
         id: profile_name
         hint_text: "Název zařízení"
-        password: True
+        text: app.get_data(1)
 
     MDTextField:
         id: profile_phone
         hint_text: "Telefon"
-        password: True
+        text: app.get_data(4)
 
     MDTextField:
         id: profile_email
         hint_text: "E-mail"
-        password: True
+        text:
 
     MDTextField:
         id: profile_address
         hint_text: "Adresa"
-        password: True
+        text: app.get_data(2)
