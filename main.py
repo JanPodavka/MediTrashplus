@@ -382,6 +382,7 @@ class StatisticWindow(Screen):
         data2 = app.cursor.execute(SQL, val)
         bezpecnost = []
         bezpecnost_name = []
+        #
         for row in data2:
             print(row)
             if row[0] == 1:
@@ -392,7 +393,8 @@ class StatisticWindow(Screen):
                 bezpecnost_name.append(row[1])
 
         bar_bez = plt.bar(bezpecnost, bezpecnost_name)
-        bar_bez[0].set_color('r')
+        if len(bar_bez) > 0:
+            bar_bez[0].set_color('r')
         if len(bar_bez) > 1:
             bar_bez[1].set_color('g')
 
@@ -435,7 +437,8 @@ class StatisticWindow(Screen):
                 bezpecnost_name.append(row[1])
 
         bar_bez = plt.bar(bezpecnost, bezpecnost_name)
-        bar_bez[0].set_color('r')
+        if len(bar_bez) > 0:
+            bar_bez[0].set_color('r')
         if len(bar_bez) > 1:
             bar_bez[1].set_color('g')
 
