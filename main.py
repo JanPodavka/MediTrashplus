@@ -301,6 +301,7 @@ class LoginWindow(Screen):
         self.ids['log_remember_user'].active = False
 
 class StatisticWindow(Screen):
+
     def on_leave(self, *args):
         self.ids['graf1'].clear_widgets()
         self.ids['graf2'].clear_widgets()
@@ -473,8 +474,9 @@ class ProfileWindow(Screen):
 class RegistrationWindow(Screen):
 
     def reg_check(self):
-
+        app = MDApp.get_running_app()
         def reg_ico_validity(ico):
+
             if len(ico) != 8:
                 return -1
             try:
@@ -493,6 +495,13 @@ class RegistrationWindow(Screen):
             self.ids['reg_error_name'].text = "* Povinné pole"
             reg_validity = 0
         # ico
+
+        sql = "SELECT ico FROM Zdravotnicke_zarizeni"
+        ica = app.cursor.execute(sql)
+        for row in ica:
+            if self.ids['reg_ico'].text == row[0]:
+                self.ids['reg_error_ico'].text = "* Použité IČO"
+                reg_validity = 0
         if self.ids['reg_ico'].text == "":
             self.ids['reg_error_ico'].text = "* Povinné pole"
             reg_validity = 0
@@ -560,11 +569,11 @@ class RegistrationWindow(Screen):
 
     def reg_to_dbs(self):
         app = MDApp.get_running_app()
-        sql = "INSERT INTO Zdravotnicke_zarizeni (heslo, nazev, mesto, ico, telefon) VALUES (?, ?, ?, ?, ?)"
-        val = (self.ids['reg_password'].text,
-               self.ids['reg_name'].text,
-               self.ids['reg_address'].text,
+        sql = "INSERT INTO Zdravotnicke_zarizeni (nazev, ico, heslo, mesto, telefon) VALUES (?, ?, ?, ?, ?)"
+        val = (self.ids['reg_name'].text,
                self.ids['reg_ico'].text,
+               self.ids['reg_password'].text,
+               self.ids['reg_address'].text,
                self.ids['reg_number'].text
                )
 
