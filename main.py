@@ -475,6 +475,16 @@ class ProfileWindow(Screen):
                 self.ids['progress_bar_nebezpecne'].set_value(hint_data[0][1])
                 self.ids['progress_bar_bezpecne'].set_value(hint_data[1][1])
 
+        print(self.ids['progress_bar_bezpecne'].value)
+        print(self.ids['progress_bar_nebezpecne'].value)
+        if self.ids['progress_bar_bezpecne'].value >= 1000 * 1000 or self.ids['progress_bar_nebezpecne'].value >= 100 * 1000:
+            self.dialog = MDDialog(
+                title="Překročení limitu - Odešlete ISPOP dotazník",
+                radius=[20, 20, 20, 20],
+                size_hint=[.5, .6],
+            )
+            self.dialog.open()
+
     def generateISPOP(self):
         app = MDApp.get_running_app()
         pdf = FPDF()
@@ -485,6 +495,13 @@ class ProfileWindow(Screen):
         pdf.cell(200, 30, txt="Zpráva pro ISPOP",ln=1, align='C')
         today = date.today().strftime("-%m-%Y")
         pdf.output(home + "/Desktop/ISPOP" + today + ".pdf");
+
+        sql = 'UPDATE Odpad SET ispop = 1 WHERE id_zdravotnicke_zarizeni = (?) AND ispop = 0'
+        val = app.usernameL
+        app.cursor.execute(sql, val)
+        app.cursor.commit()
+        self.ids['progress_bar_nebezpecne'].set_value(0)
+        self.ids['progress_bar_bezpecne'].set_value(0)
         Snackbar(
             text="ISPOP zpráva byla úspěšně uložena na plochu",
             snackbar_x="10dp",
