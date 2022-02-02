@@ -23,7 +23,7 @@ from kivy.graphics import Line, Rectangle, Color
 from fpdf import FPDF
 from pathlib import Path
 from matplotlib import pyplot as plt
-from kivy.garden.matplotlib import FigureCanvasKivyAgg
+#from kivy.garden.matplotlib import FigureCanvasKivyAgg
 #pip3 install fpdf
 
 _ACCEPTED_BAR_CAPS = {"round", "none", "square"}
@@ -220,16 +220,20 @@ class HistoryWindow(Screen):
             sorted_order="DSC"
         )
         self.ids['table'].add_widget(table)
-        app.selected_rows = [" ", " ", " ", " ", " ", " ", " "]
-        print("test-----", app.selected_rows)
+        app.selected_rows = []
         table.bind(on_check_press=self.on_check_press)
 
     def on_check_press(self, instance_table, current_row):
-        #print(instance_table, current_row,instance_row)
+        print("DATA")
+        #print(current_row[0])
         app = MDApp.get_running_app()
-        app.selected_rows = instance_table.get_row_checks()
-        print("--------------všechny zvolené---------")
-        print(instance_table.get_row_checks())
+        if current_row[0]  in app.selected_rows:
+            app.selected_rows.remove(current_row[0])
+        else:
+            app.selected_rows.append(current_row[0])
+        print(app.selected_rows)
+        #print("--------------všechny zvolené---------")
+        #print(instance_table.get_row_checks())
 
 
     def on_leave(self, *args):
@@ -237,14 +241,13 @@ class HistoryWindow(Screen):
 
     def deleteData(self):
         app = MDApp.get_running_app()
-        print(app.selected_rows)
         for row in app.selected_rows:
             print(row)
             SQL = "DELETE from Odpad where id = ? AND id_zdravotnicke_zarizeni = ?"
-            val = (row[0], app.usernameL)
+            val = (row, app.usernameL)
             app.cursor.execute(SQL, val)
             app.cursor.commit()
-            #
+
         app.selected_rows = []
         self.ids.table.clear_widgets()
         app = MDApp.get_running_app()
@@ -285,14 +288,13 @@ class HistoryWindow(Screen):
             sorted_order="DSC"
         )
         self.ids['table'].add_widget(table)
-        app.selected_rows = [" ", " ", " ", " ", " ", " ", " "]
+        app.selected_rows = []
         print("test-----", app.selected_rows)
         table.bind(on_check_press=self.on_check_press)
 
     # def removeSelectedRows(self, *args):
     #     app = MDApp.get_running_app()
     #     print(app.selected_rows)
-
 
 class LoginWindow(Screen):
 
@@ -375,7 +377,7 @@ class StatisticWindow(Screen):
         plt.bar(nazvy, mnozstvi, color=(0, 0, 1, 0.6))
         plt.ylabel("Váha (g)")
         plt.xlabel("Kód odpadu")
-        self.ids['graf1'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
+        #self.ids['graf1'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
         plt.figure(4)
         SQL = "SELECT kategorie,SUM(mnozstvi) FROM 	Odpad o,Katalog_odpadu k WHERE o.id_odpad = k.id_odpad AND datum_odvozu IS NULL AND id_zdravotnicke_zarizeni = ? GROUP BY kategorie"
         val = (app.usernameL)
@@ -398,7 +400,7 @@ class StatisticWindow(Screen):
 
         plt.ylabel("Váha (g)")
         plt.xlabel("Kategorie")
-        self.ids['graf2'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
+        #self.ids['graf2'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
 
     def first_graph(self,*args):
         self.ids['graf1'].clear_widgets()
@@ -419,7 +421,7 @@ class StatisticWindow(Screen):
         plt.bar(nazvy, mnozstvi, color=(0, 0, 1, 0.6))
         plt.ylabel("Váha (g)")
         plt.xlabel("Kód odpadu")
-        self.ids['graf1'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
+        #self.ids['graf1'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
         plt.figure(2)
         SQL = "SELECT kategorie,SUM(mnozstvi) FROM 	Odpad o,Katalog_odpadu k WHERE k.id_odpad = o.id_odpad AND  id_zdravotnicke_zarizeni = ? GROUP BY kategorie"
         data2 = app.cursor.execute(SQL, val)
@@ -441,7 +443,7 @@ class StatisticWindow(Screen):
 
         plt.ylabel("Váha (g)")
         plt.xlabel("Kategorie")
-        self.ids['graf2'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
+        #self.ids['graf2'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
 
 class MainWindow(Screen):
 
