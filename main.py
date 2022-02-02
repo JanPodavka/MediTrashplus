@@ -97,8 +97,8 @@ class OdvozWindow(Screen):
 
     def on_pre_enter(self, *args):
         app = MDApp.get_running_app()
-        sql = 'SELECT nazev,kod_odpadu, SUM(mnozstvi) from Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND odevezeno = (?)  AND zdravotnicke_zarizeni_ico = ? GROUP BY nazev,kod_odpadu'
-        val = "ne",app.usernameL
+        sql = 'SELECT nazev,o.id_odpad, SUM(mnozstvi) from Odpad o,Katalog_odpadu k WHERE o.id_odpad = k.id_odpad AND datum_odvozu IS NULL  AND id_zdravotnicke_zarizeni = ? GROUP BY nazev,o.id_odpad'
+        val = app.usernameL
         app.cursor.execute(sql, val)
         for row in app.cursor:
             item = ListItemWithCheckbox(text=f"{row[0]}", secondary_text = f"{row[1]}",  tertiary_text=f"Váha: {row[2]} g")
@@ -148,8 +148,8 @@ class OdvozWindow(Screen):
             opravnena_osoba.append(row)
         for element in self.ids.scroll.children:
             if element.ids.check.active:
-                sql = "UPDATE Odpad SET opravnena_osoba_ico = (?), odevezeno = (?), datum_odvozu = (?) WHERE katalogove_cislo = (?) AND zdravotnicke_zarizeni_ico = (?)"
-                val = str(opravnena_osoba[0][0]),"ano",date.today().strftime("%d.%m.%Y"),element.secondary_text, app.usernameL
+                sql = "UPDATE Odpad SET id_opravnena_osoba = (?), datum_odvozu = (?) WHERE id_odpad = (?) AND id_zdravotnicke_zarizeni = (?)"
+                val = str(opravnena_osoba[0][0]),date.today().strftime("%d.%m.%Y"),element.secondary_text, app.usernameL
                 app.cursor.execute(sql, val)
                 app.cursor.commit()
         self.dialog.dismiss()
@@ -157,8 +157,8 @@ class OdvozWindow(Screen):
             element.ids.check.active = False
 
         self.ids.scroll.clear_widgets()
-        sql = 'SELECT nazev,kod_odpadu, SUM(mnozstvi) from Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND odevezeno = (?)  AND zdravotnicke_zarizeni_ico = ? GROUP BY nazev,kod_odpadu'
-        val = "ne", app.usernameL
+        sql = 'SELECT nazev,o.id_odpad, SUM(mnozstvi) from Odpad o ,Katalog_odpadu k WHERE o.id_odpad = k.id_odpad AND datum_odvozu IS NULL  AND id_zdravotnicke_zarizeni = ? GROUP BY nazev,o.id_odpad'
+        val = app.usernameL
         app.cursor.execute(sql, val)
         for row in app.cursor:
             item = ListItemWithCheckbox(text=f"{row[0]}", secondary_text=f"{row[1]}", tertiary_text=f"Váha: {row[2]} g")
@@ -182,8 +182,8 @@ class HistoryWindow(Screen):
     def on_pre_enter(self, *args):
 
         app = MDApp.get_running_app()
-        SQL = "SELECT o.id, nazev, katalogove_cislo, mnozstvi, kategorie, datum_uskladneni, ISNULL(datum_odvozu," \
-              "'neodvezeno'),ISNULL(opravnena_osoba_ico,'nepřiřazeno') FROM Odpad o, Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = (?) "
+        SQL = "SELECT o.id, nazev, o.id_odpad, mnozstvi, kategorie, datum_uskladneni, ISNULL(datum_odvozu," \
+              "'neodvezeno'),ISNULL(id_opravnena_osoba,'nepřiřazeno') FROM Odpad o, Katalog_odpadu k WHERE o.id_odpad = k.id_odpad AND id_zdravotnicke_zarizeni = (?) "
         val = app.usernameL
         data = app.cursor.execute(SQL, val)
         hist_data = []
@@ -313,7 +313,7 @@ class StatisticWindow(Screen):
         self.ids['neodvezeno'].background_color = [0, 0, 0, 0.5]
         self.ids['celkem'].background_color = [0, 0, 0, 0.3]
         app = MDApp.get_running_app()
-        SQL = "SELECT kod_odpadu,SUM(mnozstvi) FROM Odpad o,Katalog_odpadu k WHERE o.id_odpad = k.id_odpad AND datum_odvozu IS NULL AND  id_zdravotnicke_zarizeni = ? GROUP BY o.id_odpad"
+        SQL = "SELECT o.id_odpad,SUM(mnozstvi) FROM Odpad o,Katalog_odpadu k WHERE o.id_odpad = k.id_odpad AND datum_odvozu IS NULL AND  id_zdravotnicke_zarizeni = ? GROUP BY o.id_odpad"
         val = (app.usernameL)
         data = app.cursor.execute(SQL, val)
         mnozstvi = []
@@ -327,8 +327,8 @@ class StatisticWindow(Screen):
         plt.xlabel("Kód odpadu")
         self.ids['graf1'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
         plt.figure(4)
-        SQL = "SELECT kategorie,SUM(mnozstvi) FROM 	Odpad o,Katalog_odpadu k WHERE o.id_odpad = k AND odevezeno = ? AND zdravotnicke_zarizeni_ico = ? GROUP BY kategorie"
-        val = ('ne', app.usernameL)
+        SQL = "SELECT kategorie,SUM(mnozstvi) FROM 	Odpad o,Katalog_odpadu k WHERE o.id_odpad = k.id_odpad AND datum_odvozu IS NULL AND id_zdravotnicke_zarizeni = ? GROUP BY kategorie"
+        val = (app.usernameL)
         data2 = app.cursor.execute(SQL, val)
         bezpecnost = []
         bezpecnost_name = []
@@ -343,7 +343,8 @@ class StatisticWindow(Screen):
 
         bar_bez = plt.bar(bezpecnost, bezpecnost_name)
         bar_bez[0].set_color('r')
-        bar_bez[1].set_color('g')
+        if len(bar_bez) > 1:
+            bar_bez[1].set_color('g')
 
         plt.ylabel("Váha (g)")
         plt.xlabel("Kategorie")
@@ -355,12 +356,13 @@ class StatisticWindow(Screen):
         self.ids['neodvezeno'].background_color = [0, 0, 0, 0.3]
         self.ids['celkem'].background_color = [0, 0, 0, 0.5]
         app = MDApp.get_running_app()
-        SQL = "SELECT kod_odpadu,SUM(mnozstvi) FROM Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND  zdravotnicke_zarizeni_ico = ? GROUP BY kod_odpadu"
+        SQL = "SELECT o.id_odpad,SUM(mnozstvi) FROM Odpad o,Katalog_odpadu k WHERE k.id_odpad = o.id_odpad AND  id_zdravotnicke_zarizeni = ? GROUP BY o.id_odpad"
         val = app.usernameL
         data = app.cursor.execute(SQL, val)
         mnozstvi = []
         nazvy = []
         for row in data:
+            print(row)
             nazvy.append(row[0])
             mnozstvi.append(row[1])
         plt.figure(1)
@@ -369,7 +371,7 @@ class StatisticWindow(Screen):
         plt.xlabel("Kód odpadu")
         self.ids['graf1'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
         plt.figure(2)
-        SQL = "SELECT kategorie,SUM(mnozstvi) FROM 	Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND  zdravotnicke_zarizeni_ico = ?	GROUP BY kategorie"
+        SQL = "SELECT kategorie,SUM(mnozstvi) FROM 	Odpad o,Katalog_odpadu k WHERE k.id_odpad = o.id_odpad AND  id_zdravotnicke_zarizeni = ? GROUP BY kategorie"
         data2 = app.cursor.execute(SQL, val)
         bezpecnost = []
         bezpecnost_name = []
@@ -384,7 +386,8 @@ class StatisticWindow(Screen):
 
         bar_bez = plt.bar(bezpecnost, bezpecnost_name)
         bar_bez[0].set_color('r')
-        bar_bez[1].set_color('g')
+        if len(bar_bez) > 1:
+            bar_bez[1].set_color('g')
 
         plt.ylabel("Váha (g)")
         plt.xlabel("Kategorie")
