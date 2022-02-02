@@ -18,6 +18,8 @@ Naše řešení je multiplatformní aplikace, která klade důraz především n
 
 ### Návrh databázového schématu 
 
+![image](https://github.com/JanPodavka/MediTrashplus/blob/main/Dokumentace/Schema.png)
+
 ### Použité technologie
 
 Programovací jazyk:
