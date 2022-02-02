@@ -23,7 +23,7 @@ from kivy.graphics import Line, Rectangle, Color
 from fpdf import FPDF
 from pathlib import Path
 from matplotlib import pyplot as plt
-#from kivy.garden.matplotlib import FigureCanvasKivyAgg
+from kivy.garden.matplotlib import FigureCanvasKivyAgg
 #pip3 install fpdf
 
 _ACCEPTED_BAR_CAPS = {"round", "none", "square"}
@@ -356,28 +356,44 @@ class StatisticWindow(Screen):
         self.ids['graf1'].clear_widgets()
         self.ids['graf2'].clear_widgets()
 
+    def clear(self):
+        self.ids['graf1'].clear_widgets()
+        self.ids['graf2'].clear_widgets()
+        plt.figure(1).clear()
+        plt.figure(2).clear()
+        plt.figure(3).clear()
+        plt.figure(4).clear()
+
+
     def on_pre_enter(self, *args):
         self.first_graph()
 
+
     def second_graph(self, *args):
+        plt.figure(1).clear()
+        plt.figure(2).clear()
+        plt.figure(3).clear()
+        plt.figure(4).clear()
+
         self.ids['graf1'].clear_widgets()
         self.ids['graf2'].clear_widgets()
         self.ids['neodvezeno'].background_color = [0, 0, 0, 0.5]
         self.ids['celkem'].background_color = [0, 0, 0, 0.3]
         app = MDApp.get_running_app()
         SQL = "SELECT o.id_odpad,SUM(mnozstvi) FROM Odpad o,Katalog_odpadu k WHERE o.id_odpad = k.id_odpad AND datum_odvozu IS NULL AND  id_zdravotnicke_zarizeni = ? GROUP BY o.id_odpad"
-        val = (app.usernameL)
+        val = app.usernameL
         data = app.cursor.execute(SQL, val)
         mnozstvi = []
         nazvy = []
         for row in data:
+            print(row)
             nazvy.append(row[0])
             mnozstvi.append(row[1])
         plt.figure(3)
         plt.bar(nazvy, mnozstvi, color=(0, 0, 1, 0.6))
         plt.ylabel("Váha (g)")
         plt.xlabel("Kód odpadu")
-        #self.ids['graf1'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
+        self.ids['graf1'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
         plt.figure(4)
         SQL = "SELECT kategorie,SUM(mnozstvi) FROM 	Odpad o,Katalog_odpadu k WHERE o.id_odpad = k.id_odpad AND datum_odvozu IS NULL AND id_zdravotnicke_zarizeni = ? GROUP BY kategorie"
         val = (app.usernameL)
@@ -402,11 +418,16 @@ class StatisticWindow(Screen):
 
         plt.ylabel("Váha (g)")
         plt.xlabel("Kategorie")
-        #self.ids['graf2'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
+        self.ids['graf2'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
 
     def first_graph(self,*args):
         self.ids['graf1'].clear_widgets()
         self.ids['graf2'].clear_widgets()
+        plt.figure(1).clear()
+        plt.figure(2).clear()
+        plt.figure(3).clear()
+        plt.figure(4).clear()
+
         self.ids['neodvezeno'].background_color = [0, 0, 0, 0.3]
         self.ids['celkem'].background_color = [0, 0, 0, 0.5]
         app = MDApp.get_running_app()
@@ -423,7 +444,7 @@ class StatisticWindow(Screen):
         plt.bar(nazvy, mnozstvi, color=(0, 0, 1, 0.6))
         plt.ylabel("Váha (g)")
         plt.xlabel("Kód odpadu")
-        #self.ids['graf1'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
+        self.ids['graf1'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
         plt.figure(2)
         SQL = "SELECT kategorie,SUM(mnozstvi) FROM 	Odpad o,Katalog_odpadu k WHERE k.id_odpad = o.id_odpad AND  id_zdravotnicke_zarizeni = ? GROUP BY kategorie"
         data2 = app.cursor.execute(SQL, val)
@@ -446,7 +467,8 @@ class StatisticWindow(Screen):
 
         plt.ylabel("Váha (g)")
         plt.xlabel("Kategorie")
-        #self.ids['graf2'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
+        self.ids['graf2'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
+
 
 class MainWindow(Screen):
 
