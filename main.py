@@ -23,7 +23,7 @@ from kivy.graphics import Line, Rectangle, Color
 from fpdf import FPDF
 from pathlib import Path
 from matplotlib import pyplot as plt
-#from kivy.garden.matplotlib import FigureCanvasKivyAgg
+from kivy.garden.matplotlib import FigureCanvasKivyAgg
 #pip3 install fpdf
 
 _ACCEPTED_BAR_CAPS = {"round", "none", "square"}
@@ -217,34 +217,82 @@ class HistoryWindow(Screen):
             ],
             row_data=hist_data,
             sorted_on=" ID ",
-            sorted_order="ASC"
+            sorted_order="DSC"
         )
         self.ids['table'].add_widget(table)
         app.selected_rows = [" ", " ", " ", " ", " ", " ", " "]
+        print("test-----", app.selected_rows)
         table.bind(on_check_press=self.on_check_press)
 
     def on_check_press(self, instance_table, current_row):
         #print(instance_table, current_row,instance_row)
-        # app = MDApp.get_running_app()
-        # app.selected_rows = instance_table.get_row_checks()
-        # print("--------------všechny zvolené---------")
+        app = MDApp.get_running_app()
+        app.selected_rows = instance_table.get_row_checks()
+        print("--------------všechny zvolené---------")
         print(instance_table.get_row_checks())
-        pass
+
 
     def on_leave(self, *args):
         self.ids.table.clear_widgets()
 
-    def removeSelectedRows(self, *args):
+    def deleteData(self):
         app = MDApp.get_running_app()
         print(app.selected_rows)
         for row in app.selected_rows:
-            SQL = "DELETE from Odpad where id = ? AND zdravotnicke_zarizeni_ico = ?"
+            print(row)
+            SQL = "DELETE from Odpad where id = ? AND id_zdravotnicke_zarizeni = ?"
             val = (row[0], app.usernameL)
             app.cursor.execute(SQL, val)
             app.cursor.commit()
+            #
+        app.selected_rows = []
+        self.ids.table.clear_widgets()
+        app = MDApp.get_running_app()
+        SQL = "SELECT o.id, nazev, o.id_odpad, mnozstvi, kategorie, datum_uskladneni, ISNULL(datum_odvozu," \
+              "'neodvezeno'),ISNULL(id_opravnena_osoba,'nepřiřazeno') FROM Odpad o, Katalog_odpadu k WHERE o.id_odpad = k.id_odpad AND id_zdravotnicke_zarizeni = (?) "
+        val = app.usernameL
+        data = app.cursor.execute(SQL, val)
+        hist_data = []
+        for row in data:
+            if row[4] == 1:
+                row[4] = "nebezpečné"
+            else:
+                row[4] = "bezpečné"
 
+            hist_data.append(row)
 
+        table = MDDataTable(
+            pos_hint={'center_x': 0.5, 'center_y': 0.5},
+            size_hint=(.5, .6),
+            use_pagination=True,
+            rows_num=7,
+            check=True,
+            pagination_menu_height='240dp',
+            pagination_menu_pos="auto",
+            # background_color=[1, 1, 1, 1],
+            column_data=[
+                (" ID ", dp(20)),
+                ("Název", dp(45)),
+                ("Katalogoé číslo", dp(35)),
+                ("Váha (g)", dp(25)),
+                ("Kategorie", dp(45)),
+                ("Datum uskladnění", dp(45)),
+                ("Datum odvozu", dp(45)),
+                ("IČO Odvozce", dp(45)),
+            ],
+            row_data=hist_data,
+            sorted_on=" ID ",
+            sorted_order="DSC"
+        )
+        self.ids['table'].add_widget(table)
         app.selected_rows = [" ", " ", " ", " ", " ", " ", " "]
+        print("test-----", app.selected_rows)
+        table.bind(on_check_press=self.on_check_press)
+
+    # def removeSelectedRows(self, *args):
+    #     app = MDApp.get_running_app()
+    #     print(app.selected_rows)
+
 
 class LoginWindow(Screen):
 
@@ -327,7 +375,7 @@ class StatisticWindow(Screen):
         plt.bar(nazvy, mnozstvi, color=(0, 0, 1, 0.6))
         plt.ylabel("Váha (g)")
         plt.xlabel("Kód odpadu")
-        #self.ids['graf1'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
+        self.ids['graf1'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
         plt.figure(4)
         SQL = "SELECT kategorie,SUM(mnozstvi) FROM 	Odpad o,Katalog_odpadu k WHERE o.id_odpad = k.id_odpad AND datum_odvozu IS NULL AND id_zdravotnicke_zarizeni = ? GROUP BY kategorie"
         val = (app.usernameL)
@@ -350,7 +398,7 @@ class StatisticWindow(Screen):
 
         plt.ylabel("Váha (g)")
         plt.xlabel("Kategorie")
-        #self.ids['graf2'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
+        self.ids['graf2'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
 
     def first_graph(self,*args):
         self.ids['graf1'].clear_widgets()
@@ -371,7 +419,7 @@ class StatisticWindow(Screen):
         plt.bar(nazvy, mnozstvi, color=(0, 0, 1, 0.6))
         plt.ylabel("Váha (g)")
         plt.xlabel("Kód odpadu")
-        #self.ids['graf1'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
+        self.ids['graf1'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
         plt.figure(2)
         SQL = "SELECT kategorie,SUM(mnozstvi) FROM 	Odpad o,Katalog_odpadu k WHERE k.id_odpad = o.id_odpad AND  id_zdravotnicke_zarizeni = ? GROUP BY kategorie"
         data2 = app.cursor.execute(SQL, val)
@@ -393,7 +441,7 @@ class StatisticWindow(Screen):
 
         plt.ylabel("Váha (g)")
         plt.xlabel("Kategorie")
-        #self.ids['graf2'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
+        self.ids['graf2'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
 
 class MainWindow(Screen):
 

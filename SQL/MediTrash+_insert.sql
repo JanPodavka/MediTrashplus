@@ -20,3 +20,5 @@ INSERT INTO Opravnena_osoba VALUES ('12689648','Honza Odvozce')
 select * from Opravnena_osoba
 select * from Katalog_odpadu
 select * from Zdravotnicke_zarizeni
+select * from Odpad
+
