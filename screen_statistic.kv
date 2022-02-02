@@ -1,3 +1,4 @@
+
 <StatisticWindow>:
     name:'statistic'
 
@@ -9,30 +10,35 @@
     MDBoxLayout:
         pos_hint: {"center_x": .5, "center_y": .965}
         size_hint: 1, .08
+
         Button:
             text: "Profil"
             background_color: (.0, .0, .0, .45)
             font_size: 0.32 * self.height
             on_press:
                 app.root.current = 'profile'
+
         Button:
             text: "Vložit odpad"
             background_color: (.0, .0, .0, .45)
             font_size: 0.32 * self.height
             on_press:
                 app.root.current = 'addtrash'
+
         Button:
             text: "Odvoz odpadu"
             background_color: (.0, .0, .0, .45)
             font_size: 0.32 * self.height
             on_press:
                 app.root.current = 'odvoz'
+
         Button:
             text: "Statistiky"
             background_color: (.0, .0, .0, .6)
             font_size: 0.32 * self.height
             on_press:
                 app.root.current = 'statistic'
+
         Button:
             text: "Historie"
             background_color: (.0, .0, .0, .45)
@@ -43,11 +49,14 @@
         Image:
             source: 'obrazky/logo.png'
             background_color: (.0, .0, .0, .45)
+
     BoxLayout:
         pos_hint: {"center_x": .5, "center_y": .5}
         orientation: "vertical"
+
         BoxLayout:
             size_hint: .2,.2
+
         BoxLayout:
             size_hint: .3,.075
             pos_hint: {"center_x": .5, "center_y": .5}
@@ -58,13 +67,14 @@
                 Line:
                     width: 1
                     rectangle: self.x, self.y, self.width, self.height
+
             Button:
                 id: celkem
                 md_bg_color: [0, 0, 0, 0.3]
                 text:"Celkový odpad"
                 on_press:
                     root.first_graph()
-
+                    
             Button:
                 id: neodvezeno
                 text:"neodvezený odpad"
@@ -77,7 +87,6 @@
             padding:10
             BoxLayout:
                 id: graf1
-
             BoxLayout:
                 id: graf2
         BoxLayout:
