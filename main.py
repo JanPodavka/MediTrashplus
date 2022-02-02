@@ -244,6 +244,7 @@ class HistoryWindow(Screen):
             val = (row[0], app.usernameL)
             app.cursor.execute(SQL, val)
             app.cursor.commit()
+            #
         app.selected_rows = []
         self.ids.table.clear_widgets()
         app = MDApp.get_running_app()
