@@ -237,10 +237,7 @@ class HistoryWindow(Screen):
     def removeSelectedRows(self, *args):
         app = MDApp.get_running_app()
         print(app.selected_rows)
-
-        #print(app.selected_rows)
         for row in app.selected_rows:
-
             SQL = "DELETE from Odpad where id = ? AND zdravotnicke_zarizeni_ico = ?"
             val = (row[0], app.usernameL)
             app.cursor.execute(SQL, val)
@@ -393,7 +390,6 @@ class StatisticWindow(Screen):
         plt.ylabel("Váha (g)")
         plt.xlabel("Kategorie")
         self.ids['graf2'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
-
 
 class MainWindow(Screen):
 
