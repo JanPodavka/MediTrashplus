@@ -243,6 +243,7 @@ class HistoryWindow(Screen):
             app.cursor.execute(SQL, val)
             app.cursor.commit()
 
+
         app.selected_rows = [" ", " ", " ", " ", " ", " ", " "]
 
 class LoginWindow(Screen):
