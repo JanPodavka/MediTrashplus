@@ -131,52 +131,56 @@
         size_hint: .35, .45
         pos_hint: {"center_x": .28, "center_y": .52}
         radius: [20, 20, 20, 20]
-        orientation: "vertical"
+
         BoxLayout:
-            size_hint_y: .3
-            MDLabel:
-                pos_hint: {"center_x": .75, "center_y": .5}
-                font_size: self.width/20
-                text: "ISPOP hlášení"
-                underline: True
-                bold: True
-                halign: "center"
-                valign: "middle"
-        BoxLayout:
-            orientation: "horizontal"
-            FloatLayout:
-                orientation: "vertical"
-                size_hint_x: .4
-                CircularProgressBar:
-                    id: progress_bar_bezpecne
-                    size_hint: (None, None)
-                    height: 220
-                    width: 220
-                    max: 1000 * 1000
-                    pos: 400, 925
-                CircularProgressBar:
-                    id: progress_bar_nebezpecne
-                    pos: 400, 670
-                    size_hint: (None, None)
-                    height: 220
-                    width: 220
-                    max: 100 * 1000
+            orientation: "vertical"
             BoxLayout:
-                orientation: "vertical"
-                size_hint_x: .6
+                size_hint_y: .2
+                MDLabel:
+                    pos_hint: {"center_x": .75, "center_y": .5}
+                    font_size: self.width/21
+                    text: "ISPOP hlášení"
+                    underline: True
+                    bold: True
+                    halign: "center"
+                    valign: "middle"
+
+            BoxLayout:
+                orientation: "horizontal"
+                size_hint_y: .15
                 MDLabel:
                     text: "Bezpečné"
-                    font_size: self.width/15
+                    halign: "center"
+                    font_size: self.width/12
                 MDLabel:
                     text: "Nebezpečné"
-                    font_size: self.width/15
-        BoxLayout:
-            size_hint_y: .2
-            Button:
-                text: "Vygenerovat zprávu ISPOP"
-                background_color: (.0, .0, .0, .6)
-                on_press:
-                    root.generateISPOP();
+                    halign: "center"
+                    font_size: self.width/12
+            BoxLayout:
+                size_hint_y: .5
+                FloatLayout:
+                    orientation: "horizontal"
+                    CircularProgressBar:
+                        id: progress_bar_bezpecne
+                        size_hint: (None, None)
+                        height: 160
+                        width: 160
+                        max: 1000 * 1000
+                        pos: 210,310
+                    CircularProgressBar:
+                        id: progress_bar_nebezpecne
+                        pos: 480, 310
+                        size_hint: (None, None)
+                        height: 160
+                        width: 160
+                        max: 100 * 1000
+            BoxLayout:
+                size_hint_y: .15
+                Button:
+                    text: "Vygenerovat zprávu ISPOP"
+                    background_color: (.0, .0, .0, .6)
+                    on_press:
+                        root.generateISPOP();
     Image:
         source: 'obrazky/line3.png'
         size_hint_x: 1

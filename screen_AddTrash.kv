@@ -36,7 +36,7 @@
             background_color: (.0, .0, .0, .45)
             font_size: 0.32 * self.height
             on_press:
-                #app.root.current = 'statistic'
+                app.root.current = 'statistic'
         Button:
             text: "Historie"
             background_color: (.0, .0, .0, .45)
@@ -82,13 +82,13 @@
         readonly: True
         halign: "left"
         font_size: 0.58 * self.height
-        size_hint: .23, .035
+        size_hint: .23, .040
         valign: "middle"
         pos_hint: {"center_x": .74, "center_y": .8}
 
     BoxLayout:
         spacing:15
-        size_hint: .32, .035
+        size_hint: .32, .040
         pos_hint: {"center_x": .695,"center_y": .74}
         MDLabel:
             size_hint_x: .28

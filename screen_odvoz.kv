@@ -1,7 +1,7 @@
 <ListItemWithCheckbox>:
     RightCheckbox:
         id: check
-        #on_active: self.on_checkbox_active(*args)
+        on_active: self.on_checkbox_active(*args)
 
 <Send_checker>:
     id: checker
@@ -10,12 +10,11 @@
     size_hint_y: None
     height: "50dp"
 
-<Item>:
-
-
 <OdvozWindow>:
     name:"odvoz"
 
+
+    # Navbbar
     MDBoxLayout:
         pos_hint: {"center_x": .5, "center_y": .965}
         size_hint: 1, .08
@@ -43,7 +42,7 @@
             background_color: (.0, .0, .0, .45)
             font_size: 0.32 * self.height
             on_press:
-                #app.root.current = 'statistic'
+                app.root.current = 'statistic'
         Button:
             text: "Historie"
             background_color: (.0, .0, .0, .45)
@@ -56,7 +55,7 @@
 
     BoxLayout:
         spacing:15
-        size_hint: .33, .035
+        size_hint: .33, .040
         pos_hint: {"center_x": .68, "center_y": .8}
         MDLabel:
             size_hint_x: .5
@@ -84,8 +83,9 @@
         scroll_type: ['bars']
         MDList:
             id: scroll
-    MDRoundFlatButton:
+    MDFillRoundFlatButton:
         text: "Odeslat"
+        background_color: (.0, .0, .0, .6)
         size_hint: .2,.07
         font_size: 0.4 * self.height
         pos_hint: {"center_x": .76, "center_y": .2}

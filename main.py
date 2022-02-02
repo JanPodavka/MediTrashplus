@@ -5,6 +5,7 @@ import pyodbc
 from kivy.properties import StringProperty, ObjectProperty
 from kivymd.uix.dialog import MDDialog
 from kivymd.uix.datatables import MDDataTable
+from datetime import date
 from kivymd.uix.selectioncontrol import MDCheckbox
 from kivymd.uix.snackbar import Snackbar
 from datetime import datetime
@@ -15,12 +16,15 @@ import locale
 from kivy.metrics import dp
 from kivy.uix.progressbar import ProgressBar
 from kivy.core.text import Label as CoreLabel
-from kivy.graphics import Ellipse, Rectangle, Color
+from kivy.graphics import Color, Ellipse, Rectangle
 from kivy.core.text import Label
 from kivy.lang.builder import Builder
+from kivy.graphics import Line, Rectangle, Color
 from fpdf import FPDF
 from pathlib import Path
-from datetime import date
+from matplotlib import pyplot as plt
+from kivy.garden.matplotlib import FigureCanvasKivyAgg
+#pip3 install fpdf
 
 _ACCEPTED_BAR_CAPS = {"round", "none", "square"}
 _DEFAULT_THICKNESS = 10
@@ -98,7 +102,7 @@ class OdvozWindow(Screen):
         val = "ne",app.usernameL
         app.cursor.execute(sql, val)
         for row in app.cursor:
-            item = ListItemWithCheckbox(text=f"{row[0]}", secondary_text = f"{row[1]}",  tertiary_text=f"váha: {row[2]} g")
+            item = ListItemWithCheckbox(text=f"{row[0]}", secondary_text = f"{row[1]}",  tertiary_text=f"Váha: {row[2]} g")
             self.ids.scroll.add_widget(item)
         sql = 'SELECT * from Opravnena_osoba'
         app.cursor.execute(sql)
@@ -111,17 +115,17 @@ class OdvozWindow(Screen):
 
     def send_trash(self):
         app = MDApp.get_running_app()
-
         if self.ids['drop_item'].text == "Vyberte osobu":
             self.ids.Send_error_mess.text = "* Povinné pole"
         else:
             self.ids.Send_error_mess.text = ""
             self.dialog = MDDialog(
-                title="Opravdu si přejete odeslat?",
-                text=self.getCheckedText(),
+                title="Opravdu si přejete odeslat",
                 radius=[20, 20, 20, 20],
                 size_hint=[.5, .6],
+                type="custom",
                 auto_dismiss=False,
+                content_cls=Send_checker(),
                 buttons=[
                     MDFlatButton(
                         text="Zpět",
@@ -134,13 +138,6 @@ class OdvozWindow(Screen):
                 ],
             )
             self.dialog.open()
-
-    def getCheckedText(self):
-        text = ""
-        for element in self.ids.scroll.children:
-            if element.ids.check.active:
-                text = text + element.text + " - " + element.tertiary_text + "\n"
-        return text
 
     def get_active_check(self,*args):
         app = MDApp.get_running_app()
@@ -157,6 +154,8 @@ class OdvozWindow(Screen):
                 app.cursor.execute(sql, val)
                 app.cursor.commit()
         self.dialog.dismiss()
+        for element in self.ids.scroll.children:
+            element.ids.check.active = False
 
         self.ids.scroll.clear_widgets()
         sql = 'SELECT nazev,kod_odpadu, SUM(mnozstvi) from Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND odevezeno = (?)  AND zdravotnicke_zarizeni_ico = ? GROUP BY nazev,kod_odpadu'
@@ -305,7 +304,96 @@ class LoginWindow(Screen):
         self.ids['log_remember_user'].active = False
 
 class StatisticWindow(Screen):
-    pass
+    def on_leave(self, *args):
+        self.ids['graf1'].clear_widgets()
+        self.ids['graf2'].clear_widgets()
+
+    def on_pre_enter(self, *args):
+        self.first_graph()
+
+    def second_graph(self, *args):
+        self.ids['graf1'].clear_widgets()
+        self.ids['graf2'].clear_widgets()
+        self.ids['neodvezeno'].background_color = [0, 0, 0, 0.5]
+        self.ids['celkem'].background_color = [0, 0, 0, 0.3]
+        app = MDApp.get_running_app()
+        SQL = "SELECT kod_odpadu,SUM(mnozstvi) FROM Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND odevezeno = (?) AND  zdravotnicke_zarizeni_ico = ? GROUP BY kod_odpadu"
+        val = ('ne', app.usernameL)
+        data = app.cursor.execute(SQL, val)
+        mnozstvi = []
+        nazvy = []
+        for row in data:
+            nazvy.append(row[0])
+            mnozstvi.append(row[1])
+        plt.figure(3)
+        plt.bar(nazvy, mnozstvi, color=(0, 0, 1, 0.6))
+        plt.ylabel("Váha (g)")
+        plt.xlabel("Kód odpadu")
+        self.ids['graf1'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
+        plt.figure(4)
+        SQL = "SELECT kategorie,SUM(mnozstvi) FROM 	Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND odevezeno = ? AND zdravotnicke_zarizeni_ico = ? GROUP BY kategorie"
+        val = ('ne', app.usernameL)
+        data2 = app.cursor.execute(SQL, val)
+        bezpecnost = []
+        bezpecnost_name = []
+        for row in data2:
+            print(row)
+            if row[0] == 1:
+                bezpecnost.append("Bezpečný")
+                bezpecnost_name.append(row[1])
+            else:
+                bezpecnost.append("Nebezpečný")
+                bezpecnost_name.append(row[1])
+
+        bar_bez = plt.bar(bezpecnost, bezpecnost_name)
+        bar_bez[0].set_color('r')
+        bar_bez[1].set_color('g')
+
+        plt.ylabel("Váha (g)")
+        plt.xlabel("Kategorie")
+        self.ids['graf2'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
+
+    def first_graph(self,*args):
+        self.ids['graf1'].clear_widgets()
+        self.ids['graf2'].clear_widgets()
+        self.ids['neodvezeno'].background_color = [0, 0, 0, 0.3]
+        self.ids['celkem'].background_color = [0, 0, 0, 0.5]
+        app = MDApp.get_running_app()
+        SQL = "SELECT kod_odpadu,SUM(mnozstvi) FROM Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND  zdravotnicke_zarizeni_ico = ? GROUP BY kod_odpadu"
+        val = app.usernameL
+        data = app.cursor.execute(SQL, val)
+        mnozstvi = []
+        nazvy = []
+        for row in data:
+            nazvy.append(row[0])
+            mnozstvi.append(row[1])
+        plt.figure(1)
+        plt.bar(nazvy, mnozstvi, color=(0, 0, 1, 0.6))
+        plt.ylabel("Váha (g)")
+        plt.xlabel("Kód odpadu")
+        self.ids['graf1'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
+        plt.figure(2)
+        SQL = "SELECT kategorie,SUM(mnozstvi) FROM 	Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND  zdravotnicke_zarizeni_ico = ?	GROUP BY kategorie"
+        data2 = app.cursor.execute(SQL, val)
+        bezpecnost = []
+        bezpecnost_name = []
+        for row in data2:
+            print(row)
+            if row[0] == 1:
+                bezpecnost.append("Bezpečný")
+                bezpecnost_name.append(row[1])
+            else:
+                bezpecnost.append("Nebezpečný")
+                bezpecnost_name.append(row[1])
+
+        bar_bez = plt.bar(bezpecnost, bezpecnost_name)
+        bar_bez[0].set_color('r')
+        bar_bez[1].set_color('g')
+
+        plt.ylabel("Váha (g)")
+        plt.xlabel("Kategorie")
+        self.ids['graf2'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
+
 
 class MainWindow(Screen):
 
@@ -354,7 +442,8 @@ class ProfileWindow(Screen):
         self.ids['ico'].text = udaje[3]
         self.ids['telefon'].text = udaje[4]
 
-        sql = 'Select kategorie,SUM(mnozstvi) from Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = ? GROUP BY kategorie'
+        sql = 'Select kategorie,SUM(mnozstvi) from Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = ? ' \
+              'GROUP BY kategorie'
         val = app.usernameL
         data = app.cursor.execute(sql, val)
         hint_data = []
@@ -567,8 +656,16 @@ class MeditrashApp(MDApp):
 
     def __init__(self, **kwargs):
         super().__init__()
-        connection = pyodbc.connect(
-            'DRIVER={ODBC Driver 17 for SQL Server};SERVER=' + '147.230.21.34' + ';DATABASE=' + 'DBS2021_JanPodavka' + ';UID=' + 'student' + ';PWD=' + 'student')
+        try:
+            connection = pyodbc.connect(
+                'DRIVER={ODBC Driver 17 for SQL Server};SERVER=' + '147.230.21.34' + ';DATABASE=' + 'DBS2021_JanPodavka'
+                + ';UID=' + 'student' + ';PWD=' + 'student')
+        except pyodbc.Error as ex:
+            sqlstate = ex.args[1]
+            print("Nelze připojit k databázi\n")
+            print(sqlstate)
+            exit()
+
         self.cursor = connection.cursor()
 
     def build(self):
@@ -635,7 +732,6 @@ class MeditrashApp(MDApp):
 
     def close_dialog(self,obj):
          self.dialog.dismiss()
-
     def update_psswd(self, *args):
         app = MDApp.get_running_app()
         valid = True
@@ -719,6 +815,7 @@ class MeditrashApp(MDApp):
                 snackbar_y="10dp",
                 bg_color=(0, 0, 0, .2)
             ).open()
+
 
     def get_data(self,n):
         app = MDApp.get_running_app()
