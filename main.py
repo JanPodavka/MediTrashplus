@@ -441,7 +441,8 @@ class ProfileWindow(Screen):
         self.ids['adresa'].text = udaje[3]
         self.ids['ico'].text = udaje[1]
         self.ids['telefon'].text = udaje[4]
-        self.ids['email'].text = udaje[5]
+        if  udaje[5]!=None:
+            self.ids['email'].text = udaje[5]
 
         sql = 'Select kategorie,SUM(mnozstvi) from Odpad O, Katalog_odpadu K WHERE O.id_odpad = K.id_odpad AND id_zdravotnicke_zarizeni = ? ' \
               'AND ispop = 0 GROUP BY kategorie'
@@ -450,8 +451,10 @@ class ProfileWindow(Screen):
         hint_data = []
         for row in data:
             hint_data.append(row)
-        print(hint_data)
-        if len(hint_data) == 1:
+        if not hint_data:
+            self.ids['progress_bar_nebezpecne'].set_value(0)
+            self.ids['progress_bar_bezpecne'].set_value(0)
+        elif len(hint_data) == 1:
             if hint_data[0][0] == 0:
                 self.ids['progress_bar_bezpecne'].set_value(hint_data[0][1])
                 self.ids['progress_bar_nebezpecne'].set_value(0)
@@ -582,8 +585,10 @@ class RegistrationWindow(Screen):
         app = MDApp.get_running_app()
         sql = "INSERT INTO Zdravotnicke_zarizeni (nazev, ico, heslo, mesto, telefon) VALUES (?, ?, ?, ?, ?)"
         val = (self.ids['reg_name'].text,
-               self.ids['reg_ico'].text,
-               self.ids['reg_number'].text
+            self.ids['reg_ico'].text,
+            self.ids['reg_password'].text,
+            self.ids['reg_address'].text,
+            self.ids['reg_number'].text,
                )
 
         app.cursor.execute(sql, val)
@@ -746,7 +751,6 @@ class MeditrashApp(MDApp):
 
     def close_dialog(self,obj):
          self.dialog.dismiss()
-
     def update_psswd(self, *args):
         app = MDApp.get_running_app()
         valid = True
@@ -811,11 +815,12 @@ class MeditrashApp(MDApp):
             self.dialog.content_cls.ids.profile_address.error = False
 
         if valid:
-            sql = "UPDATE Zdravotnicke_zarizeni SET nazev = (?), mesto = (?), telefon = (?)  WHERE ico = (?)"
+            sql = "UPDATE Zdravotnicke_zarizeni SET nazev = (?), mesto = (?), telefon = (?), email = (?) WHERE ico = (?)"
             name = self.dialog.content_cls.ids.profile_name.text
             address = self.dialog.content_cls.ids.profile_address.text
             phone = self.dialog.content_cls.ids.profile_phone.text
-            val = (name, address, phone, app.usernameL)
+            email = self.dialog.content_cls.ids.profile_email.text
+            val = (name, address, phone, email, app.usernameL)
             app.cursor.execute(sql, val)
             app.cursor.commit()
             self.dialog.dismiss(force=True)
@@ -823,7 +828,7 @@ class MeditrashApp(MDApp):
             self.root.get_screen('profile').ids['telefon'].text = phone
             self.root.get_screen('profile').ids['nazev_organizace'].text = name
             self.root.get_screen('profile').ids['adresa'].text = address
-
+            self.root.get_screen('profile').ids['email'].text = email
             Snackbar(
                 text="Informace úspěšně změněny",
                 snackbar_x="10dp",
@@ -831,14 +836,16 @@ class MeditrashApp(MDApp):
                 bg_color=(0, 0, 0, .2)
             ).open()
 
+
     def get_data(self,n):
         app = MDApp.get_running_app()
-        SQL = "SELECT * FROM Zdravotnicke_zarizeni WHERE ico = ? "
+        SQL = "SELECT nazev, ico, heslo, mesto, telefon, email FROM Zdravotnicke_zarizeni WHERE ico = ? "
         val = app.usernameL
         data = app.cursor.execute(SQL, val)
         for row in data:
             udaje = row
-
+        if n == 5 and udaje[5] == None:
+            return ""
         return udaje[n]
 
 if __name__ == '__main__':
