@@ -433,25 +433,34 @@ class ProfileWindow(Screen):
         data = app.cursor.execute(SQL, val)
         for row in data:
             udaje = row
-        self.ids['nazev_organizace'].text = udaje[1]
-        self.ids['adresa'].text = udaje[2]
-        self.ids['ico'].text = udaje[3]
+        self.ids['nazev_organizace'].text = udaje[0]
+        self.ids['adresa'].text = udaje[3]
+        self.ids['ico'].text = udaje[1]
         self.ids['telefon'].text = udaje[4]
+        self.ids['email'].text = udaje[5]
 
-        sql = 'Select kategorie,SUM(mnozstvi) from Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND zdravotnicke_zarizeni_ico = ? ' \
-              'GROUP BY kategorie'
+        sql = 'Select kategorie,SUM(mnozstvi) from Odpad O, Katalog_odpadu K WHERE O.id_odpad = K.id_odpad AND id_zdravotnicke_zarizeni = ? ' \
+              'AND ispop = 0 GROUP BY kategorie'
         val = app.usernameL
         data = app.cursor.execute(sql, val)
         hint_data = []
         for row in data:
             hint_data.append(row)
-
-        if hint_data[0][0] == 0:
-            self.ids['progress_bar_bezpecne'].set_value(hint_data[0][1])
-            self.ids['progress_bar_nebezpecne'].set_value(hint_data[1][1])
+        print(hint_data)
+        if len(hint_data) == 1:
+            if hint_data[0][0] == 0:
+                self.ids['progress_bar_bezpecne'].set_value(hint_data[0][1])
+                self.ids['progress_bar_nebezpecne'].set_value(0)
+            else:
+                self.ids['progress_bar_nebezpecne'].set_value(hint_data[0][1])
+                self.ids['progress_bar_bezpecne'].set_value(0)
         else:
-            self.ids['progress_bar_nebezpecne'].set_value(hint_data[0][1])
-            self.ids['progress_bar_bezpecne'].set_value(hint_data[1][1])
+            if hint_data[0][0] == 0:
+                self.ids['progress_bar_bezpecne'].set_value(hint_data[0][1])
+                self.ids['progress_bar_nebezpecne'].set_value(hint_data[1][1])
+            else:
+                self.ids['progress_bar_nebezpecne'].set_value(hint_data[0][1])
+                self.ids['progress_bar_bezpecne'].set_value(hint_data[1][1])
 
     def generateISPOP(self):
         app = MDApp.get_running_app()
@@ -733,11 +742,12 @@ class MeditrashApp(MDApp):
 
     def close_dialog(self,obj):
          self.dialog.dismiss()
+
     def update_psswd(self, *args):
         app = MDApp.get_running_app()
         valid = True
 
-        stare_heslo = app.get_data(0)
+        stare_heslo = app.get_data(2)
         if self.dialog.content_cls.ids.profile_old_psswd.text != stare_heslo:
             self.dialog.content_cls.ids.profile_old_psswd.error = True
             self.dialog.content_cls.ids.profile_old_psswd.helper_text = "Chybné heslo"
@@ -816,7 +826,6 @@ class MeditrashApp(MDApp):
                 snackbar_y="10dp",
                 bg_color=(0, 0, 0, .2)
             ).open()
-
 
     def get_data(self,n):
         app = MDApp.get_running_app()
