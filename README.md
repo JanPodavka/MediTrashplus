@@ -33,13 +33,14 @@ Knihovny:
 
 ### Připojení k databázi
 
-![image](https://github.com/JanPodavka/MediTrashplus/blob/main/Dokumentace/connection_to_DBS.png)
+![image](https://github.com/JanPodavka/MediTrashplus/blob/main/Dokumentace/connection_to_dbs.png)
 
 - Pro připojení k databázi používáme knihovnu Pyodbc, kdy při spuštění aplikace se vytvoří connection k naší databázi (zadáním IP, názvu databáze, jmena/hesla)
+- Pokud se nepřipojí aplikace k databázi, tak se po 20 vteřinách ukončí a vypíši chybovou hlášku
 - Poté jsme si předvytvořili cursor na dané připojení, ke kterému lze přistupovat (app.cursor) v jednotlivých screenech aplikace
 
 ### SQL Injection
 
 ![image](https://github.com/JanPodavka/MediTrashplus/blob/main/Dokumentace/protect_SQL_INJECTION.png)
 
-- Aplikace řeší základní SQL Injection
+- Aplikace řeší základní SQL Injection pomoci tzv.PreparedStatement, tedy je předvytvořeno query a následně se k němu připojují data v metodě cursor.execute(), která odešle naše query do databáze
