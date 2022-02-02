@@ -281,7 +281,7 @@ class LoginWindow(Screen):
         # Otevři soubor
         app.cursor.execute('SELECT * FROM Zdravotnicke_zarizeni')
         for row in app.cursor:
-            if self.ids['name'].text == row[3] and self.ids['password'].text == row[0]:
+            if self.ids['name'].text == row[1] and self.ids['password'].text == row[2]:
                 print("úspěšně přihlášeno")
                 # Náhrání do údajů aktivnního uživatele
                 app.usernameL = loginText
@@ -301,7 +301,6 @@ class LoginWindow(Screen):
         self.ids['log_remember_user'].active = False
 
 class StatisticWindow(Screen):
-
     def on_leave(self, *args):
         self.ids['graf1'].clear_widgets()
         self.ids['graf2'].clear_widgets()
@@ -315,8 +314,8 @@ class StatisticWindow(Screen):
         self.ids['neodvezeno'].background_color = [0, 0, 0, 0.5]
         self.ids['celkem'].background_color = [0, 0, 0, 0.3]
         app = MDApp.get_running_app()
-        SQL = "SELECT kod_odpadu,SUM(mnozstvi) FROM Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND odevezeno = (?) AND  zdravotnicke_zarizeni_ico = ? GROUP BY kod_odpadu"
-        val = ('ne', app.usernameL)
+        SQL = "SELECT kod_odpadu,SUM(mnozstvi) FROM Odpad o,Katalog_odpadu k WHERE o.id_odpad = k.id_odpad AND datum_odvozu IS NULL AND  id_zdravotnicke_zarizeni = ? GROUP BY o.id_odpad"
+        val = (app.usernameL)
         data = app.cursor.execute(SQL, val)
         mnozstvi = []
         nazvy = []
@@ -329,7 +328,7 @@ class StatisticWindow(Screen):
         plt.xlabel("Kód odpadu")
         #self.ids['graf1'].add_widget(FigureCanvasKivyAgg(plt.gcf()))
         plt.figure(4)
-        SQL = "SELECT kategorie,SUM(mnozstvi) FROM 	Odpad,Katalog_odpadu WHERE katalogove_cislo = kod_odpadu AND odevezeno = ? AND zdravotnicke_zarizeni_ico = ? GROUP BY kategorie"
+        SQL = "SELECT kategorie,SUM(mnozstvi) FROM 	Odpad o,Katalog_odpadu k WHERE o.id_odpad = k AND odevezeno = ? AND zdravotnicke_zarizeni_ico = ? GROUP BY kategorie"
         val = ('ne', app.usernameL)
         data2 = app.cursor.execute(SQL, val)
         bezpecnost = []
@@ -398,7 +397,7 @@ class MainWindow(Screen):
         self.ids['main_day_of_week'].text = 'Dnes je ' + datetime.today().strftime('%A') + ' ' + date.today().strftime(
             "%d. %m. %Y")
         app = MDApp.get_running_app()
-        SQL = "SELECT distinct(datum_uskladneni) FROM Odpad O, Katalog_odpadu K WHERE O.katalogove_cislo = K.kod_odpadu AND kategorie = 1 AND datum_odvozu IS NULL AND zdravotnicke_zarizeni_ico = (?)"
+        SQL = "SELECT distinct(datum_uskladneni) FROM Odpad O, Katalog_odpadu K WHERE O.id_odpad = K.id_odpad AND kategorie = 1 AND datum_odvozu IS NULL AND id_zdravotnicke_zarizeni = (?)"
         val = app.usernameL
         data = app.cursor.execute(SQL, val)
         list_of_char = [' ','(',')', '\'',',']
@@ -476,7 +475,6 @@ class RegistrationWindow(Screen):
     def reg_check(self):
         app = MDApp.get_running_app()
         def reg_ico_validity(ico):
-
             if len(ico) != 8:
                 return -1
             try:
@@ -572,8 +570,6 @@ class RegistrationWindow(Screen):
         sql = "INSERT INTO Zdravotnicke_zarizeni (nazev, ico, heslo, mesto, telefon) VALUES (?, ?, ?, ?, ?)"
         val = (self.ids['reg_name'].text,
                self.ids['reg_ico'].text,
-               self.ids['reg_password'].text,
-               self.ids['reg_address'].text,
                self.ids['reg_number'].text
                )
 
@@ -628,20 +624,20 @@ class AddTrashWindow(Screen):
             else:
                 mnozstvi = float(self.ids['Add_trash_pole_mnozstvi'].text)
 
-            SQL = ('SELECT COUNT(*) FROM Odpad WHERE zdravotnicke_zarizeni_ico = (?)')
+            SQL = ('SELECT COUNT(*) FROM Odpad WHERE id_zdravotnicke_zarizeni = (?)')
             val = (app.usernameL)
             pocet = app.cursor.execute(SQL, val)
 
             if pocet.fetchone()[0] == 0:
                 id_odpadu = 1
             else:
-                SQL = ('SELECT max(id) FROM Odpad WHERE zdravotnicke_zarizeni_ico = (?)')
+                SQL = ('SELECT max(id) FROM Odpad WHERE id_zdravotnicke_zarizeni = (?)')
                 val = (app.usernameL)
                 nacteny = app.cursor.execute(SQL, val)
                 id_odpadu = nacteny.fetchone()[0] + 1
 
-            SQL = ('INSERT INTO Odpad (id, mnozstvi, datum_uskladneni, katalogove_cislo,zdravotnicke_zarizeni_ico,odevezeno) VALUES (?,?,?,?,?,?)')
-            val = (id_odpadu, int(mnozstvi),date.today().strftime("%d. %m. %Y"), app.vybrany_odpad,app.usernameL,"ne")
+            SQL = ('INSERT INTO Odpad (id, mnozstvi, datum_uskladneni, id_odpad,id_zdravotnicke_zarizeni,ispop) VALUES (?,?,?,?,?,?)')
+            val = (id_odpadu, int(mnozstvi),date.today().strftime("%d. %m. %Y"), app.vybrany_odpad,app.usernameL,0)
             app.cursor.execute(SQL,val)
             app.cursor.commit()
             Snackbar(
