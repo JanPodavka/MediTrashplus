@@ -217,34 +217,40 @@ class HistoryWindow(Screen):
             ],
             row_data=hist_data,
             sorted_on=" ID ",
-            sorted_order="ASC"
+            sorted_order="DSC"
         )
         self.ids['table'].add_widget(table)
         app.selected_rows = [" ", " ", " ", " ", " ", " ", " "]
+        print("test-----", app.selected_rows)
         table.bind(on_check_press=self.on_check_press)
 
     def on_check_press(self, instance_table, current_row):
         #print(instance_table, current_row,instance_row)
-        # app = MDApp.get_running_app()
-        # app.selected_rows = instance_table.get_row_checks()
-        # print("--------------všechny zvolené---------")
+        app = MDApp.get_running_app()
+        app.selected_rows = instance_table.get_row_checks()
+        print("--------------všechny zvolené---------")
         print(instance_table.get_row_checks())
-        pass
 
     def on_leave(self, *args):
         self.ids.table.clear_widgets()
 
-    def removeSelectedRows(self, *args):
+    def deleteData(self):
         app = MDApp.get_running_app()
         print(app.selected_rows)
         for row in app.selected_rows:
             print(row)
-            # SQL = "DELETE from Odpad where id = ? AND zdravotnicke_zarizeni_ico = ?"
-            # val = (row[0], app.usernameL)
-            # app.cursor.execute(SQL, val)
-            # app.cursor.commit()
+            SQL = "DELETE from Odpad where id = ? AND id_zdravotnicke_zarizeni = ?"
+            val = (row[0], app.usernameL)
+            app.cursor.execute(SQL, val)
+            app.cursor.commit()
+        app.selected_rows = []
 
-        app.selected_rows = [" ", " ", " ", " ", " ", " ", " "]
+    # def removeSelectedRows(self, *args):
+    #     app = MDApp.get_running_app()
+    #     print(app.selected_rows)
+
+
+
 
 class LoginWindow(Screen):
 
