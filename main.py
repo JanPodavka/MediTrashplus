@@ -633,9 +633,16 @@ class MeditrashApp(MDApp):
 
     def __init__(self, **kwargs):
         super().__init__()
-        connection = pyodbc.connect(
-            'DRIVER={ODBC Driver 17 for SQL Server};SERVER=' + '147.230.21.34' + ';DATABASE=' + 'DBS2021_JanPodavka'
-            + ';UID=' + 'student' + ';PWD=' + 'student')
+        try:
+            connection = pyodbc.connect(
+                'DRIVER={ODBC Driver 17 for SQL Server};SERVER=' + '147.230.21.34' + ';DATABASE=' + 'DBS2021_JanPodavka'
+                + ';UID=' + 'student' + ';PWD=' + 'student')
+        except pyodbc.Error as ex:
+            sqlstate = ex.args[1]
+            print("Nelze připojit k databázi\n")
+            print(sqlstate)
+            exit()
+
         self.cursor = connection.cursor()
 
     def build(self):
