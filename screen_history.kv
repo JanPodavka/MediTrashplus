@@ -49,9 +49,13 @@
         adaptive_size: True
         id: table
 
-    Button:
-        pos_hint: {"center_x": .8, "center_y": .25}
-        size_hint: .08, .08
+
+    MDFillRoundFlatButton:
+        text: "Odsranit"
+        background_color: (.0, .0, .0, .6)
+        size_hint: .2,.07
+        font_size: 0.4 * self.height
+        pos_hint: {"center_x": .76, "center_y": .12}
         on_press:
             root.removeSelectedRows()
 
