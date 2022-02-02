@@ -289,7 +289,6 @@ class HistoryWindow(Screen):
         )
         self.ids['table'].add_widget(table)
         app.selected_rows = []
-        print("test-----", app.selected_rows)
         table.bind(on_check_press=self.on_check_press)
 
     # def removeSelectedRows(self, *args):
