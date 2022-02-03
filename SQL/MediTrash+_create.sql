@@ -37,7 +37,7 @@ CREATE TABLE Zdravotnicke_zarizeni (
     heslo nvarchar(200)  NOT NULL,
     mesto nvarchar(200)  NOT NULL,
     telefon nvarchar(200)  NOT NULL,
-    email nvarchar(200)  NOT NULL,
+    email nvarchar(200)  NULL,
     CONSTRAINT ICO UNIQUE (ico),
     CONSTRAINT Zdravotnicke_zarizeni_pk PRIMARY KEY  (ico)
 );
@@ -47,19 +47,23 @@ CREATE TABLE Zdravotnicke_zarizeni (
 ALTER TABLE Odpad ADD CONSTRAINT Odpad_Katalog_odpadu
     FOREIGN KEY (id_odpad)
     REFERENCES Katalog_odpadu (id_odpad)
-	ON DELETE  NO ACTION;
+	ON DELETE  NO ACTION
+	ON UPDATE NO ACTION;
+
 
 -- Reference: Odpad_Opravnena_osoba (table: Odpad)
 ALTER TABLE Odpad ADD CONSTRAINT Odpad_Opravnena_osoba
     FOREIGN KEY (id_opravnena_osoba)
     REFERENCES Opravnena_osoba (ico)
-	ON DELETE  NO ACTION;
+	ON DELETE  NO ACTION
+	ON UPDATE NO ACTION;
 
 -- Reference: Odpad_Zdravotnicke_zarizeni (table: Odpad)
 ALTER TABLE Odpad ADD CONSTRAINT Odpad_Zdravotnicke_zarizeni
     FOREIGN KEY (id_zdravotnicke_zarizeni)
     REFERENCES Zdravotnicke_zarizeni (ico)
-	ON DELETE  CASCADE;
+	ON DELETE CASCADE
+	ON UPDATE NO ACTION; --Nelze,již by byla jiná organizace
 
 -- End of file.
 
